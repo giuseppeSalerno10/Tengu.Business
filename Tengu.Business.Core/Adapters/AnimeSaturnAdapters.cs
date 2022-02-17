@@ -37,7 +37,7 @@ namespace Tengu.Business.Core
                 animeList.Add(anime);
             }
 
-            return AnimeSaturnUtilities.FillAnimeList(animeList);
+            return await AnimeSaturnUtilities.FillAnimeList(animeList);
         }
 
         public async Task<AnimeModel[]> SearchByFiltersAsync(AnimeSaturnSearchFilterInput searchFilter)
@@ -105,7 +105,7 @@ namespace Tengu.Business.Core
                 }
                 
             }
-            return AnimeSaturnUtilities.FillAnimeList(animeList.ToArray());
+            return await AnimeSaturnUtilities.FillAnimeList(animeList.ToArray());
         }
 
         public async Task<EpisodeModel[]> GetLatestEpisodeAsync(int count)
