@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tengu.Business.Commons;
 
 namespace Tengu.Business.Core.Adapters
 {
-    internal class KitsuAdapter
+    public class KitsuAdapter
     {
+        public AnimeModel SearchAnime(string[] titles) 
+        {
+            throw new NotImplementedException();
+        }
     }
 }

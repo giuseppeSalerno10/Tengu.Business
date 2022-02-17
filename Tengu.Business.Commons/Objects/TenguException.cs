@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tengu.Business.Commons.Objects
+namespace Tengu.Business.Commons
 {
     public class TenguException : Exception
     {

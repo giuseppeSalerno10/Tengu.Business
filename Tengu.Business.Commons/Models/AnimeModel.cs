@@ -16,8 +16,8 @@ namespace Tengu.Business.Commons
 
         public string Studio { get; set; } = string.Empty;
         public DateTime ReleaseDate { get; set; }
-        public List<string> Tags { get; set; } = new List<string>();
-        public List<EpisodeModel> Episodes { get; set; } = new List<EpisodeModel>();
+        public string[] Tags { get; set; } = Array.Empty<string>();
+        public EpisodeModel[] Episodes { get; set; } = Array.Empty<EpisodeModel>();
         public int TotalEpisode { get; set; }
     }
 }

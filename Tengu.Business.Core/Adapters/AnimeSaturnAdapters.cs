@@ -2,6 +2,7 @@
 using Flurl.Http;
 using HtmlAgilityPack;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,19 +14,18 @@ namespace Tengu.Business.Core
 {
     public class AnimeSaturnAdapters
     {
-        public AnimeModel[] SearchByTitle(string title) 
+        public async Task<AnimeModel[]> SearchByTitleAsync(string title) 
         {
             var requestUrl = $"{Config.AnimeSaturn.SearchByTitleUrl}" +
                 $"search=1&" +
                 $"key={title}";
 
             var response = requestUrl
-                .GetJsonAsync<AnimeSaturnSearchTitleOutput[]>()
-                .Result;
+                .GetJsonAsync<AnimeSaturnSearchTitleOutput[]>();
 
             var animeList = new List<AnimeModel>();
 
-            foreach (var item in response)
+            foreach (var item in await response)
             {
                 var anime = new AnimeModel()
                 {
@@ -37,18 +37,14 @@ namespace Tengu.Business.Core
                 animeList.Add(anime);
             }
 
-            AnimeSaturnUtilities.FillAnimeList(animeList);
-
-            return animeList.ToArray();
+            return AnimeSaturnUtilities.FillAnimeList(animeList);
         }
 
-        public AnimeModel[] SearchByFilters(AnimeSaturnSearchFilterInput searchFilter)
+        public async Task<AnimeModel[]> SearchByFiltersAsync(AnimeSaturnSearchFilterInput searchFilter)
         {
+            var animeList = new ConcurrentBag<AnimeModel>();
             var web = new HtmlWeb();
 
-            var animeList = new List<AnimeModel>();
-
-            //Prima query Get Page
             var requestUrl = $"{Config.AnimeSaturn.SearchByFilterUrl}";
 
             foreach (var state in searchFilter.Statuses)
@@ -67,55 +63,157 @@ namespace Tengu.Business.Core
             }
 
             HtmlDocument doc;
-            doc = web.Load($"{requestUrl}");
-            
-            int currentPage = 1;
-            var paginationNode = doc.GetElementbyId("pagination");
+            doc = await web.LoadFromWebAsync($"{requestUrl}");
+            var totalPagesNode = doc.DocumentNode.SelectSingleNode("./div[@class='container p-3 shadow rounded bg-dark-as-box']/script");
 
-            while (paginationNode != null)
+            if(totalPagesNode != null)
             {
-                var currentAnimesNode = doc.DocumentNode.SelectNodes($"./div/div/div[@class='anime-card-newanime main-anime-card']");
+                var totalPages = Convert.ToInt32(totalPagesNode
+                .InnerText
+                .Split("totalPages: ")[1]
+                .Split(",")[0]);
 
-                foreach (var node in currentAnimesNode)
+                var taskList = new List<Task>();
+
+                for (int i = 1; i <= totalPages; i++)
                 {
-                    var aNode = node.SelectSingleNode("./div/a");
-
-                    var anime = new AnimeModel()
+                    taskList.Add(Task.Run(async () => 
                     {
-                        Image = aNode.SelectSingleNode("./img").GetAttributeValue("src", ""),
-                        Url = aNode.GetAttributeValue("href", ""),
-                        Title = aNode.GetAttributeValue("title", ""),
+                        HtmlWeb innerWeb = new HtmlWeb();
+                        HtmlDocument innerDoc = await innerWeb.LoadFromWebAsync($"{requestUrl}page={i}");
+                        
+                        var currentAnimesNode = innerDoc.DocumentNode.SelectNodes($"./div/div/div[@class='anime-card-newanime main-anime-card']");
+
+                        foreach (var node in currentAnimesNode)
+                        {
+                            var aNode = node.SelectSingleNode("./div/a");
+
+                            var anime = new AnimeModel()
+                            {
+                                Image = aNode.SelectSingleNode("./img").GetAttributeValue("src", ""),
+                                Url = aNode.GetAttributeValue("href", ""),
+                                Title = aNode.GetAttributeValue("title", ""),
+                            };
+                            animeList.Add(anime);
+                        }
+                    }));
+                }
+
+                foreach (var task in taskList)
+                {
+                    await task;
+                }
+                
+            }
+            return AnimeSaturnUtilities.FillAnimeList(animeList.ToArray());
+        }
+
+        public async Task<EpisodeModel[]> GetLatestEpisodeAsync(int count)
+        {
+            var episodeList = new List<EpisodeModel>();
+
+            var doc = new HtmlDocument();
+
+
+            var requestUrl = Config.AnimeSaturn.BaseLatestEpisodeUrl;
+
+            var currentAnimes = 0;
+            var currentPage = 1;
+
+            while(currentAnimes < count)
+            {
+                var response = await requestUrl
+                    .WithHeader("X-Requested-With", "XMLHttpRequest")
+                    .WithHeader("Content-Type", "application/x-www-form-urlencoded")
+                    .PostStringAsync($"page={currentPage}")
+                    .ReceiveString();
+
+                doc.LoadHtml(response);
+
+                var latestNodes = doc.DocumentNode.SelectNodes("./div/div[@class='anime-card main-anime-card']");
+
+                foreach (var node in latestNodes)
+                {
+                    var urlNode = node.SelectSingleNode("./div[@class='card mb-4 shadow-sm']/a[1]");
+                    var titleNode = node.SelectSingleNode("./div[@class='card mb-4 shadow-sm']/a[2]");
+
+                    var episode = new EpisodeModel()
+                    {
+                        Url = urlNode.GetAttributeValue("href", ""),
+                        Title = $"{urlNode.GetAttributeValue("title", "").Trim()} {titleNode.InnerText.Trim()}",
+                        Image = urlNode.SelectSingleNode("./img").GetAttributeValue("src", "")
                     };
-                    animeList.Add(anime);
+                    episodeList.Add(episode);
+                    
+                    currentAnimes++;
+
                 }
 
                 currentPage++;
-                doc = web.Load($"{requestUrl}page={currentPage}");
-                paginationNode = doc.GetElementbyId("pagination");
             }
 
-            AnimeSaturnUtilities.FillAnimeList(animeList);
 
-            return animeList.ToArray();
+            return episodeList.ToArray();
+
+
         }
 
-        public void Download(string downloadPath, Uri animeUrl)
+        public async Task Download(string downloadPath, string animeUrl)
         {
             var web = new HtmlWeb();
-            var doc = web.Load(animeUrl);
+            HtmlDocument doc = await web.LoadFromWebAsync(animeUrl);
 
-            var source = doc
-                .GetElementbyId("myvideo_html5_api")
-                .SelectSingleNode("//source")
-                .InnerText;
+            if (doc.DocumentNode.SelectSingleNode("//center/div/div/div/div/div/div/div/script[2]") != null) //M3U8
+            {
+                var scriptNode = doc.DocumentNode.SelectSingleNode("//center/div/div/div/div/div/div/div/script[2]").InnerText;
 
-            DownlaClient downlaClient = new DownlaClient(downloadPath);
+                var m3u8InitialUrl = scriptNode.Split("file: ")[1]
+                    .Split(",")[0]
+                    .Replace("\"","");
 
-            var cts = new CancellationTokenSource();
+                M3u8Client m3U8Client = new M3u8Client() { DownloadPath = downloadPath};
+                var downloadUrls = await m3U8Client.GenerateDownloadUrls(m3u8InitialUrl);
 
-            downlaClient.DownloadAsync(new Uri(source), cts.Token);
-            downlaClient.EnsureDownload(cts.Token);
-            
+                await m3U8Client.Download("file.ts", downloadUrls);
+            }
+            else if(doc.GetElementbyId("myvideo") != null)
+            {
+                var downloadUrl = doc.GetElementbyId("myvideo")
+                    .SelectSingleNode("./source")
+                    .GetAttributeValue("src", "");
+
+                DownlaClient downlaClient = new DownlaClient(downloadPath);
+
+                var cts = new CancellationTokenSource();
+
+                downlaClient.DownloadAsync(new Uri(downloadUrl), cts.Token);
+                downlaClient.EnsureDownload(cts.Token);
+            } //Direct
+            else if (doc.DocumentNode.SelectSingleNode("./div[@class=button]/a") != null)
+            {
+                var streamTapeUrl = doc.DocumentNode
+                    .SelectSingleNode("./div[@class=button]/a")
+                    .GetAttributeValue("href", "")
+                    .Replace("https://streamtape.com/v", "https://streamtape.com/e");
+
+                doc = web.Load(streamTapeUrl);
+
+                var downloadUrl = doc.GetElementbyId("robotlink")
+                    .InnerText
+                    .Replace("\"", "");
+
+                DownlaClient downlaClient = new DownlaClient(downloadPath);
+
+                var cts = new CancellationTokenSource();
+
+                downlaClient.DownloadAsync(new Uri(downloadUrl), cts.Token);
+                downlaClient.EnsureDownload(cts.Token);
+            } //StreamTape
+            else
+            {
+                throw new TenguException("No download method found");
+            }
+
         }
     }
 }
