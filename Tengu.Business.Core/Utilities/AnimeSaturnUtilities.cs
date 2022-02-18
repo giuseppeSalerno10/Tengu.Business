@@ -21,7 +21,7 @@ namespace Tengu.Business.Core
             }
 
             var ct = CancellationToken.None;
-
+           
             await Parallel.ForEachAsync(concurrentAnimeList, ct, async (anime, ct) => 
             {
                 var web = new HtmlWeb();
@@ -40,6 +40,7 @@ namespace Tengu.Business.Core
 
                 foreach (var node in episodesNode)
                 {
+
                     var internalUrl = node.SelectSingleNode("./a").GetAttributeValue("href", "");
                     var internalWeb = new HtmlWeb();
                     var internalDoc = internalWeb.Load(internalUrl);
@@ -62,7 +63,7 @@ namespace Tengu.Business.Core
                 anime.Episodes = episodeList.ToArray();
 
             });
-
+            
             return concurrentAnimeList.ToArray();
         }
     }
