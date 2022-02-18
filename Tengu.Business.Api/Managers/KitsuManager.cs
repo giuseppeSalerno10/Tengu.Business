@@ -19,8 +19,12 @@ namespace Tengu.Business.API
 
         public Task<AnimeModel[]> SearchAnime(string title, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            return _adapter.SearchAnime(title);
         }
 
+        public Task<AnimeModel[]> GetUpcomingAnime(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

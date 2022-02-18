@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,103 +30,68 @@ namespace Tengu.Business.API
         {
             CheckForHost();
 
-            var animeList = new List<AnimeModel>();
+            var animeList = new ConcurrentBag<AnimeModel>();
             var searchTasks = new List<Task<AnimeModel[]>>();
             
             foreach (var host in CurrentHosts)
             {
                 switch (host)
                 {
-                    case Commons.Hosts.AnimeSaturn:
+                    case Hosts.AnimeSaturn:
                         searchTasks.Add(_animeSaturnManager.SearchAnime(title, cancellationToken));
                         break;
-                    case Commons.Hosts.AnimeUnity:
+                    case Hosts.AnimeUnity:
                         searchTasks.Add(_animeUnityManager.SearchAnime(title, cancellationToken));
                         break;
                 }
             }
 
-            foreach (var task in searchTasks)
-            {
-                try
-                {
-                    animeList.AddRange(await task);
-                }
-                catch (Exception ex)
-                {
-                    //Logging
-                }
-            }
-
-            return animeList.ToArray();
+            return await ElaborateSearch(searchTasks, cancellationToken);
         }
+
         public async Task<AnimeModel[]> SearchAnime(SearchFilter filter, CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
-            var animeList = new List<AnimeModel>();
+            var animeList = new ConcurrentBag<AnimeModel>();
             var searchTasks = new List<Task<AnimeModel[]>>();
 
             foreach (var host in CurrentHosts)
             {
                 switch (host)
                 {
-                    case Commons.Hosts.AnimeSaturn:
+                    case Hosts.AnimeSaturn:
                         searchTasks.Add(_animeSaturnManager.SearchAnime(filter, cancellationToken));
                         break;
-                    case Commons.Hosts.AnimeUnity:
+                    case Hosts.AnimeUnity:
                         searchTasks.Add(_animeUnityManager.SearchAnime(filter, cancellationToken));
                         break;
                 }
             }
 
-            foreach (var task in searchTasks)
-            {
-                try
-                {
-                    animeList.AddRange(await task);
-                }
-                catch (Exception ex)
-                {
-                    // Logging
-                }
-            }
-
-            return animeList.ToArray();
+            return await ElaborateSearch(searchTasks, cancellationToken);
         }
+
         public async Task<AnimeModel[]> SearchAnime(string title, SearchFilter filter, CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
-            var animeList = new List<AnimeModel>();
             var searchTasks = new List<Task<AnimeModel[]>>();
 
             foreach (var host in CurrentHosts)
             {
                 switch (host)
                 {
-                    case Commons.Hosts.AnimeSaturn:
+                    case Hosts.AnimeSaturn:
                         searchTasks.Add(_animeSaturnManager.SearchAnime(title, filter, cancellationToken));
                         break;
-                    case Commons.Hosts.AnimeUnity:
+                    case Hosts.AnimeUnity:
                         searchTasks.Add(_animeUnityManager.SearchAnime(title, filter, cancellationToken));
                         break;
                 }
             }
 
-            foreach (var task in searchTasks)
-            {
-                try
-                {
-                    animeList.AddRange(await task);
-                }
-                catch (Exception ex)
-                {
-                    // Logging
-                }
-            }
-
-            return animeList.ToArray();
+            return await ElaborateSearch(searchTasks, cancellationToken);
         }
 
         public async Task<EpisodeModel[]> GetLatestEpisode(int count, CancellationToken cancellationToken = default)
@@ -190,10 +156,31 @@ namespace Tengu.Business.API
             }
         }
 
-        
+      
         private void CheckForHost()
         {
             if(CurrentHosts.Length == 0) { throw new TenguException("No host defined"); }
         } 
+        private async Task<AnimeModel[]> ElaborateSearch(List<Task<AnimeModel[]>> searchTasks, CancellationToken cancellationToken)
+        {
+            var animeList = new ConcurrentBag<AnimeModel>();
+
+            foreach (var task in searchTasks)
+            {
+                foreach (var anime in await task)
+                {
+                    try
+                    {
+                        animeList.Add(anime);
+                    }
+                    catch (Exception ex)
+                    {
+                        //Logging
+                    }
+                }
+            }
+
+            return animeList.ToArray();
+        }
     }
 }

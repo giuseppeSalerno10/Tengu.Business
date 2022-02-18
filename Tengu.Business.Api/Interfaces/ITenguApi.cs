@@ -5,6 +5,7 @@ namespace Tengu.Business.API
     public interface ITenguApi
     {
         Hosts[] CurrentHosts { get; set; }
+        public string DownloadPath { get; set; }
 
         Task Download(EpisodeModel episode, CancellationToken cancellationToken = default);
         Task<EpisodeModel[]> GetLatestEpisode(int count, CancellationToken cancellationToken = default);

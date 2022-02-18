@@ -10,6 +10,12 @@ namespace Tengu.Business.Commons
     {
         public static AnimeSaturnConfig AnimeSaturn { get; } = new AnimeSaturnConfig();
         public static AnimeUnityConfig AnimeUnity { get; } = new AnimeUnityConfig();
+        public static KitsuConfig Kitsu { get; } = new KitsuConfig();
+    }
+
+    public class KitsuConfig
+    {
+        public string BaseUrl { get; } = "https://kitsu.io/api/edge/anime?";
     }
 
     public class AnimeSaturnConfig

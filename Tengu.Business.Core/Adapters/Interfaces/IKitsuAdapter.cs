@@ -4,6 +4,6 @@ namespace Tengu.Business.Core
 {
     public interface IKitsuAdapter
     {
-        AnimeModel SearchAnime(string[] titles);
+        Task<AnimeModel[]> SearchAnime(string titles);
     }
 }

@@ -45,6 +45,7 @@ namespace Tengu.Business.Core
 
                     var episode = new EpisodeModel
                     {
+                        Host = Hosts.AnimeSaturn,
                         Title = internalDoc.DocumentNode
                             .SelectSingleNode("./div/div/div[@class='card-body']/h3[@class='text-center mb-4']")
                             .InnerText
@@ -69,15 +70,63 @@ namespace Tengu.Business.Core
         {
             Dictionary<Genres, string> genreMap = new Dictionary<Genres, string>()
             {
-                { Genres.Martial, "Arti Marziali" },
-                { Genres.Adventure, "Avventura" }
+                { Genres.ArtiMarziali, "Arti Marziali" },
+                { Genres.Avventura, "Avventura" },
+                { Genres.Azione, "Azione" },
+                { Genres.Bambini, "Bambini" },
+                { Genres.Commedia, "Commedia" },
+                { Genres.Demenziale, "Demenziale" },
+                { Genres.Demoni, "Demoni" },
+                { Genres.Drammatico, "Drammatico" },
+                { Genres.Ecchi, "Ecchi" },
+                { Genres.Fantasy, "Fantasy" },
+                { Genres.Gioco, "Gioco" },
+                { Genres.Harem, "Harem" },
+                { Genres.Hentai, "Hentai" },
+                { Genres.Horror, "Horror" },
+                { Genres.Josei, "Josei" },
+                { Genres.Magia, "Magia" },
+                { Genres.Mecha, "Mecha" },
+                { Genres.Militari, "Militari" },
+                { Genres.Mistero, "Mistero" },
+                { Genres.Musicale, "Musicale" },
+                { Genres.Parodia, "Parodia" },
+                { Genres.Polizia, "Polizia" },
+                { Genres.Psicologico, "Psicologico" },
+                { Genres.Romantico, "Romantico" },
+                { Genres.Samurai, "Samurai" },
+                { Genres.SciFi, "Sci-Fi" },
+                { Genres.Scolastico, "Scolastico" },
+                { Genres.Seinen, "Seinen" },
+                { Genres.Sentimentale, "Sentimentale" },
+                { Genres.ShoujoAi, "Shoujo Ai" },
+                { Genres.Shoujo, "Shoujo" },
+                { Genres.ShounenAi, "Shounen Ai" },
+                { Genres.Shounen, "Shounen" },
+                { Genres.SliceOfLife, "Slice of Life" },
+                { Genres.Soprannaturale, "Soprannaturale" },
+                { Genres.Spazio, "Spazio" },
+                { Genres.Sport, "Sport" },
+                { Genres.Storico, "Storico" },
+                { Genres.Superpoteri, "Superpoteri" },
+                { Genres.Thriller, "Thriller" },
+                { Genres.Vampiri, "Vampiri" },
+                { Genres.Veicoli, "Veicoli" },
+                { Genres.Yaoi, "Yaoi" },
+                { Genres.Yuri, "Yuri" }
             };
 
             var genresList = new List<string>();
 
             foreach (var genre in genres)
             {
-                genresList.Add(genreMap[genre]);
+                string? mappedGenre;
+                genreMap.TryGetValue(genre, out mappedGenre);
+                
+                if(mappedGenre != null)
+                {
+                    genresList.Add(mappedGenre);
+                }
             }
 
             return genresList.ToArray();
@@ -105,8 +154,8 @@ namespace Tengu.Business.Core
         {
             Dictionary<Languages, string> langMap = new Dictionary<Languages, string>()
             {
-                { Languages.Dubbed, "1" },
-                { Languages.Subbed , "0" }
+                { Languages.Subbed , "0" },
+                { Languages.Dubbed, "1" }
             };
 
             var languagesList = new List<string>();

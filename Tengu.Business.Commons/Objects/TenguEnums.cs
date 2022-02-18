@@ -30,8 +30,55 @@ namespace Tengu.Business.Commons
 
     public enum Genres
     {
+        // BOTH
         None,
-        Martial,
-        Adventure
+
+        // AS
+        ArtiMarziali,
+        Avventura,
+        Azione,
+        Bambini,
+        Commedia,
+        Demenziale,
+        Demoni,
+        Drammatico,
+        Ecchi,
+        Fantasy,
+        Gioco,
+        Harem,
+        Hentai,
+        Horror,
+        Josei,
+        Magia,
+        Mecha,
+        Militari,
+        Mistero,
+        Musicale,
+        Parodia,
+        Polizia,
+        Psicologico,
+        Romantico,
+        Samurai,
+        SciFi,
+        Scolastico,
+        Seinen,
+        Sentimentale,
+        ShoujoAi,
+        Shoujo,
+        ShounenAi,
+        Shounen,
+        SliceOfLife,
+        Soprannaturale,
+        Spazio,
+        Sport,
+        Storico,
+        Superpoteri,
+        Thriller,
+        Vampiri,
+        Veicoli,
+        Yaoi,
+        Yuri,
+
+        // AU
     }
 }

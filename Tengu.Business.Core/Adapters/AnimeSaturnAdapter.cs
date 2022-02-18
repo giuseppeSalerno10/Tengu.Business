@@ -170,7 +170,7 @@ namespace Tengu.Business.Core
 
         }
 
-        public async Task Download(string downloadPath, string animeUrl, CancellationToken cancellationToken = default)
+        public async Task Download(string downloadPath, string animeUrl, string fileName, CancellationToken cancellationToken = default)
         {
             var web = new HtmlWeb();
             HtmlDocument doc = await web.LoadFromWebAsync(animeUrl, cancellationToken);
@@ -183,13 +183,11 @@ namespace Tengu.Business.Core
                     .Split(",")[0]
                     .Replace("\"", "");
 
-                var fileName = "DEVITROVAREILFILENAME.mp4";
-
                 _m3U8Client.DownloadPath = downloadPath;
 
                 var downloadUrls = await _m3U8Client.GenerateDownloadUrls(m3u8InitialUrl, cancellationToken);
 
-                await _m3U8Client.Download(fileName, downloadUrls, cancellationToken);
+                await _m3U8Client.Download($"{fileName}.mp4", downloadUrls, cancellationToken);
             } //TS
             else if (doc.GetElementbyId("myvideo") != null)
             {

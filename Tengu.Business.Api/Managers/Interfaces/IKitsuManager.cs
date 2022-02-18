@@ -5,5 +5,6 @@ namespace Tengu.Business.API
     public interface IKitsuManager
     {
         Task<AnimeModel[]> SearchAnime(string title, CancellationToken cancellationToken = default);
+        Task<AnimeModel[]> GetUpcomingAnime(CancellationToken cancellationToken = default);
     }
 }

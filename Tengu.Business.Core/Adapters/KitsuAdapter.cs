@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Flurl.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,8 +10,13 @@ namespace Tengu.Business.Core
 {
     public class KitsuAdapter : IKitsuAdapter
     {
-        public AnimeModel SearchAnime(string[] titles)
+        public async Task<AnimeModel[]> SearchAnime(string title)
         {
+            var response = $"{Config.Kitsu.BaseUrl}filter[text]={title}"
+                .WithHeader("Accept", "application/vnd.api+json")
+                .WithHeader("Content-Type", "application/vnd.api+json")
+                .GetJsonAsync();
+
             throw new NotImplementedException();
         }
     }

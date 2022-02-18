@@ -21,7 +21,7 @@ namespace Tengu.Business.API
 
         public Task Download(string downloadPath, EpisodeModel episode, CancellationToken cancellationToken = default)
         {
-            return _adapter.Download(downloadPath, episode.Url, cancellationToken);
+            return _adapter.Download(downloadPath, episode.Url, episode.Title, cancellationToken);
         }
 
         public Task<EpisodeModel[]> GetLatestEpisode(int count, CancellationToken cancellationToken = default)
