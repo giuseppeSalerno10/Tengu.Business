@@ -24,8 +24,9 @@ namespace Tengu.Business.API
             services.AddTransient<IAnimeUnityAdapter, AnimeUnityAdapter>();
             services.AddTransient<IKitsuAdapter, KitsuAdapter>();
 
-            services.AddTransient<IAnimeSaturnUtilities, AnimeSaturnUtilities>();
-            services.AddTransient<IAnimeUnityUtilities, AnimeUnityUtilities>();
+            services.AddSingleton<IAnimeSaturnUtilities, AnimeSaturnUtilities>();
+            services.AddSingleton<IAnimeUnityUtilities, AnimeUnityUtilities>();
+            services.AddSingleton<ITenguUtilities, TenguUtilities>();
 
             services.AddTransient<IDownlaClient, DownlaClient>();
             services.AddTransient<IM3u8Client, M3u8Client>();

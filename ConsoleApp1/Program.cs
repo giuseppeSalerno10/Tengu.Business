@@ -21,7 +21,7 @@ async static void App(IServiceProvider services)
 
         var title = Console.ReadLine() ?? "";
 
-        var animes = await tenguApi.SearchAnime(title);
+        var animes = await tenguApi.SearchAnime(title, true);
 
         Console.WriteLine("Anime:\n");
 
@@ -41,14 +41,21 @@ async static void App(IServiceProvider services)
             Console.WriteLine($"[{i}] {item.Title}");
         }
 
-        Console.WriteLine("\nScegli per download (-1 per annullare): ");
+        Console.WriteLine("\nScegli per download (invio per annullare): ");
 
-        var episodeIndex = Convert.ToInt32(Console.ReadLine() ?? "-1");
 
-        if (episodeIndex >= 0)
+        var rawIndexes = Console.ReadLine();
+        var episodeIndexes = rawIndexes.Split(",");
+
+        if (episodeIndexes.Length > 0)
         {
-            await tenguApi.Download(animes[animeIndex].Episodes[episodeIndex]);
+            foreach (var index in episodeIndexes)
+            {
+                await tenguApi.Download(animes[animeIndex].Episodes[Convert.ToInt32(index)]);
+            }
         }
+
+        Console.WriteLine("Adieu!");
     }
     async static Task FilterMenu(ITenguApi tenguApi)
     {
@@ -128,7 +135,20 @@ async static void App(IServiceProvider services)
             await tenguApi.Download(animes[animeIndex].Episodes[episodeIndex]);
         }
     }
+    async static Task KitsuMenu(ITenguApi tenguApi)
+    {
 
+        var animes = await tenguApi.KitsuUpcomingAnime(10);
+
+        Console.WriteLine("Anime:\n");
+
+        for (int i = 0; i < animes.Length; i++)
+        {
+            AnimeModel? item = animes[i];
+            Console.WriteLine($"[{i}] {item.Title}");
+        }
+
+    }
     ITenguApi tenguApi = (ITenguApi) (services.GetService(typeof(ITenguApi)) ?? throw new Exception());
 
     tenguApi.CurrentHosts = new Hosts[] { Hosts.AnimeSaturn };
@@ -137,7 +157,8 @@ async static void App(IServiceProvider services)
         "Inserisci il tipo di ricerca:" +
         "\n0 - Title" +
         "\n1 - Filter" +
-        "\n2 - Mista");
+        "\n2 - Mista" +
+        "\n3 - Kitsu");
 
     switch (Convert.ToInt32(Console.ReadLine()))
     {
@@ -150,7 +171,10 @@ async static void App(IServiceProvider services)
         case 2:
             await BothMenu(tenguApi);
             break;
-            
+        case 3:
+            await KitsuMenu(tenguApi);
+            break;
+
         default:
             return;
     }

@@ -10,14 +10,58 @@ namespace Tengu.Business.Core
 {
     public class KitsuAdapter : IKitsuAdapter
     {
-        public async Task<AnimeModel[]> SearchAnime(string title)
+        public async Task<AnimeModel[]> GetUpcomingAnime(int limit, CancellationToken cancellationToken = default)
         {
-            var response = $"{Config.Kitsu.BaseUrl}filter[text]={title}"
+            var response = await $"{Config.Kitsu.BaseUrl}filter[status]=upcoming&page[limit]={limit}"
                 .WithHeader("Accept", "application/vnd.api+json")
                 .WithHeader("Content-Type", "application/vnd.api+json")
-                .GetJsonAsync();
+                .GetJsonAsync<KitsuSearchOutput>(cancellationToken);
 
-            throw new NotImplementedException();
+            var animeList = new List<AnimeModel>();
+
+            foreach (var item in response.Data)
+            {
+                animeList.Add(new AnimeModel()
+                {
+                    KitsuUrl = item.Links.Self ?? "",
+                    ReleaseDate = item.Attributes.StartDate ?? "",
+                    TotalEpisodes = item.Attributes.EpisodeCount ?? 0,
+                    AgeRating = item.Attributes.AgeRating ?? "",
+                    RatingRank = item.Attributes.RatingRank ?? 0,
+                    PopularityRank = item.Attributes.PopularityRank ?? 0,
+                    AverageRating = item.Attributes.AverageRating ?? "",
+                    Synopsis = item.Attributes.Synopsis ?? "",
+                    Title = item.Attributes.CanonicalTitle ?? "",
+                });
+            }
+            return animeList.ToArray();
+        }
+
+        public async Task<AnimeModel[]> SearchAnime(string title, int limit, CancellationToken cancellationToken = default)
+        {
+            var response = await $"{Config.Kitsu.BaseUrl}filter[text]={title}&page[limit]={limit}"
+                .WithHeader("Accept", "application/vnd.api+json")
+                .WithHeader("Content-Type", "application/vnd.api+json")
+                .GetJsonAsync<KitsuSearchOutput>(cancellationToken);
+
+            var animeList = new List<AnimeModel>();
+
+            foreach (var item in response.Data)
+            {
+                animeList.Add(new AnimeModel()
+                {
+                    KitsuUrl = item.Links.Self ?? "",
+                    ReleaseDate = item.Attributes.StartDate ?? "",
+                    TotalEpisodes = item.Attributes.EpisodeCount ?? 0,
+                    AgeRating = item.Attributes.AgeRating ?? "",
+                    RatingRank = item.Attributes.RatingRank ?? 0,
+                    PopularityRank = item.Attributes.PopularityRank ?? 0,
+                    AverageRating = item.Attributes.AverageRating ?? "",
+                    Synopsis = item.Attributes.Synopsis ?? "",
+                    Title = item.Attributes.CanonicalTitle ?? "",
+                });
+            }
+            return animeList.ToArray();
         }
     }
 }
