@@ -8,17 +8,20 @@ namespace Tengu.Business.Commons
 {
     public enum Hosts
     {
+        None,
         AnimeSaturn,
         AnimeUnity
     }
 
     public enum Languages
     {
+        None,
         Subbed,
         Dubbed
     }
     public enum Statuses
     {
+        None,
         InProgress,
         Completed,
         NotReleased,
@@ -27,6 +30,7 @@ namespace Tengu.Business.Commons
 
     public enum Genres
     {
+        None,
         Martial,
         Adventure
     }

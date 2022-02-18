@@ -14,9 +14,13 @@ namespace Tengu.Business.API
         {
             services.AddSingleton<ITenguApi, TenguApi>();
 
+            services.AddTransient<IAnimeSaturnManager, AnimeSaturnManager>();
+            services.AddTransient<IAnimeUnityManager, AnimeUnityManager>();
+
             services.AddTransient<IAnimeSaturnAdapter, AnimeSaturnAdapter>();
             services.AddTransient<IAnimeUnityAdapter, AnimeUnityAdapter>();
             services.AddTransient<IKitsuAdapter, KitsuAdapter>();
+
             services.AddTransient<IAnimeSaturnUtilities, AnimeSaturnUtilities>();
             services.AddTransient<IAnimeUnityUtilities, AnimeUnityUtilities>();
 

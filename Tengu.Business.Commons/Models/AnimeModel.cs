@@ -8,7 +8,7 @@ namespace Tengu.Business.Commons
 {
     public class AnimeModel
     {
-
+        public Hosts Host { get; set; } = Hosts.None;
         public string Url { get; set; } = string.Empty;
         public string Image { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;

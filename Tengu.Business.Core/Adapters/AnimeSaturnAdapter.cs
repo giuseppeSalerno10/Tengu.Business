@@ -25,7 +25,7 @@ namespace Tengu.Business.Core
             _m3U8Client = m3u8Client;
         }
 
-        public async Task<AnimeModel[]> SearchByTitleAsync(string title, CancellationToken cancellationToken = default)
+        public async Task<AnimeModel[]> SearchByTitle(string title, CancellationToken cancellationToken = default)
         {
             var requestUrl = $"{Config.AnimeSaturn.SearchByTitleUrl}" +
                 $"search=1&" +
@@ -40,6 +40,7 @@ namespace Tengu.Business.Core
             {
                 var anime = new AnimeModel()
                 {
+                    Host = Hosts.AnimeSaturn,
                     Title = item.Name,
                     Image = item.Image,
                     Url = item.Link
@@ -51,7 +52,7 @@ namespace Tengu.Business.Core
             return await _utilities.FillAnimeList(animeList, cancellationToken);
         }
 
-        public async Task<AnimeModel[]> SearchByFiltersAsync(AnimeSaturnSearchFilterInput searchFilter, CancellationToken cancellationToken = default)
+        public async Task<AnimeModel[]> SearchByFilters(AnimeSaturnSearchFilterInput searchFilter, CancellationToken cancellationToken = default)
         {
             var animeList = new ConcurrentBag<AnimeModel>();
             var web = new HtmlWeb();
@@ -101,6 +102,7 @@ namespace Tengu.Business.Core
 
                             var anime = new AnimeModel()
                             {
+                                Host = Hosts.AnimeSaturn,
                                 Image = aNode.SelectSingleNode("./img").GetAttributeValue("src", ""),
                                 Url = aNode.GetAttributeValue("href", ""),
                                 Title = aNode.GetAttributeValue("title", ""),
@@ -119,7 +121,7 @@ namespace Tengu.Business.Core
             return await _utilities.FillAnimeList(animeList.ToArray());
         }
 
-        public async Task<EpisodeModel[]> GetLatestEpisodeAsync(int count, CancellationToken cancellationToken = default)
+        public async Task<EpisodeModel[]> GetLatestEpisode(int count, CancellationToken cancellationToken = default)
         {
             var episodeList = new List<EpisodeModel>();
 
@@ -149,6 +151,7 @@ namespace Tengu.Business.Core
 
                     var episode = new EpisodeModel()
                     {
+                        Host = Hosts.AnimeSaturn,
                         Url = urlNode.GetAttributeValue("href", ""),
                         Title = $"{urlNode.GetAttributeValue("title", "").Trim()} {titleNode.InnerText.Trim()}",
                         Image = urlNode.SelectSingleNode("./img").GetAttributeValue("src", "")

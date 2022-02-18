@@ -2,11 +2,9 @@
 
 namespace Tengu.Business.API
 {
-    public interface ITenguApi
+    public interface IAnimeSaturnManager
     {
-        Hosts[] CurrentHosts { get; set; }
-
-        Task Download(EpisodeModel episode, CancellationToken cancellationToken = default);
+        Task Download(string downloadPath, EpisodeModel episode, CancellationToken cancellationToken = default);
         Task<EpisodeModel[]> GetLatestEpisode(int count, CancellationToken cancellationToken = default);
         Task<AnimeModel[]> SearchAnime(SearchFilter filter, CancellationToken cancellationToken = default);
         Task<AnimeModel[]> SearchAnime(string title, CancellationToken cancellationToken = default);

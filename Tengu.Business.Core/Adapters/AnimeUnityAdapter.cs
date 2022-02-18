@@ -10,47 +10,24 @@ namespace Tengu.Business.Core
 {
     public class AnimeUnityAdapter : IAnimeUnityAdapter
     {
-        public IEnumerable<AnimeModel> SearchByTitle(string title)
-        {
-            var requestUrl = $"{Config.AnimeUnity.SearchByTitleUrl}";
-
-            var requestBody = new AnimeUnitySearchTitleInput()
-            {
-                Title = title,
-            };
-
-            var response = requestUrl
-                .PostJsonAsync(requestBody)
-                .ReceiveJson<AnimeUnitySearchTitleOutput[]>()
-                .Result;
-
-            var aniemeList = new List<AnimeModel>();
-
-            foreach (var item in response)
-            {
-                var anime = new AnimeModel()
-                {
-                    Title = item.Name,
-                    Image = item.Image,
-                    Url = item.Link
-                };
-
-                aniemeList.Add(anime);
-            }
-
-            //AnimeSaturnUtilities.FillAnimeList(aniemeList);
-
-            return aniemeList;
-        }
-
-        public IEnumerable<AnimeModel> SearchByFilters()
+        public Task Download(string downloadPath, string animeUrl, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public void Download(string downloadPath, Uri uri)
+        public Task<EpisodeModel[]> GetLatestEpisode(int count, CancellationToken cancellationToken = default)
         {
+            throw new NotImplementedException();
+        }
 
+        public Task<AnimeModel[]> SearchByFilters(AnimeSaturnSearchFilterInput searchFilter, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AnimeModel[]> SearchByTitle(string title, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }
