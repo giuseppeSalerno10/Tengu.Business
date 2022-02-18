@@ -8,12 +8,13 @@ using IHost host = Host.CreateDefaultBuilder(args)
         services.AddTenguServices())
     .Build();
 
-Task.Run( () => App(host.Services));
+host.Start();
 
-await host.RunAsync();
+await App(host.Services);
+
 #endregion
 
-async static void App(IServiceProvider services)
+async static Task App(IServiceProvider services)
 {
     async static Task TitleMenu(ITenguApi tenguApi)
     {
@@ -153,30 +154,34 @@ async static void App(IServiceProvider services)
 
     tenguApi.CurrentHosts = new Hosts[] { Hosts.AnimeSaturn };
 
-    Console.WriteLine("\n#####################\n" +
-        "Inserisci il tipo di ricerca:" +
-        "\n0 - Title" +
-        "\n1 - Filter" +
-        "\n2 - Mista" +
-        "\n3 - Kitsu");
-
-    switch (Convert.ToInt32(Console.ReadLine()))
+    while (true)
     {
-        case 0:
-            await TitleMenu(tenguApi);
-            break;
-        case 1:
-            await FilterMenu(tenguApi);
-            break;
-        case 2:
-            await BothMenu(tenguApi);
-            break;
-        case 3:
-            await KitsuMenu(tenguApi);
-            break;
+        Console.Clear();
 
-        default:
-            return;
+        Console.WriteLine("#####################\n" +
+            "Inserisci il tipo di ricerca:" +
+            "\n0 - Title" +
+            "\n1 - Filter" +
+            "\n2 - Mista" +
+            "\n3 - Kitsu");
+
+        switch (Convert.ToInt32(Console.ReadLine()))
+        {
+            case 0:
+                await TitleMenu(tenguApi);
+                break;
+            case 1:
+                await FilterMenu(tenguApi);
+                break;
+            case 2:
+                await BothMenu(tenguApi);
+                break;
+            case 3:
+                await KitsuMenu(tenguApi);
+                break;
+
+            default:
+                return;
+        }
     }
-    
 }
