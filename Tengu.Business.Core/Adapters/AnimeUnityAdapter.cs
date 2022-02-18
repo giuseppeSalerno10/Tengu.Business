@@ -8,7 +8,7 @@ using Tengu.Business.Commons;
 
 namespace Tengu.Business.Core
 {
-    public class AnimeUnityAdapter
+    public class AnimeUnityAdapter : IAnimeUnityAdapter
     {
         public IEnumerable<AnimeModel> SearchByTitle(string title)
         {
@@ -38,7 +38,7 @@ namespace Tengu.Business.Core
                 aniemeList.Add(anime);
             }
 
-            AnimeSaturnUtilities.FillAnimeList(aniemeList);
+            //AnimeSaturnUtilities.FillAnimeList(aniemeList);
 
             return aniemeList;
         }

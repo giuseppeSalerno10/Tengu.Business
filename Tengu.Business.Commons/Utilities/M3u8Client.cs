@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Tengu.Business.Commons
 {
-    public class M3u8Client
+    public class M3u8Client : IM3u8Client
     {
         public string DownloadPath { get; set; } = string.Empty;
 
-        public async Task<string[]> GenerateDownloadUrls(string downloadUrl)
+        public async Task<string[]> GenerateDownloadUrls(string downloadUrl, CancellationToken cancellationToken = default)
         {
             List<string> downloadUrls = new List<string>();
 
@@ -49,31 +49,23 @@ namespace Tengu.Business.Commons
             return downloadUrls.ToArray();
         }
 
-        public async Task Download(string fileName, IEnumerable<string> downloadUrls)
+        public async Task Download(string fileName, IEnumerable<string> downloadUrls, CancellationToken cancellationToken = default)
         {
             var file = File.Create($"{DownloadPath}\\{fileName}");
 
             var downloadTasks = new List<Task<byte[]>>();
-            
+
             foreach (var url in downloadUrls)
             {
                 downloadTasks.Add(url.GetBytesAsync());
             }
 
-            foreach(var downloadTask in downloadTasks)
+            foreach (var downloadTask in downloadTasks)
             {
                 var bytes = await downloadTask;
                 file.Write(bytes, 0, bytes.Length);
             }
         }
 
-    }
-
-    public class IdWrap<T>
-    {
-        private T? item;
-
-        public T Item { get => item ?? throw new ArgumentNullException(); set => item = value; }
-        public int Id { get; set; }
     }
 }

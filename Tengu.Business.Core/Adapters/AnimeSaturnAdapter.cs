@@ -12,16 +12,27 @@ using Tengu.Business.Commons;
 
 namespace Tengu.Business.Core
 {
-    public class AnimeSaturnAdapters
+    public class AnimeSaturnAdapter : IAnimeSaturnAdapter
     {
-        public async Task<AnimeModel[]> SearchByTitleAsync(string title) 
+        private readonly IAnimeSaturnUtilities _utilities;
+        private readonly IDownlaClient _downlaClient;
+        private readonly IM3u8Client _m3U8Client;
+
+        public AnimeSaturnAdapter(IAnimeSaturnUtilities utilities, IDownlaClient downlaClient, IM3u8Client m3u8Client)
+        {
+            _utilities = utilities;
+            _downlaClient = downlaClient;
+            _m3U8Client = m3u8Client;
+        }
+
+        public async Task<AnimeModel[]> SearchByTitleAsync(string title, CancellationToken cancellationToken = default)
         {
             var requestUrl = $"{Config.AnimeSaturn.SearchByTitleUrl}" +
                 $"search=1&" +
                 $"key={title}";
 
             var response = requestUrl
-                .GetJsonAsync<AnimeSaturnSearchTitleOutput[]>();
+                .GetJsonAsync<AnimeSaturnSearchTitleOutput[]>(cancellationToken);
 
             var animeList = new List<AnimeModel>();
 
@@ -37,10 +48,10 @@ namespace Tengu.Business.Core
                 animeList.Add(anime);
             }
 
-            return await AnimeSaturnUtilities.FillAnimeList(animeList);
+            return await _utilities.FillAnimeList(animeList, cancellationToken);
         }
 
-        public async Task<AnimeModel[]> SearchByFiltersAsync(AnimeSaturnSearchFilterInput searchFilter)
+        public async Task<AnimeModel[]> SearchByFiltersAsync(AnimeSaturnSearchFilterInput searchFilter, CancellationToken cancellationToken = default)
         {
             var animeList = new ConcurrentBag<AnimeModel>();
             var web = new HtmlWeb();
@@ -66,7 +77,7 @@ namespace Tengu.Business.Core
             doc = await web.LoadFromWebAsync($"{requestUrl}");
             var totalPagesNode = doc.DocumentNode.SelectSingleNode("./div[@class='container p-3 shadow rounded bg-dark-as-box']/script");
 
-            if(totalPagesNode != null)
+            if (totalPagesNode != null)
             {
                 var totalPages = Convert.ToInt32(totalPagesNode
                 .InnerText
@@ -77,11 +88,11 @@ namespace Tengu.Business.Core
 
                 for (int i = 1; i <= totalPages; i++)
                 {
-                    taskList.Add(Task.Run(async () => 
+                    taskList.Add(Task.Run(async () =>
                     {
                         HtmlWeb innerWeb = new HtmlWeb();
                         HtmlDocument innerDoc = await innerWeb.LoadFromWebAsync($"{requestUrl}page={i}");
-                        
+
                         var currentAnimesNode = innerDoc.DocumentNode.SelectNodes($"./div/div/div[@class='anime-card-newanime main-anime-card']");
 
                         foreach (var node in currentAnimesNode)
@@ -103,29 +114,28 @@ namespace Tengu.Business.Core
                 {
                     await task;
                 }
-                
+
             }
-            return await AnimeSaturnUtilities.FillAnimeList(animeList.ToArray());
+            return await _utilities.FillAnimeList(animeList.ToArray());
         }
 
-        public async Task<EpisodeModel[]> GetLatestEpisodeAsync(int count)
+        public async Task<EpisodeModel[]> GetLatestEpisodeAsync(int count, CancellationToken cancellationToken = default)
         {
             var episodeList = new List<EpisodeModel>();
 
             var doc = new HtmlDocument();
-
 
             var requestUrl = Config.AnimeSaturn.BaseLatestEpisodeUrl;
 
             var currentAnimes = 0;
             var currentPage = 1;
 
-            while(currentAnimes < count)
+            while (!cancellationToken.IsCancellationRequested && currentAnimes < count)
             {
                 var response = await requestUrl
                     .WithHeader("X-Requested-With", "XMLHttpRequest")
                     .WithHeader("Content-Type", "application/x-www-form-urlencoded")
-                    .PostStringAsync($"page={currentPage}")
+                    .PostStringAsync($"page={currentPage}", cancellationToken)
                     .ReceiveString();
 
                 doc.LoadHtml(response);
@@ -144,7 +154,7 @@ namespace Tengu.Business.Core
                         Image = urlNode.SelectSingleNode("./img").GetAttributeValue("src", "")
                     };
                     episodeList.Add(episode);
-                    
+
                     currentAnimes++;
 
                 }
@@ -152,16 +162,15 @@ namespace Tengu.Business.Core
                 currentPage++;
             }
 
-
             return episodeList.ToArray();
 
 
         }
 
-        public async Task Download(string downloadPath, string animeUrl)
+        public async Task Download(string downloadPath, string animeUrl, CancellationToken cancellationToken = default)
         {
             var web = new HtmlWeb();
-            HtmlDocument doc = await web.LoadFromWebAsync(animeUrl);
+            HtmlDocument doc = await web.LoadFromWebAsync(animeUrl, cancellationToken);
 
             if (doc.DocumentNode.SelectSingleNode("//center/div/div/div/div/div/div/div/script[2]") != null) //M3U8
             {
@@ -169,25 +178,26 @@ namespace Tengu.Business.Core
 
                 var m3u8InitialUrl = scriptNode.Split("file: ")[1]
                     .Split(",")[0]
-                    .Replace("\"","");
+                    .Replace("\"", "");
 
-                M3u8Client m3U8Client = new M3u8Client() { DownloadPath = downloadPath};
-                var downloadUrls = await m3U8Client.GenerateDownloadUrls(m3u8InitialUrl);
+                var fileName = "DEVITROVAREILFILENAME.mp4";
 
-                await m3U8Client.Download("file.ts", downloadUrls);
-            }
-            else if(doc.GetElementbyId("myvideo") != null)
+                _m3U8Client.DownloadPath = downloadPath;
+
+                var downloadUrls = await _m3U8Client.GenerateDownloadUrls(m3u8InitialUrl, cancellationToken);
+
+                await _m3U8Client.Download(fileName, downloadUrls, cancellationToken);
+            } //TS
+            else if (doc.GetElementbyId("myvideo") != null)
             {
                 var downloadUrl = doc.GetElementbyId("myvideo")
                     .SelectSingleNode("./source")
                     .GetAttributeValue("src", "");
 
-                DownlaClient downlaClient = new DownlaClient(downloadPath);
+                _downlaClient.DownloadPath = downloadPath;
 
-                var cts = new CancellationTokenSource();
-
-                downlaClient.DownloadAsync(new Uri(downloadUrl), cts.Token);
-                downlaClient.EnsureDownload(cts.Token);
+                _downlaClient.DownloadAsync(new Uri(downloadUrl), cancellationToken);
+                _downlaClient.EnsureDownload(cancellationToken);
             } //Direct
             else if (doc.DocumentNode.SelectSingleNode("./div[@class=button]/a") != null)
             {
@@ -202,18 +212,15 @@ namespace Tengu.Business.Core
                     .InnerText
                     .Replace("\"", "");
 
-                DownlaClient downlaClient = new DownlaClient(downloadPath);
+                _downlaClient.DownloadPath = downloadPath;
 
-                var cts = new CancellationTokenSource();
-
-                downlaClient.DownloadAsync(new Uri(downloadUrl), cts.Token);
-                downlaClient.EnsureDownload(cts.Token);
+                _downlaClient.DownloadAsync(new Uri(downloadUrl), cancellationToken);
+                _downlaClient.EnsureDownload(cancellationToken);
             } //StreamTape
             else
             {
                 throw new TenguException("No download method found");
             }
-
         }
     }
 }

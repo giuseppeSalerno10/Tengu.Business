@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Tengu.Business.Commons;
 
-namespace Tengu.Business.Core.Adapters
+namespace Tengu.Business.Core
 {
-    public class KitsuAdapter
+    public class KitsuAdapter : IKitsuAdapter
     {
-        public AnimeModel SearchAnime(string[] titles) 
+        public AnimeModel SearchAnime(string[] titles)
         {
             throw new NotImplementedException();
         }

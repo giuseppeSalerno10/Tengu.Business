@@ -9,9 +9,9 @@ using Tengu.Business.Commons;
 
 namespace Tengu.Business.Core
 {
-    public static class AnimeSaturnUtilities
+    public class AnimeSaturnUtilities : IAnimeSaturnUtilities
     {
-        public async static Task<AnimeModel[]> FillAnimeList(IEnumerable<AnimeModel> animeList)
+        public async Task<AnimeModel[]> FillAnimeList(IEnumerable<AnimeModel> animeList, CancellationToken cancellationToken = default)
         {
             var concurrentAnimeList = new ConcurrentBag<AnimeModel>();
 
@@ -20,9 +20,7 @@ namespace Tengu.Business.Core
                 concurrentAnimeList.Add(anime);
             }
 
-            var ct = CancellationToken.None;
-           
-            await Parallel.ForEachAsync(concurrentAnimeList, ct, async (anime, ct) => 
+            await Parallel.ForEachAsync(concurrentAnimeList, cancellationToken, async (anime, cancellationToken) =>
             {
                 var web = new HtmlWeb();
                 HtmlDocument doc;
@@ -63,8 +61,62 @@ namespace Tengu.Business.Core
                 anime.Episodes = episodeList.ToArray();
 
             });
-            
+
             return concurrentAnimeList.ToArray();
+        }
+
+        public string[] GetGenreArray(IEnumerable<Genres> genres)
+        {
+            Dictionary<Genres, string> genreMap = new Dictionary<Genres, string>()
+            {
+                { Genres.Martial, "Arti Marziali" },
+                { Genres.Adventure, "Avventura" }
+            };
+
+            var genresList = new List<string>();
+
+            foreach (var genre in genres)
+            {
+                genresList.Add(genreMap[genre]);
+            }
+
+            return genresList.ToArray();
+        }
+        public string[] GetStatusesArray(IEnumerable<Statuses> statuses)
+        {
+            Dictionary<Statuses, string> statusMap = new Dictionary<Statuses, string>()
+            {
+                { Statuses.InProgress, "0"},
+                { Statuses.Completed, "1"},
+                { Statuses.NotReleased, "2"},
+                { Statuses.Canceled, "3"},
+            };
+
+            var statusesList = new List<string>();
+
+            foreach (var status in statuses)
+            {
+                statusesList.Add(statusMap[status]);
+            }
+
+            return statusesList.ToArray();
+        }
+        public string[] GetLanguagesArray(IEnumerable<Languages> languages)
+        {
+            Dictionary<Languages, string> langMap = new Dictionary<Languages, string>()
+            {
+                { Languages.Dubbed, "1" },
+                { Languages.Subbed , "0" }
+            };
+
+            var languagesList = new List<string>();
+
+            foreach (var status in languages)
+            {
+                languagesList.Add(langMap[status]);
+            }
+
+            return languagesList.ToArray();
         }
     }
 }
