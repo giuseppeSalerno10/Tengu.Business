@@ -49,7 +49,7 @@ namespace Tengu.Business.Core
                 animeList.Add(anime);
             }
 
-            return await _utilities.FillAnimeList(animeList, cancellationToken);
+            return animeList.ToArray();
         }
 
         public async Task<AnimeModel[]> SearchByFilters(AnimeSaturnSearchFilterInput searchFilter, CancellationToken cancellationToken = default)
@@ -118,10 +118,53 @@ namespace Tengu.Business.Core
                 }
 
             }
-            return await _utilities.FillAnimeList(animeList.ToArray());
+
+            return animeList.ToArray();
         }
 
-        public async Task<EpisodeModel[]> GetLatestEpisode(int count, CancellationToken cancellationToken = default)
+        public async Task<EpisodeModel[]> GetEpisodes(AnimeModel anime, CancellationToken cancellationToken = default)
+        {
+            var web = new HtmlWeb();
+            HtmlDocument doc;
+
+            doc = await web.LoadFromWebAsync($"{anime.Url}");
+
+            anime.AlternativeTitle = doc.DocumentNode.SelectSingleNode("./div/div/div/div/div[@class='box-trasparente-alternativo rounded']")
+                .InnerText;
+
+            var episodesNodes = doc
+                .GetElementbyId("resultsxd")
+                .SelectNodes("./div/div/div");
+
+            var episodeList = new ConcurrentBag<EpisodeModel>();
+
+            await Parallel.ForEachAsync(episodesNodes, async (node, cancellationToken) =>
+            {
+                var internalUrl = node.SelectSingleNode("./a").GetAttributeValue("href", "");
+                var internalWeb = new HtmlWeb();
+                var internalDoc = await internalWeb.LoadFromWebAsync(internalUrl);
+
+                var episode = new EpisodeModel
+                {
+                    Host = Hosts.AnimeSaturn,
+                    Title = internalDoc.DocumentNode
+                        .SelectSingleNode("./div/div/div[@class='card-body']/h3[@class='text-center mb-4']")
+                        .InnerText
+                        .Split("<br>")[^1]
+                        .Trim(),
+                    Url = internalDoc.DocumentNode
+                        .SelectSingleNode("./div/div/div[@class='card-body']/a")
+                        .GetAttributeValue("href", ""),
+                    Image = anime.Image
+                };
+                episodeList.Add(episode);
+            });
+
+            return episodeList.ToArray();
+
+        }
+
+        public async Task<EpisodeModel[]> GetLatestEpisodes(int offset, int limit, CancellationToken cancellationToken = default)
         {
             var episodeList = new List<EpisodeModel>();
 
@@ -129,10 +172,11 @@ namespace Tengu.Business.Core
 
             var requestUrl = Config.AnimeSaturn.BaseLatestEpisodeUrl;
 
-            var currentAnimes = 0;
-            var currentPage = 1;
+            var currentPage = offset / 15;
 
-            while (!cancellationToken.IsCancellationRequested && currentAnimes < count)
+            var ignoreCount = offset - currentPage * 15;
+            var episodeCount = offset - limit;
+            while (!cancellationToken.IsCancellationRequested && episodeList.Count < episodeCount)
             {
                 var response = await requestUrl
                     .WithHeader("X-Requested-With", "XMLHttpRequest")
@@ -157,8 +201,6 @@ namespace Tengu.Business.Core
                         Image = urlNode.SelectSingleNode("./img").GetAttributeValue("src", "")
                     };
                     episodeList.Add(episode);
-
-                    currentAnimes++;
 
                 }
 

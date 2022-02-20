@@ -11,61 +11,6 @@ namespace Tengu.Business.Core
 {
     public class AnimeSaturnUtilities : IAnimeSaturnUtilities
     {
-        public async Task<AnimeModel[]> FillAnimeList(IEnumerable<AnimeModel> animeList, CancellationToken cancellationToken = default)
-        {
-            var concurrentAnimeList = new ConcurrentBag<AnimeModel>();
-
-            foreach (var anime in animeList)
-            {
-                concurrentAnimeList.Add(anime);
-            }
-
-            await Parallel.ForEachAsync(concurrentAnimeList, cancellationToken, async (anime, cancellationToken) =>
-            {
-                var web = new HtmlWeb();
-                HtmlDocument doc;
-
-                doc = await web.LoadFromWebAsync($"{anime.Url}");
-
-                anime.AlternativeTitle = doc.DocumentNode.SelectSingleNode("./div/div/div/div/div[@class='box-trasparente-alternativo rounded']")
-                    .InnerText;
-
-                var episodesNode = doc
-                    .GetElementbyId("resultsxd")
-                    .SelectNodes("./div/div/div");
-
-                var episodeList = new List<EpisodeModel>();
-
-                foreach (var node in episodesNode)
-                {
-
-                    var internalUrl = node.SelectSingleNode("./a").GetAttributeValue("href", "");
-                    var internalWeb = new HtmlWeb();
-                    var internalDoc = internalWeb.Load(internalUrl);
-
-                    var episode = new EpisodeModel
-                    {
-                        Host = Hosts.AnimeSaturn,
-                        Title = internalDoc.DocumentNode
-                            .SelectSingleNode("./div/div/div[@class='card-body']/h3[@class='text-center mb-4']")
-                            .InnerText
-                            .Split("<br>")[^1]
-                            .Trim(),
-                        Url = internalDoc.DocumentNode
-                            .SelectSingleNode("./div/div/div[@class='card-body']/a")
-                            .GetAttributeValue("href", ""),
-                        Image = anime.Image
-                    };
-                    episodeList.Add(episode);
-                }
-
-                anime.Episodes = episodeList.ToArray();
-
-            });
-
-            return concurrentAnimeList.ToArray();
-        }
-
         public string[] GetGenreArray(IEnumerable<Genres> genres)
         {
             Dictionary<Genres, string> genreMap = new Dictionary<Genres, string>()

@@ -24,9 +24,14 @@ namespace Tengu.Business.API
             return _adapter.Download(downloadPath, episode.Url, cancellationToken);
         }
 
-        public Task<EpisodeModel[]> GetLatestEpisode(int count, CancellationToken cancellationToken = default)
+        public Task<EpisodeModel[]> GetEpisodes(AnimeModel anime, CancellationToken cancellationToken = default)
         {
-            return _adapter.GetLatestEpisode(count, cancellationToken);
+            return _adapter.GetEpisodes(anime, cancellationToken);
+        }
+
+        public Task<EpisodeModel[]> GetLatestEpisodes(int offset, int limit, CancellationToken cancellationToken = default)
+        {
+            return _adapter.GetLatestEpisodes(offset, limit, cancellationToken);
         }
 
         public Task<AnimeModel[]> SearchAnime(SearchFilter filter, CancellationToken cancellationToken = default)

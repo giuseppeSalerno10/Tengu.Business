@@ -9,11 +9,6 @@ namespace Tengu.Business.Core
 {
     public class AnimeUnityUtilities : IAnimeUnityUtilities
     {
-        public async Task<AnimeModel[]> FillAnimeList(IEnumerable<AnimeModel> animeList, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
         public string[] GetGenreArray(IEnumerable<Genres> genres)
         {
             throw new NotImplementedException();
