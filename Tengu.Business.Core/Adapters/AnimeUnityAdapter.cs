@@ -15,7 +15,7 @@ namespace Tengu.Business.Core
             throw new NotImplementedException();
         }
 
-        public Task<EpisodeModel[]> GetEpisodes(AnimeModel anime, CancellationToken cancellationToken = default)
+        public Task<EpisodeModel[]> GetEpisodes(string animeId, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

@@ -35,13 +35,13 @@ async static Task App(IServiceProvider services)
         switch (Convert.ToInt32(Console.ReadLine()))
         {
             case 0:
-                await TitleMenu(tenguApi);
+                await SearchAnimeMenu(tenguApi);
                 break;
             case 1:
-                await FilterMenu(tenguApi);
+                await GetEpisodesMenu(tenguApi);
                 break;
             case 2:
-                await BothMenu(tenguApi);
+                await DownloadEpisodeMenu(tenguApi);
                 break;
             case 3:
                 await KitsuMenu(tenguApi);
@@ -53,22 +53,23 @@ async static Task App(IServiceProvider services)
     }
 }
 
+
+static Task SearchAnimeMenu(ITenguApi tenguApi)
+{
+    throw new NotImplementedException();
+}
+
+static Task GetEpisodesMenu(ITenguApi tenguApi)
+{
+    throw new NotImplementedException();
+}
+
+static Task DownloadEpisodeMenu(ITenguApi tenguApi)
+{
+    throw new NotImplementedException();
+}
+
 static Task KitsuMenu(ITenguApi tenguApi)
-{
-    throw new NotImplementedException();
-}
-
-static Task BothMenu(ITenguApi tenguApi)
-{
-    throw new NotImplementedException();
-}
-
-static Task FilterMenu(ITenguApi tenguApi)
-{
-    throw new NotImplementedException();
-}
-
-static Task TitleMenu(ITenguApi tenguApi)
 {
     throw new NotImplementedException();
 }

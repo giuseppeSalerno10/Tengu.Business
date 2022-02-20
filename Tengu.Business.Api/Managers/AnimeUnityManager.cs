@@ -19,14 +19,14 @@ namespace Tengu.Business.API
             _utilities = utilities;
         }
 
-        public Task Download(string downloadPath, EpisodeModel episode, CancellationToken cancellationToken = default)
+        public Task Download(string downloadPath, string episodeId, CancellationToken cancellationToken = default)
         {
-            return _adapter.Download(downloadPath, episode.Url, cancellationToken);
+            return _adapter.Download(downloadPath, episodeId, cancellationToken);
         }
 
-        public Task<EpisodeModel[]> GetEpisodes(AnimeModel anime, CancellationToken cancellationToken = default)
+        public Task<EpisodeModel[]> GetEpisodes(string animeId, CancellationToken cancellationToken = default)
         {
-            return _adapter.GetEpisodes(anime, cancellationToken);
+            return _adapter.GetEpisodes(animeId, cancellationToken);
         }
 
         public Task<EpisodeModel[]> GetLatestEpisodes(int offset, int limit, CancellationToken cancellationToken = default)

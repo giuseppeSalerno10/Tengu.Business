@@ -126,15 +126,14 @@ namespace Tengu.Business.Core
             return animeList.ToArray();
         }
 
-        public async Task<EpisodeModel[]> GetEpisodes(AnimeModel anime, CancellationToken cancellationToken = default)
+        public async Task<EpisodeModel[]> GetEpisodes(string animeId, CancellationToken cancellationToken = default)
         {
             var web = new HtmlWeb();
             HtmlDocument doc;
 
-            doc = await web.LoadFromWebAsync($"{anime.Url}");
+            var animeUrl = Config.AnimeSaturn.BaseAnimeUrl + animeId;
 
-            anime.AlternativeTitle = doc.DocumentNode.SelectSingleNode("./div/div/div/div/div[@class='box-trasparente-alternativo rounded']")
-                .InnerText;
+            doc = await web.LoadFromWebAsync($"{animeUrl}");
 
             var episodesNodes = doc
                 .GetElementbyId("resultsxd")
@@ -161,11 +160,10 @@ namespace Tengu.Business.Core
                 var episode = new EpisodeModel
                 {
                     Id = url.Split("/")[^1],
-                    AnimeId = anime.Id,
+                    AnimeId = animeId,
                     Host = Hosts.AnimeSaturn,
                     Title = title,
                     Url = url,
-                    Image = anime.Image
                 };
                 episodeList.Add(episode);
             });
@@ -222,14 +220,19 @@ namespace Tengu.Business.Core
 
         }
 
-        public async Task Download(string downloadPath, string animeUrl, string fileName, CancellationToken cancellationToken = default)
+        public async Task Download(string downloadPath, string episodeId, CancellationToken cancellationToken = default)
         {
             var web = new HtmlWeb();
-            HtmlDocument doc = await web.LoadFromWebAsync(animeUrl, cancellationToken);
+
+            var episodeUrl = Config.AnimeSaturn.BaseEpisodeUrl + episodeId;
+
+            HtmlDocument doc = await web.LoadFromWebAsync(episodeUrl, cancellationToken);
 
             if (doc.DocumentNode.SelectSingleNode("//center/div/div/div/div/div/div/div/script[2]") != null) //M3U8
             {
                 var scriptNode = doc.DocumentNode.SelectSingleNode("//center/div/div/div/div/div/div/div/script[2]").InnerText;
+
+                var filename = doc.DocumentNode.SelectSingleNode("//center/div/div/div/h4[@class='text-white mb-3']").InnerText;
 
                 var m3u8InitialUrl = scriptNode.Split("file: ")[1]
                     .Split(",")[0]
@@ -239,7 +242,7 @@ namespace Tengu.Business.Core
 
                 var downloadUrls = await _m3U8Client.GenerateDownloadUrls(m3u8InitialUrl, cancellationToken);
 
-                await _m3U8Client.Download($"{fileName}.mp4", downloadUrls, cancellationToken);
+                await _m3U8Client.Download($"{filename}.mp4", downloadUrls, cancellationToken);
             } //TS
             else if (doc.GetElementbyId("myvideo") != null)
             {

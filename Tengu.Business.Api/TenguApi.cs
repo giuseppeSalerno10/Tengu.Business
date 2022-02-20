@@ -114,19 +114,19 @@ namespace Tengu.Business.API
             return await ElaborateSearch(searchTasks, kintsuSearch, cancellationToken);
         }
 
-        public async Task<EpisodeModel[]> GetEpisodes(AnimeModel anime, CancellationToken cancellationToken = default)
+        public async Task<EpisodeModel[]> GetEpisodes(string animeId, Hosts host, CancellationToken cancellationToken = default)
         {
             CheckForHost();
             Task<EpisodeModel[]> getEpisodesTask;
 
-            switch (anime.Host)
+            switch (host)
             {
                 case Hosts.AnimeSaturn:
-                    getEpisodesTask = _animeSaturnManager.GetEpisodes(anime, cancellationToken);
+                    getEpisodesTask = _animeSaturnManager.GetEpisodes(animeId, cancellationToken);
                     break;
 
                 case Hosts.AnimeUnity:
-                    getEpisodesTask = _animeUnityManager.GetEpisodes(anime, cancellationToken);
+                    getEpisodesTask = _animeUnityManager.GetEpisodes(animeId, cancellationToken);
                     break;
 
                 default:
@@ -141,7 +141,7 @@ namespace Tengu.Business.API
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in GetEpisodes", anime);
+                _logger.LogError(ex, "Error in GetEpisodes", new { animeId, host });
                 throw;
             }
 
@@ -185,17 +185,17 @@ namespace Tengu.Business.API
         }
 
 
-        public async Task Download(EpisodeModel episode, CancellationToken cancellationToken = default)
+        public async Task Download(string episodeId, Hosts host, CancellationToken cancellationToken = default)
         {
             Task task;
-            switch (episode.Host)
+            switch (host)
             {
                 case Hosts.AnimeSaturn:
-                    task = _animeSaturnManager.Download(DownloadPath, episode, cancellationToken);
+                    task = _animeSaturnManager.Download(DownloadPath, episodeId, cancellationToken);
                     break;
 
                 case Hosts.AnimeUnity:
-                    task = _animeUnityManager.Download(DownloadPath, episode, cancellationToken);
+                    task = _animeUnityManager.Download(DownloadPath, episodeId, cancellationToken);
                     break;
 
                 default:
@@ -208,7 +208,7 @@ namespace Tengu.Business.API
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in Download", episode);
+                _logger.LogError(ex, "Error in Download", new { episodeId, host });
                 throw;
             }
         }
