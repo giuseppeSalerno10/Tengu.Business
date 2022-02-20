@@ -77,7 +77,7 @@ namespace Tengu.Business.API
             var animeList = await SearchAnime(filter, cancellationToken);
 
             return animeList
-                .Where(anime => anime.Title.Contains(title) || anime.AlternativeTitle.Contains(title))
+                .Where(anime => anime.Title.Contains(title))
                 .ToArray();
         }
     }

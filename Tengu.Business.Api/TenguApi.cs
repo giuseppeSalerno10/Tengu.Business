@@ -21,35 +21,32 @@ namespace Tengu.Business.API
         private readonly IAnimeUnityManager _animeUnityManager;
         private readonly IAnimeSaturnManager _animeSaturnManager;
         private readonly IKitsuManager _kitsuManager;
-        private readonly ITenguUtilities _tenguUtilities;
 
         public TenguApi(
             IAnimeUnityManager animeUnityManager, 
             IAnimeSaturnManager animeSaturnManager, 
             IKitsuManager kitsuManager, 
-            ITenguUtilities tenguUtilities, 
             ILogger<TenguApi> logger)
         {
             _animeUnityManager = animeUnityManager;
             _animeSaturnManager = animeSaturnManager;
             _kitsuManager = kitsuManager;
-            _tenguUtilities = tenguUtilities;
 
             _logger = logger;
         }
 
 
-        public async Task<AnimeModel[]> KitsuUpcomingAnime(int count, CancellationToken cancellationToken = default)
+        public async Task<KitsuAnimeModel[]> KitsuUpcomingAnime(int offset, int limit, CancellationToken cancellationToken = default)
         {
-            return await _kitsuManager.GetUpcomingAnime(count, cancellationToken);
+            return await _kitsuManager.GetUpcomingAnime(offset, limit, cancellationToken);
         }
-        public async Task<AnimeModel[]> KitsuSearchAnime(string title, int count, CancellationToken cancellationToken = default)
+        public async Task<KitsuAnimeModel[]> KitsuSearchAnime(string title, int count, CancellationToken cancellationToken = default)
         {
             return await _kitsuManager.SearchAnime(title, count, cancellationToken);
         }
 
 
-        public async Task<AnimeModel[]> SearchAnime(string title, bool kintsuSearch = false, CancellationToken cancellationToken = default)
+        public async Task<AnimeModel[]> SearchAnime(string title, bool kitsuSearch = false, CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
@@ -69,9 +66,9 @@ namespace Tengu.Business.API
                 }
             }
 
-            return await ElaborateSearch(searchTasks, kintsuSearch, cancellationToken);
+            return await ElaborateSearch(searchTasks, kitsuSearch, cancellationToken);
         }
-        public async Task<AnimeModel[]> SearchAnime(SearchFilter filter, bool kintsuSearch = false, CancellationToken cancellationToken = default)
+        public async Task<AnimeModel[]> SearchAnime(SearchFilter filter, bool kitsuSearch = false, CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
@@ -91,9 +88,9 @@ namespace Tengu.Business.API
                 }
             }
 
-            return await ElaborateSearch(searchTasks, kintsuSearch, cancellationToken);
+            return await ElaborateSearch(searchTasks, kitsuSearch, cancellationToken);
         }
-        public async Task<AnimeModel[]> SearchAnime(string title, SearchFilter filter, bool kintsuSearch = false, CancellationToken cancellationToken = default)
+        public async Task<AnimeModel[]> SearchAnime(string title, SearchFilter filter, bool kitsuSearch = false, CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
@@ -111,7 +108,7 @@ namespace Tengu.Business.API
                         break;
                 }
             }
-            return await ElaborateSearch(searchTasks, kintsuSearch, cancellationToken);
+            return await ElaborateSearch(searchTasks, kitsuSearch, cancellationToken);
         }
 
         public async Task<EpisodeModel[]> GetEpisodes(string animeId, Hosts host, CancellationToken cancellationToken = default)
@@ -219,7 +216,7 @@ namespace Tengu.Business.API
         {
             if (CurrentHosts.Length == 0) { throw new TenguException("No host defined"); }
         }
-        private async Task<AnimeModel[]> ElaborateSearch(List<Task<AnimeModel[]>> searchTasks, bool kintsuSearch, CancellationToken cancellationToken)
+        private async Task<AnimeModel[]> ElaborateSearch(List<Task<AnimeModel[]>> searchTasks, bool kitsuSearch, CancellationToken cancellationToken)
         {
             var animeList = new ConcurrentBag<AnimeModel>();
 
@@ -233,35 +230,21 @@ namespace Tengu.Business.API
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, message:"Error in SearchAnime -> ElaborateSearch", new { searchTasks, kintsuSearch} );
+                        _logger.LogError(ex, message:"Error in SearchAnime -> ElaborateSearch", new { searchTasks, kitsuSearch} );
                         throw;
                     }
                 }
             }
 
-            if (kintsuSearch)
+            if (kitsuSearch)
             {
                 Parallel.ForEach(animeList, async (anime) =>
                 {
                     var titleSearch = _kitsuManager.SearchAnime(anime.Title, 1, cancellationToken);
-                    var altTitleSearch = _kitsuManager.SearchAnime(anime.AlternativeTitle, 1, cancellationToken);
 
                     var titleResponse = (await titleSearch)[0];
-                    var altTitleResponse = (await altTitleSearch)[0];
 
-                    var titleDistance = _tenguUtilities.DamerauLevenshteinDistance(titleResponse.Title, anime.Title);
-                    var altTitleDistance = _tenguUtilities.DamerauLevenshteinDistance(altTitleResponse.Title, anime.AlternativeTitle);
-
-                    var correctResponse = titleDistance > altTitleDistance ? titleResponse : altTitleResponse;
-
-                    anime.KitsuUrl = correctResponse.KitsuUrl;
-                    anime.ReleaseDate = correctResponse.ReleaseDate;
-                    anime.TotalEpisodes = correctResponse.TotalEpisodes;
-                    anime.AgeRating = correctResponse.AgeRating;
-                    anime.RatingRank = correctResponse.RatingRank;
-                    anime.PopularityRank = correctResponse.PopularityRank;
-                    anime.AverageRating = correctResponse.AverageRating;
-                    anime.Synopsis = correctResponse.Synopsis;
+                    anime.KitsuAttributes = titleResponse;
                 });
             }
 

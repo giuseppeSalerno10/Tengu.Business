@@ -53,7 +53,7 @@ namespace Tengu.Business.API
             var result = await _adapter.SearchByFilters(adapterFilter, cancellationToken);
 
             return result
-                .Where(anime => anime.Title.Contains(title) || anime.AlternativeTitle.Contains(title))
+                .Where(anime => anime.Title.Contains(title))
                 .ToArray();
         }
     }

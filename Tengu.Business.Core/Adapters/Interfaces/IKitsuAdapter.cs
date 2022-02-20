@@ -4,8 +4,8 @@ namespace Tengu.Business.Core
 {
     public interface IKitsuAdapter
     {
-        Task<AnimeModel[]> SearchAnime(string titles, int limit, CancellationToken cancellationToken = default);
-        Task<AnimeModel[]> GetUpcomingAnime(int limit, CancellationToken cancellationToken = default);
+        Task<KitsuAnimeModel[]> SearchAnime(string titles, int limit, CancellationToken cancellationToken = default);
+        Task<KitsuAnimeModel[]> GetUpcomingAnime(int offset, int limit, CancellationToken cancellationToken = default);
 
     }
 }

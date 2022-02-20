@@ -10,18 +10,18 @@ namespace Tengu.Business.Core
 {
     public class KitsuAdapter : IKitsuAdapter
     {
-        public async Task<AnimeModel[]> GetUpcomingAnime(int limit, CancellationToken cancellationToken = default)
+        public async Task<KitsuAnimeModel[]> GetUpcomingAnime(int offset, int limit, CancellationToken cancellationToken = default)
         {
-            var response = await $"{Config.Kitsu.BaseUrl}filter[status]=upcoming&page[limit]={limit}"
+            var response = await $"{Config.Kitsu.BaseUrl}filter[status]=upcoming&page[limit]={limit}&page[offset]={offset}"
                 .WithHeader("Accept", "application/vnd.api+json")
                 .WithHeader("Content-Type", "application/vnd.api+json")
                 .GetJsonAsync<KitsuSearchOutput>(cancellationToken);
 
-            var animeList = new List<AnimeModel>();
+            var animeList = new List<KitsuAnimeModel>();
 
             foreach (var item in response.Data)
             {
-                animeList.Add(new AnimeModel()
+                animeList.Add(new KitsuAnimeModel()
                 {
                     KitsuUrl = item.Links.Self ?? "",
                     ReleaseDate = item.Attributes.StartDate ?? "",
@@ -37,18 +37,18 @@ namespace Tengu.Business.Core
             return animeList.ToArray();
         }
 
-        public async Task<AnimeModel[]> SearchAnime(string title, int limit, CancellationToken cancellationToken = default)
+        public async Task<KitsuAnimeModel[]> SearchAnime(string title, int limit, CancellationToken cancellationToken = default)
         {
             var response = await $"{Config.Kitsu.BaseUrl}filter[text]={title}&page[limit]={limit}"
                 .WithHeader("Accept", "application/vnd.api+json")
                 .WithHeader("Content-Type", "application/vnd.api+json")
                 .GetJsonAsync<KitsuSearchOutput>(cancellationToken);
 
-            var animeList = new List<AnimeModel>();
+            var animeList = new List<KitsuAnimeModel>();
 
             foreach (var item in response.Data)
             {
-                animeList.Add(new AnimeModel()
+                animeList.Add(new KitsuAnimeModel()
                 {
                     KitsuUrl = item.Links.Self ?? "",
                     ReleaseDate = item.Attributes.StartDate ?? "",
