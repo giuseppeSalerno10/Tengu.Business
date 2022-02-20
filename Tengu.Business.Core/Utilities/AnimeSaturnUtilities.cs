@@ -97,6 +97,7 @@ namespace Tengu.Business.Core
         }
         public string[] GetLanguagesArray(IEnumerable<Languages> languages)
         {
+
             Dictionary<Languages, string> langMap = new Dictionary<Languages, string>()
             {
                 { Languages.Subbed , "0" },
@@ -108,6 +109,11 @@ namespace Tengu.Business.Core
             foreach (var status in languages)
             {
                 languagesList.Add(langMap[status]);
+            }
+
+            if(languagesList.Count == 0)
+            {
+                languagesList.AddRange( langMap.Values );
             }
 
             return languagesList.ToArray();

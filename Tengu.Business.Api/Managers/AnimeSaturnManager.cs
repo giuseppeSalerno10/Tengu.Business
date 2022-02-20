@@ -24,9 +24,9 @@ namespace Tengu.Business.API
             return _adapter.Download(downloadPath, episodeId, cancellationToken);
         }
 
-        public Task<EpisodeModel[]> GetEpisodes(string animeId, CancellationToken cancellationToken = default)
+        public Task<EpisodeModel[]> GetEpisodes(string animeId, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
         {
-            return _adapter.GetEpisodes(animeId, cancellationToken);
+            return _adapter.GetEpisodes(animeId, offset, limit, cancellationToken);
         }
 
         public Task<EpisodeModel[]> GetLatestEpisodes(int offset, int limit, CancellationToken cancellationToken = default)

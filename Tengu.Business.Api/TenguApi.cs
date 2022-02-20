@@ -111,7 +111,7 @@ namespace Tengu.Business.API
             return await ElaborateSearch(searchTasks, kitsuSearch, cancellationToken);
         }
 
-        public async Task<EpisodeModel[]> GetEpisodes(string animeId, Hosts host, CancellationToken cancellationToken = default)
+        public async Task<EpisodeModel[]> GetEpisodes(string animeId, Hosts host, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
         {
             CheckForHost();
             Task<EpisodeModel[]> getEpisodesTask;
@@ -119,11 +119,11 @@ namespace Tengu.Business.API
             switch (host)
             {
                 case Hosts.AnimeSaturn:
-                    getEpisodesTask = _animeSaturnManager.GetEpisodes(animeId, cancellationToken);
+                    getEpisodesTask = _animeSaturnManager.GetEpisodes(animeId, offset, limit, cancellationToken);
                     break;
 
                 case Hosts.AnimeUnity:
-                    getEpisodesTask = _animeUnityManager.GetEpisodes(animeId, cancellationToken);
+                    getEpisodesTask = _animeUnityManager.GetEpisodes(animeId, offset, limit, cancellationToken);
                     break;
 
                 default:

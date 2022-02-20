@@ -75,6 +75,8 @@ namespace Tengu.Business.Core
                 requestUrl += $"years%5B0%5D={year}&";
             }
 
+            requestUrl += $"language%5B0%5D={searchFilter.Language}&";
+
             HtmlDocument doc;
             doc = await web.LoadFromWebAsync($"{requestUrl}");
             var totalPagesNode = doc.DocumentNode.SelectSingleNode("./div[@class='container p-3 shadow rounded bg-dark-as-box']/script");
@@ -88,45 +90,37 @@ namespace Tengu.Business.Core
 
                 var taskList = new List<Task>();
 
-                for (int i = 1; i <= totalPages; i++)
+                Parallel.For(1, totalPages + 1, i =>
                 {
-                    taskList.Add(Task.Run(async () =>
+                    HtmlWeb innerWeb = new HtmlWeb();
+                    HtmlDocument innerDoc = innerWeb.Load($"{requestUrl}page={i}");
+
+                    var currentAnimesNode = innerDoc.DocumentNode.SelectNodes($"./div/div/div[@class='anime-card-newanime main-anime-card']");
+
+                    foreach (var node in currentAnimesNode)
                     {
-                        HtmlWeb innerWeb = new HtmlWeb();
-                        HtmlDocument innerDoc = await innerWeb.LoadFromWebAsync($"{requestUrl}page={i}");
+                        var aNode = node.SelectSingleNode("./div/a");
 
-                        var currentAnimesNode = innerDoc.DocumentNode.SelectNodes($"./div/div/div[@class='anime-card-newanime main-anime-card']");
+                        var url = aNode.GetAttributeValue("href", "");
 
-                        foreach (var node in currentAnimesNode)
+                        var anime = new AnimeModel()
                         {
-                            var aNode = node.SelectSingleNode("./div/a");
-
-                            var url = aNode.GetAttributeValue("href", "");
-
-                            var anime = new AnimeModel()
-                            {
-                                Id = url.Split("/")[^1],
-                                Host = Hosts.AnimeSaturn,
-                                Image = aNode.SelectSingleNode("./img").GetAttributeValue("src", ""),
-                                Url = url,
-                                Title = aNode.GetAttributeValue("title", ""),
-                            };
-                            animeList.Add(anime);
-                        }
-                    }));
-                }
-
-                foreach (var task in taskList)
-                {
-                    await task;
-                }
+                            Id = url.Split("/")[^1],
+                            Host = Hosts.AnimeSaturn,
+                            Image = aNode.SelectSingleNode("./img").GetAttributeValue("src", ""),
+                            Url = url,
+                            Title = aNode.GetAttributeValue("title", ""),
+                        };
+                        animeList.Add(anime);
+                    }
+                });
 
             }
 
             return animeList.ToArray();
         }
 
-        public async Task<EpisodeModel[]> GetEpisodes(string animeId, CancellationToken cancellationToken = default)
+        public async Task<EpisodeModel[]> GetEpisodes(string animeId, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
         {
             var web = new HtmlWeb();
             HtmlDocument doc;
@@ -141,31 +135,37 @@ namespace Tengu.Business.Core
 
             var episodeList = new ConcurrentBag<EpisodeModel>();
 
-            await Parallel.ForEachAsync(episodesNodes, async (node, cancellationToken) =>
+            limit = limit == 0 ? episodesNodes.Count : limit;
+
+            Parallel.For(0, episodesNodes.Count, index =>
             {
-                var internalUrl = node.SelectSingleNode("./a").GetAttributeValue("href", "");
-                var internalWeb = new HtmlWeb();
-                var internalDoc = await internalWeb.LoadFromWebAsync(internalUrl);
-
-                var url = internalDoc.DocumentNode
-                        .SelectSingleNode("./div/div/div[@class='card-body']/a")
-                        .GetAttributeValue("href", "");
-
-                var title = internalDoc.DocumentNode
-                        .SelectSingleNode("./div/div/div[@class='card-body']/h3[@class='text-center mb-4']")
-                        .InnerText
-                        .Split("<br>")[^1]
-                        .Trim();
-
-                var episode = new EpisodeModel
+                if (index >= offset && index <= limit)
                 {
-                    Id = url.Split("/")[^1],
-                    AnimeId = animeId,
-                    Host = Hosts.AnimeSaturn,
-                    Title = title,
-                    Url = url,
-                };
-                episodeList.Add(episode);
+                    var internalUrl = episodesNodes[index].SelectSingleNode("./a").GetAttributeValue("href", "");
+                    var internalWeb = new HtmlWeb();
+                    var internalDoc = internalWeb.Load(internalUrl);
+
+                    var url = internalDoc.DocumentNode
+                            .SelectSingleNode("./div/div/div[@class='card-body']/a")
+                            .GetAttributeValue("href", "");
+
+                    var title = internalDoc.DocumentNode
+                            .SelectSingleNode("./div/div/div[@class='card-body']/h3[@class='text-center mb-4']")
+                            .InnerText
+                            .Split("<br>")[^1]
+                            .Trim();
+
+                    var episode = new EpisodeModel
+                    {
+                        Id = url.Split("/")[^1],
+                        AnimeId = animeId,
+                        Host = Hosts.AnimeSaturn,
+                        Title = title,
+                        Url = url,
+                    };
+                    episodeList.Add(episode);
+                }
+
             });
 
             return episodeList.ToArray();
@@ -184,6 +184,7 @@ namespace Tengu.Business.Core
 
             var ignoreCount = offset - currentPage * 15;
             var episodeCount = offset - limit;
+
             while (!cancellationToken.IsCancellationRequested && episodeList.Count < episodeCount)
             {
                 var response = await requestUrl
@@ -198,18 +199,24 @@ namespace Tengu.Business.Core
 
                 foreach (var node in latestNodes)
                 {
-                    var urlNode = node.SelectSingleNode("./div[@class='card mb-4 shadow-sm']/a[1]");
-                    var titleNode = node.SelectSingleNode("./div[@class='card mb-4 shadow-sm']/a[2]");
-
-                    var episode = new EpisodeModel()
+                    if(ignoreCount > 0)
                     {
-                        Host = Hosts.AnimeSaturn,
-                        Url = urlNode.GetAttributeValue("href", ""),
-                        Title = $"{urlNode.GetAttributeValue("title", "").Trim()} {titleNode.InnerText.Trim()}",
-                        Image = urlNode.SelectSingleNode("./img").GetAttributeValue("src", "")
-                    };
-                    episodeList.Add(episode);
+                        ignoreCount--;
+                    }
+                    else if (episodeList.Count < episodeCount)
+                    {
+                        var urlNode = node.SelectSingleNode("./div[@class='card mb-4 shadow-sm']/a[1]");
+                        var titleNode = node.SelectSingleNode("./div[@class='card mb-4 shadow-sm']/a[2]");
 
+                        var episode = new EpisodeModel()
+                        {
+                            Host = Hosts.AnimeSaturn,
+                            Url = urlNode.GetAttributeValue("href", ""),
+                            Title = $"{urlNode.GetAttributeValue("title", "").Trim()} {titleNode.InnerText.Trim()}",
+                            Image = urlNode.SelectSingleNode("./img").GetAttributeValue("src", "")
+                        };
+                        episodeList.Add(episode);
+                    }
                 }
 
                 currentPage++;
@@ -224,7 +231,7 @@ namespace Tengu.Business.Core
         {
             var web = new HtmlWeb();
 
-            var episodeUrl = Config.AnimeSaturn.BaseEpisodeUrl + episodeId;
+            var episodeUrl = Config.AnimeSaturn.BaseUrl + episodeId;
 
             HtmlDocument doc = await web.LoadFromWebAsync(episodeUrl, cancellationToken);
 
