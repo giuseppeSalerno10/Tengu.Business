@@ -40,6 +40,7 @@ namespace Tengu.Business.Core
             {
                 var anime = new AnimeModel()
                 {
+                    Id = item.Link.Split("/")[^1],
                     Host = Hosts.AnimeSaturn,
                     Title = item.Name,
                     Image = item.Image,
@@ -100,11 +101,14 @@ namespace Tengu.Business.Core
                         {
                             var aNode = node.SelectSingleNode("./div/a");
 
+                            var url = aNode.GetAttributeValue("href", "");
+
                             var anime = new AnimeModel()
                             {
+                                Id = url.Split("/")[^1],
                                 Host = Hosts.AnimeSaturn,
                                 Image = aNode.SelectSingleNode("./img").GetAttributeValue("src", ""),
-                                Url = aNode.GetAttributeValue("href", ""),
+                                Url = url,
                                 Title = aNode.GetAttributeValue("title", ""),
                             };
                             animeList.Add(anime);
@@ -144,17 +148,23 @@ namespace Tengu.Business.Core
                 var internalWeb = new HtmlWeb();
                 var internalDoc = await internalWeb.LoadFromWebAsync(internalUrl);
 
-                var episode = new EpisodeModel
-                {
-                    Host = Hosts.AnimeSaturn,
-                    Title = internalDoc.DocumentNode
+                var url = internalDoc.DocumentNode
+                        .SelectSingleNode("./div/div/div[@class='card-body']/a")
+                        .GetAttributeValue("href", "");
+
+                var title = internalDoc.DocumentNode
                         .SelectSingleNode("./div/div/div[@class='card-body']/h3[@class='text-center mb-4']")
                         .InnerText
                         .Split("<br>")[^1]
-                        .Trim(),
-                    Url = internalDoc.DocumentNode
-                        .SelectSingleNode("./div/div/div[@class='card-body']/a")
-                        .GetAttributeValue("href", ""),
+                        .Trim();
+
+                var episode = new EpisodeModel
+                {
+                    Id = url.Split("/")[^1],
+                    AnimeId = anime.Id,
+                    Host = Hosts.AnimeSaturn,
+                    Title = title,
+                    Url = url,
                     Image = anime.Image
                 };
                 episodeList.Add(episode);

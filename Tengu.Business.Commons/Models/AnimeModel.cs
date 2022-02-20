@@ -8,13 +8,12 @@ namespace Tengu.Business.Commons
 {
     public class AnimeModel
     {
+        public string Id { get; set; } = string.Empty;
         public Hosts Host { get; set; } = Hosts.None;
         public string Url { get; set; } = string.Empty;
         public string Image { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public string AlternativeTitle { get; set; } = string.Empty;
-        public EpisodeModel[] Episodes { get; set; } = Array.Empty<EpisodeModel>();
-
 
 
         #region Kitsu Attributes
