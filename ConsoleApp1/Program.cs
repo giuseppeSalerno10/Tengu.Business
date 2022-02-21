@@ -174,12 +174,45 @@ async static Task<EpisodeModel[]> GetEpisodesMenu(ITenguApi tenguApi, AnimeModel
     return episodes;
 }
 
-static Task DownloadEpisodeMenu(ITenguApi tenguApi, EpisodeModel[] episodes)
+async static Task DownloadEpisodeMenu(ITenguApi tenguApi, EpisodeModel[] episodes)
 {
     throw new NotImplementedException();
 }
 
-static Task KitsuMenu(ITenguApi tenguApi)
+async static Task<KitsuAnimeModel[]> KitsuMenu(ITenguApi tenguApi)
 {
-    throw new NotImplementedException();
+    Console.WriteLine(
+        "Scegli il tipo di operazione:\n" +
+        "0 - Upcoming\n" +
+        "1 - Ricerca per titolo\n"
+        );
+
+    KitsuAnimeModel[] animes = Array.Empty<KitsuAnimeModel>();
+
+    switch (Convert.ToInt32(Console.ReadLine()))
+    {
+        case 0:
+            Console.Clear();
+
+            Console.WriteLine("\nRisultati:");
+            animes = await tenguApi.KitsuUpcomingAnime(15,20);
+            for (int i = 0; i < animes.Length; i++)
+            {
+                KitsuAnimeModel? anime = animes[i];
+                Console.WriteLine($"[{i}] {anime.Title}");
+            }
+
+
+            break;
+
+        case 1:
+            Console.Clear();
+            break;
+
+        default:
+            Console.WriteLine("Input Errato");
+            break;
+    }
+
+    return animes;
 }

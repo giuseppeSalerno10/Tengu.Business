@@ -16,6 +16,8 @@ namespace Tengu.Business.Commons
     public class KitsuConfig
     {
         public string BaseUrl { get; } = "https://kitsu.io/api/edge/anime?";
+
+        public int MaxAnimes { get; } = 20;
     }
 
     public class AnimeSaturnConfig

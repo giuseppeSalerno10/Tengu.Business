@@ -7,8 +7,8 @@ namespace Tengu.Business.API
         Hosts[] CurrentHosts { get; set; }
         public string DownloadPath { get; set; }
 
-        Task<KitsuAnimeModel[]> KitsuUpcomingAnime(int offset, int limit, CancellationToken cancellationToken = default);
-        Task<KitsuAnimeModel[]> KitsuSearchAnime(string title, int count, CancellationToken cancellationToken = default);
+        Task<KitsuAnimeModel[]> KitsuUpcomingAnime(int offset = 0, int limit = 20, CancellationToken cancellationToken = default);
+        Task<KitsuAnimeModel[]> KitsuSearchAnime(string title, int offset = 0, int limit = 20, CancellationToken cancellationToken = default);
 
         Task Download(string episodeId, Hosts host, CancellationToken cancellationToken = default);
         Task<EpisodeModel[]> GetEpisodes(string animeId, Hosts host, int offset = 0, int limit = 0, CancellationToken cancellationToken = default);

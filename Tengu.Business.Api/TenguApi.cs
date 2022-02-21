@@ -36,13 +36,13 @@ namespace Tengu.Business.API
         }
 
 
-        public async Task<KitsuAnimeModel[]> KitsuUpcomingAnime(int offset, int limit, CancellationToken cancellationToken = default)
+        public async Task<KitsuAnimeModel[]> KitsuUpcomingAnime(int offset = 0, int limit = 20, CancellationToken cancellationToken = default)
         {
             return await _kitsuManager.GetUpcomingAnime(offset, limit, cancellationToken);
         }
-        public async Task<KitsuAnimeModel[]> KitsuSearchAnime(string title, int count, CancellationToken cancellationToken = default)
+        public async Task<KitsuAnimeModel[]> KitsuSearchAnime(string title, int offset = 0, int limit = 20, CancellationToken cancellationToken = default)
         {
-            return await _kitsuManager.SearchAnime(title, count, cancellationToken);
+            return await _kitsuManager.SearchAnime(title, offset, limit, cancellationToken);
         }
 
 
@@ -240,7 +240,7 @@ namespace Tengu.Business.API
             {
                 Parallel.ForEach(animeList, async (anime) =>
                 {
-                    var titleSearch = _kitsuManager.SearchAnime(anime.Title, 1, cancellationToken);
+                    var titleSearch = _kitsuManager.SearchAnime(anime.Title, 0, 1, cancellationToken);
 
                     var titleResponse = (await titleSearch)[0];
 
