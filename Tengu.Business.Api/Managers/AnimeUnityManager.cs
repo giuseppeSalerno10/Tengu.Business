@@ -19,38 +19,38 @@ namespace Tengu.Business.API
             _utilities = utilities;
         }
 
-        public Task Download(string downloadPath, string episodeId, CancellationToken cancellationToken = default)
+        public Task DownloadAsync(string downloadPath, string episodeId, CancellationToken cancellationToken = default)
         {
-            return _adapter.Download(downloadPath, episodeId, cancellationToken);
+            return _adapter.DownloadAsync(downloadPath, episodeId, cancellationToken);
         }
 
-        public Task<EpisodeModel[]> GetEpisodes(string animeId, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
+        public Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
         {
-            return _adapter.GetEpisodes(animeId, offset, limit, cancellationToken);
+            return _adapter.GetEpisodesAsync(animeId, offset, limit, cancellationToken);
         }
 
-        public Task<EpisodeModel[]> GetLatestEpisodes(int offset, int limit, CancellationToken cancellationToken = default)
+        public Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset, int limit, CancellationToken cancellationToken = default)
         {
-            return _adapter.GetLatestEpisodes(offset, limit, cancellationToken);
+            return _adapter.GetLatestEpisodesAsync(offset, limit, cancellationToken);
         }
 
-        public Task<AnimeModel[]> SearchAnime(SearchFilter filter, CancellationToken cancellationToken = default)
+        public Task<AnimeModel[]> SearchAnimeAsync(SearchFilter filter, CancellationToken cancellationToken = default)
         {
             var adapterFilter = new AnimeSaturnSearchFilterInput();
 
-            return _adapter.SearchByFilters(adapterFilter, cancellationToken);
+            return _adapter.SearchByFiltersAsync(adapterFilter, cancellationToken);
         }
 
-        public Task<AnimeModel[]> SearchAnime(string title, CancellationToken cancellationToken = default)
+        public Task<AnimeModel[]> SearchAnimeAsync(string title, CancellationToken cancellationToken = default)
         {
-            return _adapter.SearchByTitle(title, cancellationToken);
+            return _adapter.SearchByTitleAsync(title, cancellationToken);
         }
 
-        public async Task<AnimeModel[]> SearchAnime(string title, SearchFilter filter, CancellationToken cancellationToken = default)
+        public async Task<AnimeModel[]> SearchAnimeAsync(string title, SearchFilter filter, CancellationToken cancellationToken = default)
         {
             var adapterFilter = new AnimeSaturnSearchFilterInput();
 
-            var result = await _adapter.SearchByFilters(adapterFilter, cancellationToken);
+            var result = await _adapter.SearchByFiltersAsync(adapterFilter, cancellationToken);
 
             return result
                 .Where(anime => anime.Title.Contains(title))

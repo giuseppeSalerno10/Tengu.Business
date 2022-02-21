@@ -25,7 +25,7 @@ namespace Tengu.Business.Core
             _m3U8Client = m3u8Client;
         }
 
-        public async Task<AnimeModel[]> SearchByTitle(string title, CancellationToken cancellationToken = default)
+        public async Task<AnimeModel[]> SearchByTitleAsync(string title, CancellationToken cancellationToken = default)
         {
             var requestUrl = $"{Config.AnimeSaturn.SearchByTitleUrl}" +
                 $"search=1&" +
@@ -53,7 +53,7 @@ namespace Tengu.Business.Core
             return animeList.ToArray();
         }
 
-        public async Task<AnimeModel[]> SearchByFilters(AnimeSaturnSearchFilterInput searchFilter, CancellationToken cancellationToken = default)
+        public async Task<AnimeModel[]> SearchByFiltersAsync(AnimeSaturnSearchFilterInput searchFilter, CancellationToken cancellationToken = default)
         {
             var animeList = new ConcurrentBag<AnimeModel>();
             var web = new HtmlWeb();
@@ -120,7 +120,7 @@ namespace Tengu.Business.Core
             return animeList.ToArray();
         }
 
-        public async Task<EpisodeModel[]> GetEpisodes(string animeId, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
+        public async Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
         {
             var web = new HtmlWeb();
             HtmlDocument doc;
@@ -172,7 +172,7 @@ namespace Tengu.Business.Core
 
         }
 
-        public async Task<EpisodeModel[]> GetLatestEpisodes(int offset, int limit, CancellationToken cancellationToken = default)
+        public async Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset, int limit, CancellationToken cancellationToken = default)
         {
             var episodeList = new List<EpisodeModel>();
 
@@ -227,7 +227,7 @@ namespace Tengu.Business.Core
 
         }
 
-        public async Task Download(string downloadPath, string episodeId, CancellationToken cancellationToken = default)
+        public async Task DownloadAsync(string downloadPath, string episodeId, CancellationToken cancellationToken = default)
         {
             var web = new HtmlWeb();
 

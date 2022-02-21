@@ -36,17 +36,17 @@ namespace Tengu.Business.API
         }
 
 
-        public async Task<KitsuAnimeModel[]> KitsuUpcomingAnime(int offset = 0, int limit = 20, CancellationToken cancellationToken = default)
+        public async Task<KitsuAnimeModel[]> KitsuUpcomingAnimeAsync(int offset = 0, int limit = 20, CancellationToken cancellationToken = default)
         {
-            return await _kitsuManager.GetUpcomingAnime(offset, limit, cancellationToken);
+            return await _kitsuManager.GetUpcomingAnimeAsync(offset, limit, cancellationToken);
         }
-        public async Task<KitsuAnimeModel[]> KitsuSearchAnime(string title, int offset = 0, int limit = 20, CancellationToken cancellationToken = default)
+        public async Task<KitsuAnimeModel[]> KitsuSearchAnimeAsync(string title, int offset = 0, int limit = 20, CancellationToken cancellationToken = default)
         {
-            return await _kitsuManager.SearchAnime(title, offset, limit, cancellationToken);
+            return await _kitsuManager.SearchAnimeAsync(title, offset, limit, cancellationToken);
         }
 
 
-        public async Task<AnimeModel[]> SearchAnime(string title, bool kitsuSearch = false, CancellationToken cancellationToken = default)
+        public async Task<AnimeModel[]> SearchAnimeAsync(string title, bool kitsuSearch = false, CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
@@ -58,17 +58,17 @@ namespace Tengu.Business.API
                 switch (host)
                 {
                     case Hosts.AnimeSaturn:
-                        searchTasks.Add(_animeSaturnManager.SearchAnime(title, cancellationToken));
+                        searchTasks.Add(_animeSaturnManager.SearchAnimeAsync(title, cancellationToken));
                         break;
                     case Hosts.AnimeUnity:
-                        searchTasks.Add(_animeUnityManager.SearchAnime(title, cancellationToken));
+                        searchTasks.Add(_animeUnityManager.SearchAnimeAsync(title, cancellationToken));
                         break;
                 }
             }
 
             return await ElaborateSearch(searchTasks, kitsuSearch, cancellationToken);
         }
-        public async Task<AnimeModel[]> SearchAnime(SearchFilter filter, bool kitsuSearch = false, CancellationToken cancellationToken = default)
+        public async Task<AnimeModel[]> SearchAnimeAsync(SearchFilter filter, bool kitsuSearch = false, CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
@@ -80,17 +80,17 @@ namespace Tengu.Business.API
                 switch (host)
                 {
                     case Hosts.AnimeSaturn:
-                        searchTasks.Add(_animeSaturnManager.SearchAnime(filter, cancellationToken));
+                        searchTasks.Add(_animeSaturnManager.SearchAnimeAsync(filter, cancellationToken));
                         break;
                     case Hosts.AnimeUnity:
-                        searchTasks.Add(_animeUnityManager.SearchAnime(filter, cancellationToken));
+                        searchTasks.Add(_animeUnityManager.SearchAnimeAsync(filter, cancellationToken));
                         break;
                 }
             }
 
             return await ElaborateSearch(searchTasks, kitsuSearch, cancellationToken);
         }
-        public async Task<AnimeModel[]> SearchAnime(string title, SearchFilter filter, bool kitsuSearch = false, CancellationToken cancellationToken = default)
+        public async Task<AnimeModel[]> SearchAnimeAsync(string title, SearchFilter filter, bool kitsuSearch = false, CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
@@ -101,17 +101,17 @@ namespace Tengu.Business.API
                 switch (host)
                 {
                     case Hosts.AnimeSaturn:
-                        searchTasks.Add(_animeSaturnManager.SearchAnime(title, filter, cancellationToken));
+                        searchTasks.Add(_animeSaturnManager.SearchAnimeAsync(title, filter, cancellationToken));
                         break;
                     case Hosts.AnimeUnity:
-                        searchTasks.Add(_animeUnityManager.SearchAnime(title, filter, cancellationToken));
+                        searchTasks.Add(_animeUnityManager.SearchAnimeAsync(title, filter, cancellationToken));
                         break;
                 }
             }
             return await ElaborateSearch(searchTasks, kitsuSearch, cancellationToken);
         }
 
-        public async Task<EpisodeModel[]> GetEpisodes(string animeId, Hosts host, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
+        public async Task<EpisodeModel[]> GetEpisodesAsync(string animeId, Hosts host, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
         {
             CheckForHost();
             Task<EpisodeModel[]> getEpisodesTask;
@@ -119,11 +119,11 @@ namespace Tengu.Business.API
             switch (host)
             {
                 case Hosts.AnimeSaturn:
-                    getEpisodesTask = _animeSaturnManager.GetEpisodes(animeId, offset, limit, cancellationToken);
+                    getEpisodesTask = _animeSaturnManager.GetEpisodesAsync(animeId, offset, limit, cancellationToken);
                     break;
 
                 case Hosts.AnimeUnity:
-                    getEpisodesTask = _animeUnityManager.GetEpisodes(animeId, offset, limit, cancellationToken);
+                    getEpisodesTask = _animeUnityManager.GetEpisodesAsync(animeId, offset, limit, cancellationToken);
                     break;
 
                 default:
@@ -145,7 +145,7 @@ namespace Tengu.Business.API
              return episodes;
         }
 
-        public async Task<EpisodeModel[]> GetLatestEpisode(int offset, int limit, CancellationToken cancellationToken = default)
+        public async Task<EpisodeModel[]> GetLatestEpisodeAsync(int offset, int limit, CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
@@ -157,10 +157,10 @@ namespace Tengu.Business.API
                 switch (host)
                 {
                     case Commons.Hosts.AnimeSaturn:
-                        searchTasks.Add(_animeSaturnManager.GetLatestEpisodes(offset, limit, cancellationToken));
+                        searchTasks.Add(_animeSaturnManager.GetLatestEpisodesAsync(offset, limit, cancellationToken));
                         break;
                     case Commons.Hosts.AnimeUnity:
-                        searchTasks.Add(_animeUnityManager.GetLatestEpisodes(offset, limit, cancellationToken));
+                        searchTasks.Add(_animeUnityManager.GetLatestEpisodesAsync(offset, limit, cancellationToken));
                         break;
                 }
             }
@@ -181,18 +181,17 @@ namespace Tengu.Business.API
             return episodeList.ToArray();
         }
 
-
-        public async Task Download(string episodeId, Hosts host, CancellationToken cancellationToken = default)
+        public async Task DownloadAsync(string episodeId, Hosts host, CancellationToken cancellationToken = default)
         {
             Task task;
             switch (host)
             {
                 case Hosts.AnimeSaturn:
-                    task = _animeSaturnManager.Download(DownloadPath, episodeId, cancellationToken);
+                    task = _animeSaturnManager.DownloadAsync(DownloadPath, episodeId, cancellationToken);
                     break;
 
                 case Hosts.AnimeUnity:
-                    task = _animeUnityManager.Download(DownloadPath, episodeId, cancellationToken);
+                    task = _animeUnityManager.DownloadAsync(DownloadPath, episodeId, cancellationToken);
                     break;
 
                 default:
@@ -240,7 +239,7 @@ namespace Tengu.Business.API
             {
                 Parallel.ForEach(animeList, async (anime) =>
                 {
-                    var titleSearch = _kitsuManager.SearchAnime(anime.Title, 0, 1, cancellationToken);
+                    var titleSearch = _kitsuManager.SearchAnimeAsync(anime.Title, 0, 1, cancellationToken);
 
                     var titleResponse = (await titleSearch)[0];
 

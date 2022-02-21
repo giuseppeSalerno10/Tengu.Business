@@ -17,14 +17,14 @@ namespace Tengu.Business.API
             _adapter = adapter;
         }
 
-        public Task<KitsuAnimeModel[]> SearchAnime(string title, int offset = 0, int limit = 20, CancellationToken cancellationToken = default)
+        public Task<KitsuAnimeModel[]> SearchAnimeAsync(string title, int offset = 0, int limit = 20, CancellationToken cancellationToken = default)
         {
-            return _adapter.SearchAnime(title, offset, limit);
+            return _adapter.SearchAnimeAsync(title, offset, limit);
         }
 
-        public Task<KitsuAnimeModel[]> GetUpcomingAnime(int offset = 0, int limit = 20, CancellationToken cancellationToken = default)
+        public Task<KitsuAnimeModel[]> GetUpcomingAnimeAsync(int offset = 0, int limit = 20, CancellationToken cancellationToken = default)
         {
-            return _adapter.GetUpcomingAnime(offset, limit);
+            return _adapter.GetUpcomingAnimeAsync(offset, limit);
         }
     }
 }

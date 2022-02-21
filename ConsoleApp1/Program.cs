@@ -87,7 +87,7 @@ async static Task<AnimeModel[]> SearchAnimeMenu(ITenguApi tenguApi)
             if(title != null)
             {
                 Console.WriteLine("\nRisultati:");
-                animes = await tenguApi.SearchAnime(title);
+                animes = await tenguApi.SearchAnimeAsync(title);
                 for (int i = 0; i < animes.Length; i++)
                 {
                     AnimeModel? anime = animes[i];
@@ -106,7 +106,7 @@ async static Task<AnimeModel[]> SearchAnimeMenu(ITenguApi tenguApi)
             };
 
             Console.WriteLine("Risultati:");
-            animes = await tenguApi.SearchAnime(filter);
+            animes = await tenguApi.SearchAnimeAsync(filter);
 
             for (int i = 0; i < animes.Length; i++)
             {
@@ -127,7 +127,7 @@ async static Task<AnimeModel[]> SearchAnimeMenu(ITenguApi tenguApi)
             };
 
             Console.WriteLine("Risultati:");
-            animes = await tenguApi.SearchAnime(titleWithFilter, filterWithTitle);
+            animes = await tenguApi.SearchAnimeAsync(titleWithFilter, filterWithTitle);
 
             for (int i = 0; i < animes.Length; i++)
             {
@@ -162,7 +162,7 @@ async static Task<EpisodeModel[]> GetEpisodesMenu(ITenguApi tenguApi, AnimeModel
 
     var animeIndex = Convert.ToInt32(Console.ReadLine() ?? throw new Exception(""));
 
-    episodes = await tenguApi.GetEpisodes(animes[animeIndex].Id, animes[animeIndex].Host, 1, 2);
+    episodes = await tenguApi.GetEpisodesAsync(animes[animeIndex].Id, animes[animeIndex].Host, 1, 2);
 
     Console.WriteLine($"Lista episodi ({episodes.Length}):");
     for (int i = 0; i < episodes.Length; i++)
@@ -195,7 +195,7 @@ async static Task<KitsuAnimeModel[]> KitsuMenu(ITenguApi tenguApi)
             Console.Clear();
 
             Console.WriteLine("\nRisultati:");
-            animes = await tenguApi.KitsuUpcomingAnime(15,20);
+            animes = await tenguApi.KitsuUpcomingAnimeAsync(0, 25);
             for (int i = 0; i < animes.Length; i++)
             {
                 KitsuAnimeModel? anime = animes[i];
@@ -207,6 +207,23 @@ async static Task<KitsuAnimeModel[]> KitsuMenu(ITenguApi tenguApi)
 
         case 1:
             Console.Clear();
+
+            Console.Clear();
+            Console.WriteLine("Inserisci il titolo");
+
+            var title = Console.ReadLine();
+            
+            if(title != null)
+            {
+                Console.WriteLine("\nRisultati:");
+                animes = await tenguApi.KitsuSearchAnimeAsync(title, 0, 3);
+                for (int i = 0; i < animes.Length; i++)
+                {
+                    KitsuAnimeModel? anime = animes[i];
+                    Console.WriteLine($"[{i}] {anime.Title}");
+                }
+            }
+
             break;
 
         default:

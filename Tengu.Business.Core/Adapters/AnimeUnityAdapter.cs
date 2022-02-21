@@ -10,27 +10,27 @@ namespace Tengu.Business.Core
 {
     public class AnimeUnityAdapter : IAnimeUnityAdapter
     {
-        public Task Download(string downloadPath, string animeUrl, CancellationToken cancellationToken = default)
+        public Task DownloadAsync(string downloadPath, string animeUrl, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<EpisodeModel[]> GetEpisodes(string animeId, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
+        public Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<EpisodeModel[]> GetLatestEpisodes(int offset, int limit, CancellationToken cancellationToken = default)
+        public Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset, int limit, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<AnimeModel[]> SearchByFilters(AnimeSaturnSearchFilterInput searchFilter, CancellationToken cancellationToken = default)
+        public Task<AnimeModel[]> SearchByFiltersAsync(AnimeSaturnSearchFilterInput searchFilter, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<AnimeModel[]> SearchByTitle(string title, CancellationToken cancellationToken = default)
+        public Task<AnimeModel[]> SearchByTitleAsync(string title, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

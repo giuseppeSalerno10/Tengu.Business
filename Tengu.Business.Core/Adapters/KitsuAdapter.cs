@@ -10,7 +10,7 @@ namespace Tengu.Business.Core
 {
     public class KitsuAdapter : IKitsuAdapter
     {
-        public async Task<KitsuAnimeModel[]> GetUpcomingAnime(int offset = 0, int limit = 20, CancellationToken cancellationToken = default)
+        public async Task<KitsuAnimeModel[]> GetUpcomingAnimeAsync(int offset = 0, int limit = 20, CancellationToken cancellationToken = default)
         {
             var animeList = new List<KitsuAnimeModel>();
 
@@ -45,15 +45,15 @@ namespace Tengu.Business.Core
                     });
                 }
 
-                lowerBound = offset + upperBound + 1;
-                upperBound = Math.Min(limit - lowerBound, Config.Kitsu.MaxAnimes);
+                lowerBound = lowerBound + upperBound + 1;
+                upperBound = Math.Min(limit - lowerBound + 1, Config.Kitsu.MaxAnimes);
             }
 
 
             return animeList.ToArray();
         }
 
-        public async Task<KitsuAnimeModel[]> SearchAnime(string title, int offset = 0, int limit = 20, CancellationToken cancellationToken = default)
+        public async Task<KitsuAnimeModel[]> SearchAnimeAsync(string title, int offset = 0, int limit = 20, CancellationToken cancellationToken = default)
         {
             var animeList = new List<KitsuAnimeModel>();
 
@@ -88,8 +88,8 @@ namespace Tengu.Business.Core
                     });
                 }
 
-                lowerBound = offset + upperBound + 1;
-                upperBound = Math.Min(limit - lowerBound, Config.Kitsu.MaxAnimes);
+                lowerBound = lowerBound + upperBound + 1;
+                upperBound = Math.Min(limit - lowerBound + 1, Config.Kitsu.MaxAnimes);
             }
 
             return animeList.ToArray();
