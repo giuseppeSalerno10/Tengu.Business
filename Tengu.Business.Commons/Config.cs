@@ -22,9 +22,8 @@ namespace Tengu.Business.Commons
 
     public class AnimeSaturnConfig
     {
-        public string BaseUrl { get; } = "https://www.animesaturn.it/";
-        public string BaseAnimeUrl { get; } = "https://www.animesaturn.it/anime/";
-        public string BaseEpisodeUrl { get; } = "https://www.animesaturn.it/ep/";
+        public string BaseUrl { get; } = "https://www.animesaturn.it";
+        public string BaseAnimeUrl { get; } = "https://www.animesaturn.it/anime";
         public string BaseLatestEpisodeUrl { get; } = "https://www.animesaturn.it/fetch_pages.php?request=episodes";
         public string SearchByTitleUrl { get; } = "https://www.animesaturn.it/animelist?";
         public string SearchByFilterUrl { get; } = "https://www.animesaturn.it/filter?";
@@ -34,8 +33,7 @@ namespace Tengu.Business.Commons
     public class AnimeUnityConfig
     {
         public string BaseUrl { get; } = "https://www.animeunity.tv";
-        public string SearchByTitleUrl { get; } = "https://www.animeunity.tv/livesearch";
-        public string SearchByFilterUrl { get; } = "https://www.animeunity.tv/archivio/get-animes";
-
+        public string BaseAnimeUrl { get; } = "https://www.animeunity.tv/anime";
+        public string SearchUrl { get; } = "https://www.animeunity.tv/archivio/get-animes";
     }
 }

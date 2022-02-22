@@ -4,8 +4,8 @@ namespace Tengu.Business.Core
 {
     public interface IAnimeUnityUtilities
     {
-        string[] GetGenreArray(IEnumerable<Genres> genres);
-        string[] GetLanguagesArray(IEnumerable<Languages> languages);
-        string[] GetStatusesArray(IEnumerable<Statuses> statuses);
+        Task<AnimeUnityCreateSessionOutput> CreateSession();
+        AnimeUnityGenre[] GetGenreArray(IEnumerable<Genres> genres);
+        string GetStatus(Statuses status);
     }
 }

@@ -30,10 +30,7 @@ namespace Tengu.Business.Commons
 
     public enum Genres
     {
-        // BOTH
         None,
-
-        // AS
         ArtiMarziali,
         Avventura,
         Azione,
@@ -78,7 +75,5 @@ namespace Tengu.Business.Commons
         Veicoli,
         Yaoi,
         Yuri,
-
-        // AU
     }
 }

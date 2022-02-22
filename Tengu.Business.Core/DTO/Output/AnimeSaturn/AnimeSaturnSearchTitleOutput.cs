@@ -14,7 +14,7 @@ namespace Tengu.Business.Core
         public string Link
         {
             get => link;
-            set => link = Config.AnimeSaturn.BaseAnimeUrl + value;
+            set => link = $"{Config.AnimeSaturn.BaseAnimeUrl}/{value}";
         }
         public string Image { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;

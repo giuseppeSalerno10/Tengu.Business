@@ -76,7 +76,7 @@ namespace Tengu.Business.Core
 
             return genresList.ToArray();
         }
-        public string[] GetStatusesArray(IEnumerable<Statuses> statuses)
+        public string GetStatus(Statuses status)
         {
             Dictionary<Statuses, string> statusMap = new Dictionary<Statuses, string>()
             {
@@ -86,37 +86,7 @@ namespace Tengu.Business.Core
                 { Statuses.Canceled, "3"},
             };
 
-            var statusesList = new List<string>();
-
-            foreach (var status in statuses)
-            {
-                statusesList.Add(statusMap[status]);
-            }
-
-            return statusesList.ToArray();
-        }
-        public string[] GetLanguagesArray(IEnumerable<Languages> languages)
-        {
-
-            Dictionary<Languages, string> langMap = new Dictionary<Languages, string>()
-            {
-                { Languages.Subbed , "0" },
-                { Languages.Dubbed, "1" }
-            };
-
-            var languagesList = new List<string>();
-
-            foreach (var status in languages)
-            {
-                languagesList.Add(langMap[status]);
-            }
-
-            if(languagesList.Count == 0)
-            {
-                languagesList.AddRange( langMap.Values );
-            }
-
-            return languagesList.ToArray();
+            return statusMap[status];
         }
     }
 }

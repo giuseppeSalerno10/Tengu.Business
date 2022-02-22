@@ -29,32 +29,56 @@ namespace Tengu.Business.API
             return _adapter.GetEpisodesAsync(animeId, offset, limit, cancellationToken);
         }
 
-        public Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset, int limit, CancellationToken cancellationToken = default)
+        public Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
         {
             return _adapter.GetLatestEpisodesAsync(offset, limit, cancellationToken);
         }
 
-        public Task<AnimeModel[]> SearchAnimeAsync(SearchFilter filter, CancellationToken cancellationToken = default)
+        public Task<AnimeModel[]> SearchAnimeAsync(SearchFilter filter, int count = 30, CancellationToken cancellationToken = default)
         {
-            var adapterFilter = new AnimeSaturnSearchFilterInput();
+            var adapterFilter = new AnimeUnitySearchInput();
 
-            return _adapter.SearchByFiltersAsync(adapterFilter, cancellationToken);
+            if(filter.Genres.Count() > 0)
+            {
+                adapterFilter.Genres = _utilities.GetGenreArray(filter.Genres);
+            }
+
+            if (filter.Status != Statuses.None) 
+            { 
+                adapterFilter.Status = _utilities.GetStatus(filter.Status); 
+            }
+
+            return _adapter.SearchAsync(adapterFilter, count, cancellationToken);
         }
 
-        public Task<AnimeModel[]> SearchAnimeAsync(string title, CancellationToken cancellationToken = default)
+        public Task<AnimeModel[]> SearchAnimeAsync(string title, int count = 30, CancellationToken cancellationToken = default)
         {
-            return _adapter.SearchByTitleAsync(title, cancellationToken);
+            var adapterFilter = new AnimeUnitySearchInput()
+            {
+                Title = title,
+            };
+
+            return _adapter.SearchAsync(adapterFilter, count, cancellationToken);
         }
 
-        public async Task<AnimeModel[]> SearchAnimeAsync(string title, SearchFilter filter, CancellationToken cancellationToken = default)
+        public Task<AnimeModel[]> SearchAnimeAsync(string title, SearchFilter filter, int count = 30, CancellationToken cancellationToken = default)
         {
-            var adapterFilter = new AnimeSaturnSearchFilterInput();
+            var adapterFilter = new AnimeUnitySearchInput()
+            {
+                Title=title,
+            };
 
-            var result = await _adapter.SearchByFiltersAsync(adapterFilter, cancellationToken);
+            if (filter.Genres.Count() > 0)
+            {
+                adapterFilter.Genres = _utilities.GetGenreArray(filter.Genres);
+            }
 
-            return result
-                .Where(anime => anime.Title.Contains(title))
-                .ToArray();
+            if (filter.Status != Statuses.None)
+            {
+                adapterFilter.Status = _utilities.GetStatus(filter.Status);
+            }
+
+            return _adapter.SearchAsync(adapterFilter, count, cancellationToken);
         }
     }
 }

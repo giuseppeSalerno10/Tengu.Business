@@ -10,8 +10,7 @@ namespace Tengu.Business.Core
     public class AnimeSaturnSearchFilterInput
     {
         public IEnumerable<string> Genres { get; set; } = Array.Empty<string>();
-        public IEnumerable<string> Years { get; set; } = Array.Empty<string>();
-        public IEnumerable<string> Statuses { get; set; } = Array.Empty<string>();
-        public string Language { get; set; } = string.Empty;
+        public string Year { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
     }
 }

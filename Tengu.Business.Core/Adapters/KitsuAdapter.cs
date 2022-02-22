@@ -10,7 +10,7 @@ namespace Tengu.Business.Core
 {
     public class KitsuAdapter : IKitsuAdapter
     {
-        public async Task<KitsuAnimeModel[]> GetUpcomingAnimeAsync(int offset = 0, int limit = 20, CancellationToken cancellationToken = default)
+        public async Task<KitsuAnimeModel[]> GetUpcomingAnimeAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
         {
             var animeList = new List<KitsuAnimeModel>();
 
@@ -53,7 +53,7 @@ namespace Tengu.Business.Core
             return animeList.ToArray();
         }
 
-        public async Task<KitsuAnimeModel[]> SearchAnimeAsync(string title, int offset = 0, int limit = 20, CancellationToken cancellationToken = default)
+        public async Task<KitsuAnimeModel[]> SearchAnimeAsync(string title, int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
         {
             var animeList = new List<KitsuAnimeModel>();
 

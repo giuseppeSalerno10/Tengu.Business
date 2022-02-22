@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Tengu.Business.Commons\Tengu.Business.Commons.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTO\Input\Kitsu\" />
+  </ItemGroup>
+
 </Project>
