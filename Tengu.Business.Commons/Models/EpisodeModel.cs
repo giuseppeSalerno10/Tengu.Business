@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tengu.Business.Commons
 {
-    public class EpisodeModel
+    public class EpisodeModel : IComparable<EpisodeModel>
     {
         public string Id { get; set; } = string.Empty;
         public string AnimeId { get; set; } = string.Empty;
@@ -14,5 +14,12 @@ namespace Tengu.Business.Commons
         public string Title { get; set; } = string.Empty;
         public string Url { get; set; } = string.Empty;
         public string Image { get; set; } = string.Empty;
+
+        public int EpisodeNumber { get; set; }
+
+        public int CompareTo(EpisodeModel? other)
+        {
+            return EpisodeNumber.CompareTo(other?.EpisodeNumber);
+        }
     }
 }

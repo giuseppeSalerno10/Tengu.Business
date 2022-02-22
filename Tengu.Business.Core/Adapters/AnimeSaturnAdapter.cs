@@ -27,26 +27,32 @@ namespace Tengu.Business.Core
 
         public async Task<AnimeModel[]> SearchByTitleAsync(string title, CancellationToken cancellationToken = default)
         {
-            var requestUrl = $"{Config.AnimeSaturn.SearchByTitleUrl}" +
-                $"search=1&" +
-                $"key={title}";
-
-            var response = requestUrl
-                .GetJsonAsync<AnimeSaturnSearchTitleOutput[]>(cancellationToken);
-
             var animeList = new List<AnimeModel>();
 
-            foreach (var item in await response)
+            var requestUrl = $"{Config.AnimeSaturn.SearchByTitleUrl}" +
+                $"search={title}";
+
+            var web = new HtmlWeb();
+
+            HtmlDocument doc;
+            doc = await web.LoadFromWebAsync($"{requestUrl}");
+
+            var animeNodes = doc.DocumentNode.SelectNodes($"//div[@class='container p-3 shadow rounded bg-dark-as-box']/ul[@class='list-group']");
+
+            foreach (var node in animeNodes)
             {
+                var urlNode = node.SelectSingleNode("./li/div[@class='item-archivio']/div[@class='info-archivio']/h3/a");
+
+                var url = urlNode.GetAttributeValue("href", "");
                 var anime = new AnimeModel()
                 {
-                    Id = item.Link.Split("/")[^1],
+                    Url = url,
+                    Id = url.Split("/")[^1],
                     Host = Hosts.AnimeSaturn,
-                    Title = item.Name,
-                    Image = item.Image,
-                    Url = item.Link
+                    Title = urlNode.InnerText,
+                    Image = node.SelectSingleNode("./li/div[@class='item-archivio']/a/img[@class='rounded locandina-archivio']")
+                    .GetAttributeValue("src", "")
                 };
-
                 animeList.Add(anime);
             }
 
@@ -133,7 +139,7 @@ namespace Tengu.Business.Core
                 .GetElementbyId("resultsxd")
                 .SelectNodes("./div/div/div");
 
-            var episodeList = new ConcurrentBag<EpisodeModel>();
+            var episodeBag = new ConcurrentBag<EpisodeModel>();
 
             limit = limit == 0 ? episodesNodes.Count : limit;
 
@@ -162,13 +168,19 @@ namespace Tengu.Business.Core
                         Host = Hosts.AnimeSaturn,
                         Title = title,
                         Url = url,
+                        EpisodeNumber = index
                     };
-                    episodeList.Add(episode);
+                    episodeBag.Add(episode);
                 }
 
             });
 
-            return episodeList.ToArray();
+            var episodesList = episodeBag
+                .ToList();
+
+            episodesList.Sort();
+
+            return episodesList.ToArray();
 
         }
 
@@ -239,7 +251,7 @@ namespace Tengu.Business.Core
             {
                 var scriptNode = doc.DocumentNode.SelectSingleNode("//center/div/div/div/div/div/div/div/script[2]").InnerText;
 
-                var filename = doc.DocumentNode.SelectSingleNode("//center/div/div/div/h4[@class='text-white mb-3']").InnerText;
+                var filename = doc.DocumentNode.SelectSingleNode("//center/div/div/div/h4[@class='text-white mb-3']").InnerText.Trim();
 
                 var m3u8InitialUrl = scriptNode.Split("file: ")[1]
                     .Split(",")[0]

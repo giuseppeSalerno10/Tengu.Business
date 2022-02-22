@@ -1,6 +1,5 @@
 ﻿using Downla;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +30,7 @@ namespace Tengu.Business.API
             services.AddTransient<IDownlaClient, DownlaClient>();
             services.AddTransient<IM3u8Client, M3u8Client>();
 
-            services.AddSingleton<ILogger<TenguApi>, Logger<TenguApi>>();
+            services.AddSingleton<ILogger, Logger>();
             return services;
         }
     }

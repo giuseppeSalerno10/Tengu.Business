@@ -26,7 +26,7 @@ namespace Tengu.Business.Commons
         public string BaseAnimeUrl { get; } = "https://www.animesaturn.it/anime/";
         public string BaseEpisodeUrl { get; } = "https://www.animesaturn.it/ep/";
         public string BaseLatestEpisodeUrl { get; } = "https://www.animesaturn.it/fetch_pages.php?request=episodes";
-        public string SearchByTitleUrl { get; } = "https://www.animesaturn.it/index.php?";
+        public string SearchByTitleUrl { get; } = "https://www.animesaturn.it/animelist?";
         public string SearchByFilterUrl { get; } = "https://www.animesaturn.it/filter?";
 
     }

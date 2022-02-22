@@ -5,9 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tengu.Business.Commons;
-using Tengu.Business.Core;
-
-using Microsoft.Extensions.Logging;
 
 namespace Tengu.Business.API
 {
@@ -16,7 +13,7 @@ namespace Tengu.Business.API
         public Hosts[] CurrentHosts { get; set; } = Array.Empty<Hosts>();
         public string DownloadPath { get; set; } = $"{Environment.CurrentDirectory}\\DownloadedAnime";
 
-        private readonly ILogger<TenguApi> _logger;
+        private readonly ILogger _logger;
 
         private readonly IAnimeUnityManager _animeUnityManager;
         private readonly IAnimeSaturnManager _animeSaturnManager;
@@ -26,13 +23,15 @@ namespace Tengu.Business.API
             IAnimeUnityManager animeUnityManager, 
             IAnimeSaturnManager animeSaturnManager, 
             IKitsuManager kitsuManager, 
-            ILogger<TenguApi> logger)
+            ILogger logger)
         {
             _animeUnityManager = animeUnityManager;
             _animeSaturnManager = animeSaturnManager;
             _kitsuManager = kitsuManager;
 
             _logger = logger;
+
+            _logger.WriteInfo("TenguApi is READY", new { Infos = "NONE" });
         }
 
 
@@ -138,7 +137,7 @@ namespace Tengu.Business.API
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in GetEpisodes", new { animeId, host });
+                _logger.WriteError("Error in GetEpisodes", ex);
                 throw;
             }
 
@@ -156,10 +155,10 @@ namespace Tengu.Business.API
             {
                 switch (host)
                 {
-                    case Commons.Hosts.AnimeSaturn:
+                    case Hosts.AnimeSaturn:
                         searchTasks.Add(_animeSaturnManager.GetLatestEpisodesAsync(offset, limit, cancellationToken));
                         break;
-                    case Commons.Hosts.AnimeUnity:
+                    case Hosts.AnimeUnity:
                         searchTasks.Add(_animeUnityManager.GetLatestEpisodesAsync(offset, limit, cancellationToken));
                         break;
                 }
@@ -173,7 +172,7 @@ namespace Tengu.Business.API
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error in GetLatestEpisode", limit);
+                    _logger.WriteError("Error in GetLatestEpisode", ex);
                     throw;
                 }
             }
@@ -204,7 +203,7 @@ namespace Tengu.Business.API
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in Download", new { episodeId, host });
+                _logger.WriteError("Error in Download", ex);
                 throw;
             }
         }
@@ -229,7 +228,7 @@ namespace Tengu.Business.API
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, message:"Error in SearchAnime -> ElaborateSearch", new { searchTasks, kitsuSearch} );
+                        _logger.WriteError(message:"Error in SearchAnime -> ElaborateSearch", ex);
                         throw;
                     }
                 }

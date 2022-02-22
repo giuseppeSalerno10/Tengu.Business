@@ -162,7 +162,7 @@ async static Task<EpisodeModel[]> GetEpisodesMenu(ITenguApi tenguApi, AnimeModel
 
     var animeIndex = Convert.ToInt32(Console.ReadLine() ?? throw new Exception(""));
 
-    episodes = await tenguApi.GetEpisodesAsync(animes[animeIndex].Id, animes[animeIndex].Host, 1, 2);
+    episodes = await tenguApi.GetEpisodesAsync(animes[animeIndex].Id, animes[animeIndex].Host);
 
     Console.WriteLine($"Lista episodi ({episodes.Length}):");
     for (int i = 0; i < episodes.Length; i++)
@@ -176,7 +176,28 @@ async static Task<EpisodeModel[]> GetEpisodesMenu(ITenguApi tenguApi, AnimeModel
 
 async static Task DownloadEpisodeMenu(ITenguApi tenguApi, EpisodeModel[] episodes)
 {
-    throw new NotImplementedException();
+    Console.WriteLine("Lista Episodi");
+
+    for (int i = 0; i < episodes.Length; i++)
+    {
+        EpisodeModel? ep = episodes[i];
+        Console.WriteLine($"[{i}] {ep.Title} - {ep.Id}");
+    }
+    Console.WriteLine(
+        "\nScegli degki episodi (divisore ,) [0-n]:"
+        );
+
+    var episodeIndexes = Console.ReadLine() ?? throw new Exception("");
+
+    foreach (var episodeIndex in episodeIndexes.Split(","))
+    {
+        var episode = episodes[Convert.ToInt32(episodeIndex)];
+
+        await tenguApi.DownloadAsync(episode.Id, episode.Host);
+    }
+
+    Console.WriteLine("Anime scaricati");
+
 }
 
 async static Task<KitsuAnimeModel[]> KitsuMenu(ITenguApi tenguApi)
