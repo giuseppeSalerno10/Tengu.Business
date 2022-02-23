@@ -251,7 +251,13 @@ async static Task DownloadEpisodeMenu(ITenguApi tenguApi, EpisodeModel[] episode
     {
         var episode = episodes[Convert.ToInt32(episodeIndex)];
 
-        await tenguApi.DownloadAsync(episode.Id, episode.Host);
+        var download = tenguApi.DownloadAsync(episode.Id, episode.Host);
+        
+        while(download.Status == Downla.DownloadStatuses.Downloading)
+        {
+            Console.WriteLine($"Percentage: {download.DownloadedPackets / download.TotalPackets} %");
+        }
+        await download.EnsureDownloadCompletation(CancellationToken.None);
     }
 
     Console.WriteLine("Anime scaricati");

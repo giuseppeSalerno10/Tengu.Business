@@ -64,7 +64,7 @@ namespace Tengu.Business.Commons
                 strToWrite += $"MESSAGE: {tempException.Message}\n" +
                     $"STACKTRACE: {tempException.StackTrace}\n";
 
-                tempException = exception?.InnerException;
+                tempException = tempException?.InnerException;
 
                 if (tempException != null)
                 {

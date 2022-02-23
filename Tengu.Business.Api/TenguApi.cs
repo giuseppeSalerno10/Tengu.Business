@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Downla;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -180,32 +181,25 @@ namespace Tengu.Business.API
             return episodeList.ToArray();
         }
 
-        public async Task DownloadAsync(string episodeId, Hosts host, CancellationToken cancellationToken = default)
+        public DownloadInfosModel DownloadAsync(string episodeUrl, Hosts host, CancellationToken cancellationToken = default)
         {
-            Task task;
+            DownloadInfosModel downloadInfo;
+
             switch (host)
             {
                 case Hosts.AnimeSaturn:
-                    task = _animeSaturnManager.DownloadAsync(DownloadPath, episodeId, cancellationToken);
+                    downloadInfo = _animeSaturnManager.DownloadAsync(DownloadPath, episodeUrl, cancellationToken);
                     break;
 
                 case Hosts.AnimeUnity:
-                    task = _animeUnityManager.DownloadAsync(DownloadPath, episodeId, cancellationToken);
+                    downloadInfo = _animeUnityManager.DownloadAsync(DownloadPath, episodeUrl, cancellationToken);
                     break;
 
                 default:
                     throw new TenguException("No host found");
             }
 
-            try
-            {
-                await task;
-            }
-            catch (Exception ex)
-            {
-                _logger.WriteError("Error in Download", ex);
-                throw;
-            }
+            return downloadInfo;
         }
 
 

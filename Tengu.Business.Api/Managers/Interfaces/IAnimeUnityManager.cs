@@ -1,10 +1,11 @@
-﻿using Tengu.Business.Commons;
+﻿using Downla;
+using Tengu.Business.Commons;
 
 namespace Tengu.Business.API
 {
     public interface IAnimeUnityManager
     {
-        Task DownloadAsync(string downloadPath, string episodeId, CancellationToken cancellationToken = default);
+        DownloadInfosModel DownloadAsync(string downloadPath, string episodeId, CancellationToken cancellationToken = default);
         Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default);
         Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset = 0, int limit = 0, CancellationToken cancellationToken = default);
         Task<AnimeModel[]> SearchAnimeAsync(SearchFilter filter, int count = 30, CancellationToken cancellationToken = default);

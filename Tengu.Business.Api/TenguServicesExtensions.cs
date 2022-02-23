@@ -27,10 +27,9 @@ namespace Tengu.Business.API
             services.AddSingleton<IAnimeSaturnUtilities, AnimeSaturnUtilities>();
             services.AddSingleton<IAnimeUnityUtilities, AnimeUnityUtilities>();
 
-            services.AddTransient<IDownlaClient, DownlaClient>();
-            services.AddTransient<IM3u8Client, M3u8Client>();
-
             services.AddSingleton<ILogger, Logger>();
+
+            services.AddDownlaServices();
             return services;
         }
     }

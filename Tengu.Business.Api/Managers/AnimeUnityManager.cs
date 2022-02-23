@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Downla;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,16 +13,19 @@ namespace Tengu.Business.API
     {
         private readonly IAnimeUnityAdapter _adapter;
         private readonly IAnimeUnityUtilities _utilities;
+        private readonly IDownlaClient _downlaClient;
 
-        public AnimeUnityManager(IAnimeUnityAdapter adapter, IAnimeUnityUtilities utilities)
+        public AnimeUnityManager(IAnimeUnityAdapter adapter, IAnimeUnityUtilities utilities, IDownlaClient client)
         {
             _adapter = adapter;
             _utilities = utilities;
+            _downlaClient = client;
         }
 
-        public Task DownloadAsync(string downloadPath, string episodeId, CancellationToken cancellationToken = default)
+        public DownloadInfosModel DownloadAsync(string downloadPath, string episodeUrl, CancellationToken cancellationToken = default)
         {
-            return _adapter.DownloadAsync(downloadPath, episodeId, cancellationToken);
+            _downlaClient.DownloadPath = downloadPath;
+            return _downlaClient.StartDownload(new Uri(episodeUrl), cancellationToken);
         }
 
         public Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
