@@ -222,6 +222,7 @@ namespace Tengu.Business.Core
                             Image = urlNode.SelectSingleNode("./img").GetAttributeValue("src", ""),
                             Id = streamUrl.Split('=')[^1],
                             DownloadUrl = downloadUrl,
+                            EpisodeNumber = Convert.ToInt32(titleNode.InnerText.Trim().Split(" ")[^1])
                         };
 
                         episodeList.Add(episode);
@@ -264,36 +265,31 @@ namespace Tengu.Business.Core
             }
             else
             {
-                var currentPage = 0;
-                while (currentPage < serverNodes.Count && string.IsNullOrEmpty(url))
+                var nextPageUrl = serverNodes[0].GetAttributeValue("href","");
+
+                var internalWeb = new HtmlWeb();
+                var internalDoc = await web.LoadFromWebAsync(nextPageUrl);
+
+                var siteRef = internalDoc.DocumentNode.SelectSingleNode("//div[@class='button']/a").GetAttributeValue("href", "");
+
+                if (siteRef.Contains("streamtape"))
                 {
-                    var nextPageUrl = serverNodes[currentPage].GetAttributeValue("href","");
+                    siteRef = siteRef.Replace("/v/", "/e/");
 
-                    var internalWeb = new HtmlWeb();
-                    var internalDoc = await web.LoadFromWebAsync(nextPageUrl);
+                    internalDoc = await web.LoadFromWebAsync(siteRef);
 
-                    var siteRef = internalDoc.DocumentNode.SelectSingleNode("//div[@class='button']/a").GetAttributeValue("href", "");
+                    var cryptInfo = internalDoc.DocumentNode.SelectSingleNode("//script[6]").InnerText.Split("?id=")[1].Split("').")[0];
 
-                    if (siteRef.Contains("streamtape"))
-                    {
-                        siteRef = siteRef.Replace("/v/", "/e/");
+                    var informationUrl = $"https://streamtape.com/get_video?id={cryptInfo}&stream=1";
 
-                        internalDoc = await web.LoadFromWebAsync(siteRef);
+                    var infoResponse = await informationUrl
+                        .WithAutoRedirect(false)
+                        .HeadAsync();
 
-                        var cryptInfo = internalDoc.DocumentNode.SelectSingleNode("//script[6]").InnerText.Split("?id=")[1].Split("').")[0];
+                    url = infoResponse.Headers.FirstOrDefault( header => header.Name == "Location").Value;
 
-                        var informationUrl = $"https://streamtape.com/get_video?id={cryptInfo}&stream=1";
-
-                        var infoResponse = await informationUrl
-                            .WithAutoRedirect(false)
-                            .HeadAsync();
-
-                        url = infoResponse.Headers.FirstOrDefault( header => header.Name == "Location").Value;
-
-                    }
-
-                    currentPage++;
                 }
+                
             }
             
             return url;
