@@ -2,6 +2,7 @@
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -49,8 +50,8 @@ namespace Tengu.Business.Core
                 var episodeToAdd = new EpisodeModel()
                 {
                     Url = requestUrl,
-                    Title = $"Episodio {episode.Number}",
-                    AnimeId = episode.AnimeId.ToString(),
+                    Title = $"{episode.Anime.Title} - Episodio {episode.Number}",
+                    AnimeId = episode.Anime.Id.ToString(),
                     DownloadUrl = episode.Link,
                     EpisodeNumber = Convert.ToInt32(episode.Number),
                     Host = Hosts.AnimeUnity,
@@ -65,17 +66,18 @@ namespace Tengu.Business.Core
 
         public async Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
         {
-            var episodeList = new List<EpisodeModel>();
+            var episodeList = new ConcurrentBag<EpisodeModel>();
 
             var requestUrl = $"{Config.AnimeUnity.BaseUrl}";
 
             requestUrl += $"/?page={1 + offset / 30}";
 
             var web = new HtmlWeb();
-            var doc = await web.LoadFromWebAsync(requestUrl, cancellationToken);
 
             while(episodeList.Count < limit - offset)
             {
+                var doc = await web.LoadFromWebAsync(requestUrl, cancellationToken);
+
                 var episodesJson = doc.DocumentNode
                     .SelectSingleNode("//layout-items")
                     .GetAttributeValue("items-json", "")
@@ -95,25 +97,16 @@ namespace Tengu.Business.Core
 
                     var episodeToAdd = new EpisodeModel()
                     {
-                        Title = $"AnimeID: {episode.AnimeId} - Episodio {episode.Number}",
-                        AnimeId = episode.AnimeId.ToString(),
+                        Title = $"{episode.Anime.Title} - Episodio {episode.Number}",
+                        AnimeId = episode.Anime.Id.ToString(),
                         EpisodeNumber = Convert.ToInt32(episode.Number),
                         Host = Hosts.AnimeUnity,
                         Id = episode.Id.ToString(),
-                        Url = episode.Link
+                        DownloadUrl = episode.Link,
+                        Image = episode.Anime.ImageUrl
                     };
 
-                    var internalWeb = new HtmlWeb();
-                    var internalDoc = await internalWeb.LoadFromWebAsync(episodeToAdd.Url, cancellationToken);
-
-                    var episodeJson = internalDoc.GetElementbyId("anime")
-                        .SelectSingleNode("//video-player")
-                        .GetAttributeValue("episode", "")
-                        .Replace("&quot;", "\"")
-                        .Replace("\\/", "/");
-
-                    episodeToAdd.DownloadUrl = (JsonConvert.DeserializeObject<AnimeUnityGetEpisodesOutput>(episodeJson)).Link;
-
+                  
                     episodeList.Add(episodeToAdd);
                 }
 

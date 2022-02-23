@@ -22,7 +22,7 @@ async static Task App(IServiceProvider services)
 
     ITenguApi tenguApi = (ITenguApi) (services.GetService(typeof(ITenguApi)) ?? throw new Exception());
 
-    tenguApi.CurrentHosts = new Hosts[] { Hosts.AnimeSaturn };
+    tenguApi.CurrentHosts = new Hosts[] { Hosts.AnimeUnity, Hosts.AnimeSaturn };
 
     while (true)
     {
@@ -46,7 +46,7 @@ async static Task App(IServiceProvider services)
                 break;
             case 1:
                 Console.Clear();
-                await GetLatestEpisodesMenu(tenguApi);
+                currentEpisodes = await GetLatestEpisodesMenu(tenguApi);
                 break;
             case 2:
                 Console.Clear();
@@ -54,7 +54,7 @@ async static Task App(IServiceProvider services)
                 break;
             case 3:
                 Console.Clear();
-                await DownloadEpisodeMenu(tenguApi, currentEpisodes);
+                DownloadEpisodeMenu(tenguApi, currentEpisodes);
                 break;
             case 4:
                 Console.Clear();
@@ -232,7 +232,7 @@ async static Task<EpisodeModel[]> GetLatestEpisodesMenu(ITenguApi tenguApi)
     return episodes;
 }
 
-async static Task DownloadEpisodeMenu(ITenguApi tenguApi, EpisodeModel[] episodes)
+static void DownloadEpisodeMenu(ITenguApi tenguApi, EpisodeModel[] episodes)
 {
     Console.WriteLine("Lista Episodi");
 
@@ -242,7 +242,7 @@ async static Task DownloadEpisodeMenu(ITenguApi tenguApi, EpisodeModel[] episode
         Console.WriteLine($"[{i}] {ep.Title} - {ep.Id}");
     }
     Console.WriteLine(
-        "\nScegli degki episodi (divisore ,) [0-n]:"
+        "\nScegli gli episodi da scaricare (divisore ,) [0-n]:"
         );
 
     var episodeIndexes = Console.ReadLine() ?? throw new Exception("");
@@ -251,13 +251,16 @@ async static Task DownloadEpisodeMenu(ITenguApi tenguApi, EpisodeModel[] episode
     {
         var episode = episodes[Convert.ToInt32(episodeIndex)];
 
-        var download = tenguApi.DownloadAsync(episode.Id, episode.Host);
+        var download = tenguApi.DownloadAsync(episode.DownloadUrl, episode.Host);
         
         while(download.Status == Downla.DownloadStatuses.Downloading)
         {
-            Console.WriteLine($"Percentage: {download.DownloadedPackets / download.TotalPackets} %");
+            if(download.TotalPackets != 0)
+            {
+                Console.WriteLine($"Percentage: {download.DownloadedPackets * 100 / download.TotalPackets} %");
+                Thread.Sleep(5000);
+            }
         }
-        await download.EnsureDownloadCompletation(CancellationToken.None);
     }
 
     Console.WriteLine("Anime scaricati");

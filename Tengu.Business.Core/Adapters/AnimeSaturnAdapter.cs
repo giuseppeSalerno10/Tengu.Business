@@ -141,15 +141,15 @@ namespace Tengu.Business.Core
 
             limit = limit == 0 ? episodesNodes.Count : limit;
 
-            for (int index = offset; index < limit; index++)
+            Parallel.For(offset, limit, index =>
             {
                 if (index >= offset && index <= limit)
                 {
                     var episodeUrl = episodesNodes[index]
                         .SelectSingleNode("./a")
                         .GetAttributeValue("href", "");
-                    var url = await GetAnimeStreamUrl(episodeUrl);
-                    var downloadUrl = await GetDownloadUrl(url);
+                    var url = GetAnimeStreamUrl(episodeUrl).Result;
+                    var downloadUrl = GetDownloadUrl(url).Result;
 
                     var episode = new EpisodeModel
                     {
@@ -158,12 +158,12 @@ namespace Tengu.Business.Core
                         Host = Hosts.AnimeSaturn,
                         Title = $"Episode {index}",
                         Url = animeUrl,
-                        EpisodeNumber = index
+                        EpisodeNumber = index,
+                        DownloadUrl = downloadUrl
                     };
                     episodeBag.Add(episode);
                 }
-
-            }
+            });
 
             var episodesList = episodeBag
                 .ToList();
@@ -176,7 +176,7 @@ namespace Tengu.Business.Core
 
         public async Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
         {
-            var episodeList = new List<EpisodeModel>();
+            var episodeList = new ConcurrentBag<EpisodeModel>();
 
             var doc = new HtmlDocument();
 
@@ -199,9 +199,9 @@ namespace Tengu.Business.Core
 
                 var latestNodes = doc.DocumentNode.SelectNodes("./div/div[@class='anime-card main-anime-card']");
 
-                foreach (var node in latestNodes)
+                await Parallel.ForEachAsync(latestNodes, async (node, cancellationToken) =>
                 {
-                    if(ignoreCount > 0)
+                    if (ignoreCount > 0)
                     {
                         ignoreCount--;
                     }
@@ -226,8 +226,7 @@ namespace Tengu.Business.Core
 
                         episodeList.Add(episode);
                     }
-                }
-
+                });
                 currentPage++;
             }
 
@@ -250,13 +249,53 @@ namespace Tengu.Business.Core
         }
         private async Task<string> GetDownloadUrl(string episodeStreamUrl)
         {
-            var internalWeb = new HtmlWeb();
-            var internalDoc = await internalWeb.LoadFromWebAsync(episodeStreamUrl);
+            var web = new HtmlWeb();
+            var doc = await web.LoadFromWebAsync(episodeStreamUrl);
 
-            var url = internalDoc.DocumentNode
-                    .SelectSingleNode("//source")
-                    .GetAttributeValue("src", "");
+            var sourceNode = doc.DocumentNode.SelectSingleNode("//source");
 
+            var serverNodes = doc.DocumentNode.SelectNodes("//a[@class='dropdown-item']");
+
+            var url = "";
+
+            if(sourceNode != null)
+            {
+                url = sourceNode.GetAttributeValue("src", "");
+            }
+            else
+            {
+                var currentPage = 0;
+                while (currentPage < serverNodes.Count && string.IsNullOrEmpty(url))
+                {
+                    var nextPageUrl = serverNodes[currentPage].GetAttributeValue("href","");
+
+                    var internalWeb = new HtmlWeb();
+                    var internalDoc = await web.LoadFromWebAsync(nextPageUrl);
+
+                    var siteRef = internalDoc.DocumentNode.SelectSingleNode("//div[@class='button']/a").GetAttributeValue("href", "");
+
+                    if (siteRef.Contains("streamtape"))
+                    {
+                        siteRef = siteRef.Replace("/v/", "/e/");
+
+                        internalDoc = await web.LoadFromWebAsync(siteRef);
+
+                        var cryptInfo = internalDoc.DocumentNode.SelectSingleNode("//script[6]").InnerText.Split("?id=")[1].Split("').")[0];
+
+                        var informationUrl = $"https://streamtape.com/get_video?id={cryptInfo}&stream=1";
+
+                        var infoResponse = await informationUrl
+                            .WithAutoRedirect(false)
+                            .HeadAsync();
+
+                        url = infoResponse.Headers.FirstOrDefault( header => header.Name == "Location").Value;
+
+                    }
+
+                    currentPage++;
+                }
+            }
+            
             return url;
         }
 

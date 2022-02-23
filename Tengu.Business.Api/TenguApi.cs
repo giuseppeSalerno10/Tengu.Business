@@ -169,7 +169,8 @@ namespace Tengu.Business.API
             {
                 try
                 {
-                    episodeList.AddRange(await task);
+                    var result = await task;
+                    episodeList.AddRange(result);
                 }
                 catch (Exception ex)
                 {

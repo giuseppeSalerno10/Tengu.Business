@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tengu.Business.Commons
+namespace Tengu.Business.Core
 {
     public class AnimeUnityGenre
     {
