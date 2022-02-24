@@ -13,10 +13,10 @@ namespace Tengu.Business.Commons
         public Hosts Host { get; set; } = Hosts.None;
         public string Title { get; set; } = string.Empty;
         public string Url { get; set; } = string.Empty;
-        public string DownloadUrl { get; set; } = string.Empty;
         public string Image { get; set; } = string.Empty;
 
         public int EpisodeNumber { get; set; }
+        public string DownloadUrl { get; set; } = string.Empty;
 
         public int CompareTo(EpisodeModel? other)
         {

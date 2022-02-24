@@ -30,7 +30,7 @@ namespace Tengu.Business.Core
             var web = new HtmlWeb();
 
             HtmlDocument doc;
-            doc = await web.LoadFromWebAsync($"{requestUrl}");
+            doc = await web.LoadFromWebAsync($"{requestUrl}", cancellationToken);
 
             var animeNodes = doc.DocumentNode.SelectNodes($"//div[@class='container p-3 shadow rounded bg-dark-as-box']/ul[@class='list-group']");
 
@@ -80,7 +80,7 @@ namespace Tengu.Business.Core
             }
 
             HtmlDocument doc;
-            doc = await web.LoadFromWebAsync($"{requestUrl}");
+            doc = await web.LoadFromWebAsync($"{requestUrl}", cancellationToken);
             var totalPagesNode = doc.DocumentNode.SelectSingleNode("./div[@class='container p-3 shadow rounded bg-dark-as-box']/script");
 
             if (totalPagesNode != null)
@@ -131,7 +131,7 @@ namespace Tengu.Business.Core
 
             var animeUrl = $"{Config.AnimeSaturn.BaseAnimeUrl}/{animeId}";
 
-            doc = await web.LoadFromWebAsync($"{animeUrl}");
+            doc = await web.LoadFromWebAsync($"{animeUrl}", cancellationToken);
 
             var episodesNodes = doc
                 .GetElementbyId("resultsxd")
@@ -148,8 +148,8 @@ namespace Tengu.Business.Core
                     var episodeUrl = episodesNodes[index]
                         .SelectSingleNode("./a")
                         .GetAttributeValue("href", "");
-                    var url = GetAnimeStreamUrl(episodeUrl).Result;
-                    var downloadUrl = GetDownloadUrl(url).Result;
+                    
+                    var url = GetAnimeStreamUrl(episodeUrl, cancellationToken).Result;
 
                     var episode = new EpisodeModel
                     {
@@ -157,9 +157,9 @@ namespace Tengu.Business.Core
                         AnimeId = animeId,
                         Host = Hosts.AnimeSaturn,
                         Title = $"Episode {index}",
-                        Url = animeUrl,
+                        Url = url,
                         EpisodeNumber = index,
-                        DownloadUrl = downloadUrl
+                        DownloadUrl = url,
                     };
                     episodeBag.Add(episode);
                 }
@@ -211,8 +211,7 @@ namespace Tengu.Business.Core
                         var titleNode = node.SelectSingleNode("./div[@class='card mb-4 shadow-sm']/a[2]");
 
                         var url = urlNode.GetAttributeValue("href", "");
-                        var streamUrl = await GetAnimeStreamUrl(url);
-                        var downloadUrl = await GetDownloadUrl(streamUrl);
+                        var streamUrl = await GetAnimeStreamUrl(url, cancellationToken);
 
                         var episode = new EpisodeModel()
                         {
@@ -221,8 +220,8 @@ namespace Tengu.Business.Core
                             Title = $"{urlNode.GetAttributeValue("title", "").Trim()} {titleNode.InnerText.Trim()}",
                             Image = urlNode.SelectSingleNode("./img").GetAttributeValue("src", ""),
                             Id = streamUrl.Split('=')[^1],
-                            DownloadUrl = downloadUrl,
-                            EpisodeNumber = Convert.ToInt32(titleNode.InnerText.Trim().Split(" ")[^1])
+                            EpisodeNumber = Convert.ToInt32(titleNode.InnerText.Trim().Split(" ")[^1]),
+                            DownloadUrl = streamUrl
                         };
 
                         episodeList.Add(episode);
@@ -235,23 +234,11 @@ namespace Tengu.Business.Core
 
 
         }
-        
 
-        private async Task<string> GetAnimeStreamUrl(string episodeUrl)
-        {
-            var internalWeb = new HtmlWeb();
-            var internalDoc = await internalWeb.LoadFromWebAsync(episodeUrl);
-
-            var url = internalDoc.DocumentNode
-                    .SelectSingleNode("./div/div/div[@class='card-body']/a")
-                    .GetAttributeValue("href", "");
-
-            return url;
-        }
-        private async Task<string> GetDownloadUrl(string episodeStreamUrl)
+        public async Task<string> GetDownloadUrl(string episodeStreamUrl, CancellationToken cancellationToken = default)
         {
             var web = new HtmlWeb();
-            var doc = await web.LoadFromWebAsync(episodeStreamUrl);
+            var doc = await web.LoadFromWebAsync(episodeStreamUrl, cancellationToken);
 
             var sourceNode = doc.DocumentNode.SelectSingleNode("//source");
 
@@ -259,16 +246,16 @@ namespace Tengu.Business.Core
 
             var url = "";
 
-            if(sourceNode != null)
+            if (sourceNode != null)
             {
                 url = sourceNode.GetAttributeValue("src", "");
             }
             else
             {
-                var nextPageUrl = serverNodes[0].GetAttributeValue("href","");
+                var nextPageUrl = serverNodes[0].GetAttributeValue("href", "");
 
                 var internalWeb = new HtmlWeb();
-                var internalDoc = await web.LoadFromWebAsync(nextPageUrl);
+                var internalDoc = await web.LoadFromWebAsync(nextPageUrl, cancellationToken);
 
                 var siteRef = internalDoc.DocumentNode.SelectSingleNode("//div[@class='button']/a").GetAttributeValue("href", "");
 
@@ -276,7 +263,7 @@ namespace Tengu.Business.Core
                 {
                     siteRef = siteRef.Replace("/v/", "/e/");
 
-                    internalDoc = await web.LoadFromWebAsync(siteRef);
+                    internalDoc = await web.LoadFromWebAsync(siteRef, cancellationToken);
 
                     var cryptInfo = internalDoc.DocumentNode.SelectSingleNode("//script[6]").InnerText.Split("?id=")[1].Split("').")[0];
 
@@ -284,16 +271,29 @@ namespace Tengu.Business.Core
 
                     var infoResponse = await informationUrl
                         .WithAutoRedirect(false)
-                        .HeadAsync();
+                        .HeadAsync(cancellationToken);
 
-                    url = infoResponse.Headers.FirstOrDefault( header => header.Name == "Location").Value;
+                    url = infoResponse.Headers.FirstOrDefault(header => header.Name == "Location").Value;
 
                 }
-                
+
             }
-            
+
             return url;
         }
+
+        private async Task<string> GetAnimeStreamUrl(string episodeUrl, CancellationToken cancellationToken)
+        {
+            var internalWeb = new HtmlWeb();
+            var internalDoc = await internalWeb.LoadFromWebAsync(episodeUrl, cancellationToken);
+
+            var url = internalDoc.DocumentNode
+                    .SelectSingleNode("./div/div/div[@class='card-body']/a")
+                    .GetAttributeValue("href", "");
+
+            return url;
+        }
+       
 
     }
 }

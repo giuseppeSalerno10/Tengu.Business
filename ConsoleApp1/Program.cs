@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Downla;
+using Microsoft.Extensions.Hosting;
+using System.Collections.Concurrent;
 using Tengu.Business.API;
 using Tengu.Business.Commons;
 
@@ -245,22 +247,61 @@ static void DownloadEpisodeMenu(ITenguApi tenguApi, EpisodeModel[] episodes)
         "\nScegli gli episodi da scaricare (divisore ,) [0-n]:"
         );
 
-    var episodeIndexes = Console.ReadLine() ?? throw new Exception("");
+    var episodeIndexes = (Console.ReadLine() ?? throw new Exception("")).Split(",");
 
-    foreach (var episodeIndex in episodeIndexes.Split(","))
+    var queues = new Dictionary<Hosts, List<EpisodeModel>>();
+
+    foreach(var host in tenguApi.CurrentHosts)
+    {
+        queues.Add(host, new List<EpisodeModel>());
+    }
+
+    foreach (var episodeIndex in episodeIndexes)
     {
         var episode = episodes[Convert.ToInt32(episodeIndex)];
+        queues[episode.Host].Add(episode);
+    }
 
-        var download = tenguApi.DownloadAsync(episode.DownloadUrl, episode.Host);
-        
-        while(download.Status == Downla.DownloadStatuses.Downloading)
-        {
-            if(download.TotalPackets != 0)
+    var tasks = new List<Task>();
+
+    var downloadList = new ConcurrentBag<DownloadInfosModel>();
+
+    foreach (var queue in queues)
+    {
+        tasks.Add(
+            Task.Run( async () => 
             {
-                Console.WriteLine($"Percentage: {download.DownloadedPackets * 100 / download.TotalPackets} %");
-                Thread.Sleep(5000);
+                foreach (var episode in queue.Value)
+                {
+                    var download = tenguApi.DownloadAsync(episode.DownloadUrl, episode.Host);
+
+                    downloadList.Add(download);
+
+                    await download.EnsureDownloadCompletation();
+                }
+            })
+        );
+    }
+
+    while (tasks.Count > 0)
+    {
+        Console.Clear();
+        foreach (var download in downloadList)
+        {
+            if (download.TotalPackets != 0)
+            {
+                Console.WriteLine($"{download.FileName} Percentage: {download.DownloadedPackets * 100 / download.TotalPackets} %");
             }
         }
+
+        foreach (var task in tasks.ToArray())
+        {
+            if (task.IsCompleted)
+            {
+                tasks.Remove(task);
+            }
+        }
+        Thread.Sleep(5000);
     }
 
     Console.WriteLine("Anime scaricati");
