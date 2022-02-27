@@ -1,4 +1,5 @@
 ﻿using Downla;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace Tengu.Business.API
         public Hosts[] CurrentHosts { get; set; } = Array.Empty<Hosts>();
         public string DownloadPath { get; set; } = $"{Environment.CurrentDirectory}\\DownloadedAnime";
 
-        private readonly ILogger _logger;
+        private readonly ILogger<TenguApi> _logger;
 
         private readonly IAnimeUnityManager _animeUnityManager;
         private readonly IAnimeSaturnManager _animeSaturnManager;
@@ -23,8 +24,8 @@ namespace Tengu.Business.API
         public TenguApi(
             IAnimeUnityManager animeUnityManager, 
             IAnimeSaturnManager animeSaturnManager, 
-            IKitsuManager kitsuManager, 
-            ILogger logger)
+            IKitsuManager kitsuManager,
+            ILogger<TenguApi> logger)
         {
             _animeUnityManager = animeUnityManager;
             _animeSaturnManager = animeSaturnManager;
@@ -32,7 +33,7 @@ namespace Tengu.Business.API
 
             _logger = logger;
 
-            _logger.WriteInfo("TenguApi is READY", new { Infos = "NONE" });
+            _logger.LogInformation("TenguApi is READY", new { Infos = "NONE" });
         }
 
 
@@ -138,7 +139,7 @@ namespace Tengu.Business.API
             }
             catch (Exception ex)
             {
-                _logger.WriteError("Error in GetEpisodes", ex);
+                _logger.LogError("Error in GetEpisodes", ex);
                 throw;
             }
 
@@ -174,7 +175,7 @@ namespace Tengu.Business.API
                 }
                 catch (Exception ex)
                 {
-                    _logger.WriteError("Error in GetLatestEpisode", ex);
+                    _logger.LogError("Error in GetLatestEpisode", ex);
                     throw;
                 }
             }
@@ -223,7 +224,7 @@ namespace Tengu.Business.API
                     }
                     catch (Exception ex)
                     {
-                        _logger.WriteError(message:"Error in SearchAnime -> ElaborateSearch", ex);
+                        _logger.LogError(message:"Error in SearchAnime -> ElaborateSearch", ex);
                         throw;
                     }
                 }

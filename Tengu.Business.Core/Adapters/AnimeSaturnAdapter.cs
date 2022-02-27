@@ -158,7 +158,7 @@ namespace Tengu.Business.Core
                         Host = Hosts.AnimeSaturn,
                         Title = $"Episode {index}",
                         Url = url,
-                        EpisodeNumber = index,
+                        EpisodeNumber = index.ToString(),
                         DownloadUrl = url,
                     };
                     episodeBag.Add(episode);
@@ -220,7 +220,7 @@ namespace Tengu.Business.Core
                             Title = $"{urlNode.GetAttributeValue("title", "").Trim()} {titleNode.InnerText.Trim()}",
                             Image = urlNode.SelectSingleNode("./img").GetAttributeValue("src", ""),
                             Id = streamUrl.Split('=')[^1],
-                            EpisodeNumber = Convert.ToInt32(titleNode.InnerText.Trim().Split(" ")[^1]),
+                            EpisodeNumber = (titleNode.InnerText.Trim().Split(" ")[^1]),
                             DownloadUrl = streamUrl
                         };
 

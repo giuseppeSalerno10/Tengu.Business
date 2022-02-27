@@ -14,8 +14,7 @@ namespace Tengu.Business.Commons
         public string Title { get; set; } = string.Empty;
         public string Url { get; set; } = string.Empty;
         public string Image { get; set; } = string.Empty;
-
-        public int EpisodeNumber { get; set; }
+        public string EpisodeNumber { get; set; } = string.Empty ;
         public string DownloadUrl { get; set; } = string.Empty;
 
         public int CompareTo(EpisodeModel? other)

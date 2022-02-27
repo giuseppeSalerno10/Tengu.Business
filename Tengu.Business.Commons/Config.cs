@@ -11,6 +11,13 @@ namespace Tengu.Business.Commons
         public static AnimeSaturnConfig AnimeSaturn { get; } = new AnimeSaturnConfig();
         public static AnimeUnityConfig AnimeUnity { get; } = new AnimeUnityConfig();
         public static KitsuConfig Kitsu { get; } = new KitsuConfig();
+
+        public static CommonConfig Common { get; } = new CommonConfig();
+    }
+
+    public class CommonConfig
+    {
+        public string UserAgent { get; set; } = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 OPR/83.0.4254.46";
     }
 
     public class KitsuConfig

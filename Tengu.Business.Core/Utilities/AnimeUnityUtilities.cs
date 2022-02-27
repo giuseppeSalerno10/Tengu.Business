@@ -15,6 +15,7 @@ namespace Tengu.Business.Core
             var requestUrl = Config.AnimeUnity.BaseUrl;
 
             var headResponse = await requestUrl
+                .WithHeader("User-Agent", Config.Common.UserAgent)
                 .HeadAsync();
 
             var xsrfToken = headResponse.Cookies.First( cookie => cookie.Name.Equals("XSRF-TOKEN")).Value;

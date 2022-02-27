@@ -53,7 +53,7 @@ namespace Tengu.Business.Core
                     Title = $"{episode.Anime.Title} - Episodio {episode.Number}",
                     AnimeId = episode.Anime.Id.ToString(),
                     DownloadUrl = episode.Link,
-                    EpisodeNumber = Convert.ToInt32(episode.Number),
+                    EpisodeNumber = episode.Number,
                     Host = Hosts.AnimeUnity,
                     Id = episode.Id.ToString(),
                 };
@@ -99,7 +99,7 @@ namespace Tengu.Business.Core
                     {
                         Title = $"{episode.Anime.Title} - Episodio {episode.Number}",
                         AnimeId = episode.Anime.Id.ToString(),
-                        EpisodeNumber = Convert.ToInt32(episode.Number),
+                        EpisodeNumber = episode.Number,
                         Host = Hosts.AnimeUnity,
                         Id = episode.Id.ToString(),
                         DownloadUrl = episode.Link,
@@ -130,6 +130,7 @@ namespace Tengu.Business.Core
             {
                 response = await requestUrl
                 .WithHeader("X-XSRF-TOKEN", session.XSRFToken)
+                .WithHeader("User-Agent", Config.Common.UserAgent)
                 .WithCookie("XSRF-TOKEN", session.XSRFCookieToken)
                 .WithCookie("animeunity_session", session.AnimeUnitySession)
                 .PostJsonAsync(searchFilter)
