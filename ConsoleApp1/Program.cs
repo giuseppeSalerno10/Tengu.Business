@@ -37,7 +37,8 @@ async static Task App(IServiceProvider services)
             "\n2 - Fetch Episodi" +
             "\n3 - Download Episodio" +
             "\n4 - Kitsu" +
-            "\n5 - Cambia Host"
+            "\n5 - Calendario" +
+            "\n6 - Cambia Host"
             );
 
         switch (Convert.ToInt32(Console.ReadLine()))
@@ -63,6 +64,10 @@ async static Task App(IServiceProvider services)
                 await KitsuMenu(tenguApi);
                 break;
             case 5:
+                Console.Clear();
+                await GetCalendarMenu(tenguApi);
+                break;
+            case 6:
                 Console.Clear();
                 ChangeHostMenu(tenguApi);
                 break;
@@ -106,7 +111,6 @@ static void ChangeHostMenu(ITenguApi tenguApi)
             return;
     }
 }
-
 async static Task<AnimeModel[]> SearchAnimeMenu(ITenguApi tenguApi)
 {
     Console.WriteLine(
@@ -184,7 +188,6 @@ async static Task<AnimeModel[]> SearchAnimeMenu(ITenguApi tenguApi)
 
     return animes;
 }
-
 async static Task<EpisodeModel[]> GetEpisodesMenu(ITenguApi tenguApi, AnimeModel[] animes)
 {
     Console.WriteLine(
@@ -215,7 +218,6 @@ async static Task<EpisodeModel[]> GetEpisodesMenu(ITenguApi tenguApi, AnimeModel
 
     return episodes;
 }
-
 async static Task<EpisodeModel[]> GetLatestEpisodesMenu(ITenguApi tenguApi)
 {
     Console.WriteLine(
@@ -233,7 +235,6 @@ async static Task<EpisodeModel[]> GetLatestEpisodesMenu(ITenguApi tenguApi)
 
     return episodes;
 }
-
 static void DownloadEpisodeMenu(ITenguApi tenguApi, EpisodeModel[] episodes)
 {
     Console.WriteLine("Lista Episodi");
@@ -307,7 +308,6 @@ static void DownloadEpisodeMenu(ITenguApi tenguApi, EpisodeModel[] episodes)
     Console.WriteLine("Anime scaricati");
 
 }
-
 async static Task<KitsuAnimeModel[]> KitsuMenu(ITenguApi tenguApi)
 {
     Console.WriteLine(
@@ -361,4 +361,11 @@ async static Task<KitsuAnimeModel[]> KitsuMenu(ITenguApi tenguApi)
     }
 
     return animes;
+}
+async static Task GetCalendarMenu(ITenguApi tenguApi)
+{
+    Console.WriteLine("Calendario");
+
+    var calendar = await tenguApi.GetCalendar();
+
 }

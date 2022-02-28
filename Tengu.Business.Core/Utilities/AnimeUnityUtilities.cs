@@ -19,7 +19,6 @@ namespace Tengu.Business.Core
                 .HeadAsync();
 
             var xsrfToken = headResponse.Cookies.First( cookie => cookie.Name.Equals("XSRF-TOKEN")).Value;
-            var csrfToken = "dfnQrGRJt6tW8ctfi9qeVOj8hluArclyxBbhziqE"; //IDK Where to get it
             var animeUnitySession = headResponse.Cookies.First(cookie => cookie.Name.Equals("animeunity_session")).Value;
 
 
@@ -27,7 +26,6 @@ namespace Tengu.Business.Core
             {
                 XSRFToken = xsrfToken.Replace("%3D","="),
                 XSRFCookieToken = xsrfToken,
-                CSRFToken = csrfToken,
                 AnimeUnitySession = animeUnitySession
             };
 

@@ -37,7 +37,10 @@ namespace Tengu.Business.API
         {
             return _adapter.GetLatestEpisodesAsync(offset, limit, cancellationToken);
         }
-
+        public Task<Calendar> GetCalendar(CancellationToken cancellationToken = default)
+        {
+            return _adapter.GetCalendar(cancellationToken);
+        }
         public Task<AnimeModel[]> SearchAnimeAsync(SearchFilter filter, int count = 30, CancellationToken cancellationToken = default)
         {
             var adapterFilter = new AnimeUnitySearchInput();

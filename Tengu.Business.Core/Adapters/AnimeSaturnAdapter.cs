@@ -34,7 +34,7 @@ namespace Tengu.Business.Core
 
             var animeNodes = doc.DocumentNode.SelectNodes($"//div[@class='container p-3 shadow rounded bg-dark-as-box']/ul[@class='list-group']");
 
-            if(animeNodes != null)
+            if (animeNodes != null)
             {
                 foreach (var node in animeNodes)
                 {
@@ -148,7 +148,7 @@ namespace Tengu.Business.Core
                     var episodeUrl = episodesNodes[index]
                         .SelectSingleNode("./a")
                         .GetAttributeValue("href", "");
-                    
+
                     var url = GetAnimeStreamUrl(episodeUrl, cancellationToken).Result;
 
                     var episode = new EpisodeModel
@@ -172,6 +172,42 @@ namespace Tengu.Business.Core
 
             return episodesList.ToArray();
 
+        }
+
+        public async Task<Calendar> GetCalendar(CancellationToken cancellationToken = default)
+        {
+            var days = (WeekDays[]) Enum.GetValues(typeof(WeekDays));
+
+            var calendar = new Calendar() { Host = Hosts.AnimeSaturn };
+
+            var url = Config.AnimeSaturn.CalendarUrl;
+            var web = new HtmlWeb();
+
+            var doc = await web.LoadFromWebAsync(url, cancellationToken);
+
+            var entriesRows = doc.DocumentNode.SelectNodes("//tbody/tr");
+
+            foreach(var row in entriesRows)
+            {
+                var entries = row.SelectNodes("./td");
+                
+                for (int i = 0; i < entries.Count; i++)
+                {
+                    if (!string.IsNullOrEmpty(entries[i].InnerText))
+                    {
+                        var entryToAdd = new CalendarEntryModel()
+                        {
+                            Anime = entries[i].InnerText,
+                        };
+
+                        var currentDay = days[i];
+
+                        calendar.DaysDictionary[currentDay].Add(entryToAdd);
+                    }
+                }
+            }
+
+            return calendar;
         }
 
         public async Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default)

@@ -17,5 +17,6 @@ namespace Tengu.Business.API
         Task<AnimeModel[]> SearchAnimeAsync(SearchFilter filter, int count = 30, bool kitsuSearch = false, CancellationToken cancellationToken = default);
         Task<AnimeModel[]> SearchAnimeAsync(string title, int count = 30, bool kitsuSearch = false, CancellationToken cancellationToken = default);
         Task<AnimeModel[]> SearchAnimeAsync(string title, SearchFilter filter, int count = 30, bool kitsuSearch = false, CancellationToken cancellationToken = default);
+        Task<Calendar[]> GetCalendar(CancellationToken cancellationToken = default);
     }
 }

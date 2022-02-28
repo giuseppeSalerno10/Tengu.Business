@@ -139,7 +139,7 @@ namespace Tengu.Business.API
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error in GetEpisodes", ex);
+                _logger.LogError(ex, "Error in GetEpisodes");
                 throw;
             }
 
@@ -175,13 +175,51 @@ namespace Tengu.Business.API
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError("Error in GetLatestEpisode", ex);
+                    _logger.LogError(ex, "Error in GetLatestEpisode");
                     throw;
                 }
             }
 
             return episodeList.ToArray();
         }
+
+        public async Task<Calendar[]> GetCalendar(CancellationToken cancellationToken = default)
+        {
+            CheckForHost();
+
+            var calendarList = new List<Calendar>();
+            var tasks = new List<Task<Calendar>>();
+
+            foreach (var host in CurrentHosts)
+            {
+                switch (host)
+                {
+                    case Hosts.AnimeSaturn:
+                        tasks.Add(_animeSaturnManager.GetCalendar(cancellationToken));
+                        break;
+                    case Hosts.AnimeUnity:
+                        tasks.Add(_animeUnityManager.GetCalendar(cancellationToken));
+                        break;
+                }
+            }
+
+            foreach (var task in tasks)
+            {
+                try
+                {
+                    var result = await task;
+                    calendarList.Add(result);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error in GetCalendar");
+                    throw;
+                }
+            }
+
+            return calendarList.ToArray();
+        }
+
 
         public DownloadInfosModel DownloadAsync(string episodeUrl, Hosts host, CancellationToken cancellationToken = default)
         {
@@ -224,7 +262,7 @@ namespace Tengu.Business.API
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(message:"Error in SearchAnime -> ElaborateSearch", ex);
+                        _logger.LogError(ex, "Error in SearchAnime -> ElaborateSearch");
                         throw;
                     }
                 }

@@ -13,7 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Tengu.Business.Core\Tengu.Business.Core.csproj" />
+	<ProjectReference Include="..\Tengu.Business.Core\Tengu.Business.Core.csproj">
+		<ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+		<IncludeAssets>{ProjectName}.dll</IncludeAssets>
+	</ProjectReference>
   </ItemGroup>
 
 </Project>

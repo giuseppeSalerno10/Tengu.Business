@@ -155,5 +155,49 @@ namespace Tengu.Business.Core
             return animeList.ToArray();
         }
 
+        public async Task<Calendar> GetCalendar(CancellationToken cancellationToken = default)
+        {
+            var calendar = new Calendar();
+
+            var requestUrl = $"{Config.AnimeUnity.CalendarUrl}";
+
+            var web = new HtmlWeb();
+            var doc = await web.LoadFromWebAsync(requestUrl, cancellationToken);
+
+            var calendarNodes = doc.DocumentNode.SelectNodes("//calendario-item");
+
+            foreach (var node in calendarNodes)
+            {
+                var rawJson = node.GetAttributeValue("a", "")
+                .Replace("&quot;", "\"")
+                .Replace("\\/", "/"); ;
+
+                var rawCalendarEntry = JsonConvert.DeserializeObject<AnimeUnityCalendarOutput>(rawJson);
+
+                var day = rawCalendarEntry.Day switch
+                {
+                    "Lunedì" => WeekDays.Monday,
+                    "Martedì" => WeekDays.Tuesday,
+                    "Mercoledì" => WeekDays.Wednesday,
+                    "Giovedì" => WeekDays.Thursday,
+                    "Venerdì" => WeekDays.Friday,
+                    "Sabato" => WeekDays.Saturday,
+                    "Domenica" => WeekDays.Sunday,
+                    _ => WeekDays.None
+                };
+
+                var entryToAdd = new CalendarEntryModel()
+                {
+                    Anime = rawCalendarEntry.Title,
+                    Image = rawCalendarEntry.ImageURL
+                };
+
+                calendar.DaysDictionary[day].Add(entryToAdd);
+            }
+
+            
+
+            return calendar;
+        }
     }
 }

@@ -8,29 +8,26 @@ namespace Tengu.Business.Commons
 {
     public enum Hosts
     {
-        None,
         AnimeSaturn,
-        AnimeUnity
+        AnimeUnity,
+        None
     }
-
     public enum Languages
     {
-        None,
         Subbed,
-        Dubbed
+        Dubbed,
+        None
     }
     public enum Statuses
     {
-        None,
         InProgress,
         Completed,
         NotReleased,
-        Canceled
+        Canceled,
+        None
     }
-
     public enum Genres
     {
-        None,
         ArtiMarziali,
         Avventura,
         Azione,
@@ -75,5 +72,17 @@ namespace Tengu.Business.Commons
         Veicoli,
         Yaoi,
         Yuri,
+        None
+    }
+    public enum WeekDays
+    {
+        Monday,
+        Tuesday,
+        Wednesday,
+        Thursday,
+        Friday,
+        Saturday,
+        Sunday,
+        None
     }
 }
