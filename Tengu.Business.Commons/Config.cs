@@ -18,6 +18,8 @@ namespace Tengu.Business.Commons
     public class CommonConfig
     {
         public string UserAgent { get; set; } = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 OPR/83.0.4254.46";
+        public long PacketSize { get; set; } = 2621440;
+        public int Connections { get; set; } = 10;
     }
 
     public class KitsuConfig

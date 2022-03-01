@@ -25,6 +25,10 @@ namespace Tengu.Business.API
         public DownloadInfosModel DownloadAsync(string downloadPath, string episodeUrl, CancellationToken cancellationToken = default)
         {
             _downlaClient.DownloadPath = downloadPath;
+
+            _downlaClient.MaxPacketSize = Config.Common.PacketSize;
+            _downlaClient.MaxConnections = Config.Common.Connections;
+
             return _downlaClient.StartDownload(new Uri(episodeUrl), cancellationToken);
         }
 

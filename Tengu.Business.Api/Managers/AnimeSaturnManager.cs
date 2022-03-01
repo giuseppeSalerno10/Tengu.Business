@@ -26,6 +26,9 @@ namespace Tengu.Business.API
         {
             _downlaClient.DownloadPath = downloadPath;
 
+            _downlaClient.MaxPacketSize = Config.Common.PacketSize;
+            _downlaClient.MaxConnections = Config.Common.Connections;
+
             var downloadUrl = _adapter.GetDownloadUrl(episodeUrl).Result;
 
             return _downlaClient.StartDownload(new Uri(downloadUrl), cancellationToken);
