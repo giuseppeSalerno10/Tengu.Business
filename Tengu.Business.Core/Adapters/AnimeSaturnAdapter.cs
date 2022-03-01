@@ -38,19 +38,22 @@ namespace Tengu.Business.Core
             {
                 foreach (var node in animeNodes)
                 {
-                    var urlNode = node.SelectSingleNode("./li/div[@class='item-archivio']/div[@class='info-archivio']/h3/a");
-
-                    var url = urlNode.GetAttributeValue("href", "");
-                    var anime = new AnimeModel()
+                    if (animeList.Count < count)
                     {
-                        Url = url,
-                        Id = url.Split("/")[^1],
-                        Host = Hosts.AnimeSaturn,
-                        Title = urlNode.InnerText,
-                        Image = node.SelectSingleNode("./li/div[@class='item-archivio']/a/img[@class='rounded locandina-archivio']")
-                        .GetAttributeValue("src", "")
-                    };
-                    animeList.Add(anime);
+                        var urlNode = node.SelectSingleNode("./li/div[@class='item-archivio']/div[@class='info-archivio']/h3/a");
+
+                        var url = urlNode.GetAttributeValue("href", "");
+                        var anime = new AnimeModel()
+                        {
+                            Url = url,
+                            Id = url.Split("/")[^1],
+                            Host = Hosts.AnimeSaturn,
+                            Title = urlNode.InnerText,
+                            Image = node.SelectSingleNode("./li/div[@class='item-archivio']/a/img[@class='rounded locandina-archivio']")
+                            .GetAttributeValue("src", "")
+                        };
+                        animeList.Add(anime);
+                    }
                 }
             }
 
