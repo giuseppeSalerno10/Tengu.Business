@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>$Id$</id>
+        <version>$Version$</version>
+        <title>$Title$</title>
+        <authors>$Authors$</authors>
+        <owners>$Owners$</owners>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Tengu Backend</description>
+    </metadata>
+</package>
