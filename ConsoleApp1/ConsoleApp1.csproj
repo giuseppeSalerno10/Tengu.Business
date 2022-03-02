@@ -19,10 +19,7 @@
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="4.2.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Tengu.Business.Api\Tengu.Business.API.csproj" />
+    <PackageReference Include="Tengu.Business.Api" Version="1.0.1" />
   </ItemGroup>
 
 </Project>
