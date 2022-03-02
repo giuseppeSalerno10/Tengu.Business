@@ -1,14 +1,24 @@
 ﻿using Downla;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using System.Collections.Concurrent;
 using Tengu.Business.API;
 using Tengu.Business.Commons;
 
 #region DI
+
 using IHost host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices((_, services) =>
-        services.AddTenguServices())
+    .UseSerilog(
+    (hostingContext, loggerConfiguration) => loggerConfiguration.WriteTo.File($"C:\\Users\\Giuse\\Desktop\\log.txt"))
+    .ConfigureServices((_, services) => {
+        services.AddTenguServices();
+    })
     .Build();
+
+
+var tengu = (TenguApi) ActivatorUtilities.CreateInstance(host.Services, typeof(TenguApi));
+
 
 host.Start();
 
@@ -24,7 +34,7 @@ async static Task App(IServiceProvider services)
 
     ITenguApi tenguApi = (ITenguApi) (services.GetService(typeof(ITenguApi)) ?? throw new Exception());
 
-    tenguApi.CurrentHosts = new Hosts[] { Hosts.AnimeUnity, Hosts.AnimeSaturn };
+    tenguApi.CurrentHosts = new Hosts[] { Hosts.AnimeUnity };
 
     while (true)
     {

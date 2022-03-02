@@ -270,7 +270,7 @@ namespace Tengu.Business.API
 
             if (kitsuSearch)
             {
-                Parallel.ForEach(animeList, async (anime) =>
+                await Parallel.ForEachAsync(animeList, cancellationToken, async (anime, cancellationToken) =>
                 {
                     var titleSearch = _kitsuManager.SearchAnimeAsync(anime.Title, 0, 1, cancellationToken);
 

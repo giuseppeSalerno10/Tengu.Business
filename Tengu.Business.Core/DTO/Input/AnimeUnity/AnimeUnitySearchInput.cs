@@ -25,7 +25,7 @@ namespace Tengu.Business.Core
         [JsonProperty(PropertyName = "status")]
         public string? Status { get; set; } = null;
 
-        [JsonProperty(PropertyName = "genre")]
+        [JsonProperty(PropertyName = "genres")]
         public AnimeUnityGenre[]? Genres { get; set; } = null;
 
         [JsonProperty(PropertyName = "offset")]

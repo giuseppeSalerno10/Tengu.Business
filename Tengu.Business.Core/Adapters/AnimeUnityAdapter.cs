@@ -129,6 +129,7 @@ namespace Tengu.Business.Core
             do
             {
                 response = await requestUrl
+                .WithHeader("X-Requested-With", "XMLHttpRequest")
                 .WithHeader("X-XSRF-TOKEN", session.XSRFToken)
                 .WithHeader("User-Agent", Config.Common.UserAgent)
                 .WithCookie("XSRF-TOKEN", session.XSRFCookieToken)
