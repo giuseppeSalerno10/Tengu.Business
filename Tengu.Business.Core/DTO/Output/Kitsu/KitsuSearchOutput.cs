@@ -28,7 +28,7 @@ namespace Tengu.Business.Core
         public int? RatingRank { get; set; }
         public string? AgeRating { get; set; }
         public int? EpisodeCount { get; set; }
-        public KitsuImage? PosterImages { get; set; }
+        public KitsuImage? PosterImage { get; set; }
 
     }
 
