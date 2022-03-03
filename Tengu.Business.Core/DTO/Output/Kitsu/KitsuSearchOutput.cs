@@ -28,6 +28,13 @@ namespace Tengu.Business.Core
         public int? RatingRank { get; set; }
         public string? AgeRating { get; set; }
         public int? EpisodeCount { get; set; }
+        public KitsuImage? PosterImages { get; set; }
+
+    }
+
+    public class KitsuImage
+    {
+        public string? Small { get; set; }
     }
 
     public class KintsuLinks
