@@ -12,7 +12,10 @@
 		<PackageReference Include="Downla" Version="1.1.10" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
-		<PackageReference Include="Tengu.Business.Commons" Version="1.0.2" />
-		<PackageReference Include="Tengu.Business.Core" Version="1.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Tengu.Business.Commons\Tengu.Business.Commons.csproj" />
+	  <ProjectReference Include="..\Tengu.Business.Core\Tengu.Business.Core.csproj" />
 	</ItemGroup>
 </Project>
