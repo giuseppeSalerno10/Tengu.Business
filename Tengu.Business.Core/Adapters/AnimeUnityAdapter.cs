@@ -50,8 +50,8 @@ namespace Tengu.Business.Core
                 var episodeToAdd = new EpisodeModel()
                 {
                     Url = requestUrl,
-                    Title = $"{episode.Anime.Title} - Episodio {episode.Number}",
-                    AnimeId = episode.Anime.Id.ToString(),
+                    Title = $"Episode {episode.Number}",
+                    AnimeId = animeId,
                     DownloadUrl = episode.Link,
                     EpisodeNumber = episode.Number,
                     Host = Hosts.AnimeUnity,
@@ -66,16 +66,23 @@ namespace Tengu.Business.Core
 
         public async Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
         {
-            var episodeList = new ConcurrentBag<EpisodeModel>();
+            var episodeList = new List<EpisodeModel>();
 
             var requestUrl = $"{Config.AnimeUnity.BaseUrl}";
 
-            requestUrl += $"/?page={1 + offset / 30}";
+            var currentPage = offset / 30;
+
+            requestUrl += $"/?page={currentPage + 1}";
 
             var web = new HtmlWeb();
 
-            while(episodeList.Count < limit - offset)
+            var count = limit - offset;
+
+            while (!cancellationToken.IsCancellationRequested && count > 0)
             {
+                var startIndex = offset - currentPage * 30;
+                var endIndex = Math.Min(30, startIndex + count);
+
                 var doc = await web.LoadFromWebAsync(requestUrl, cancellationToken);
 
                 var episodesJson = doc.DocumentNode
@@ -85,19 +92,14 @@ namespace Tengu.Business.Core
                     .Replace("\\/", "/");
 
                 var rawEpisodes = JsonConvert.DeserializeObject<AnimeUnityGetLatestEpisodesOutput>(episodesJson);
-
-                if (limit == 0)
-                {
-                    limit = rawEpisodes.Data.Length;
-                }
-            
-                for (int i = 0; i < limit; i++)
+                
+                for (int i = startIndex; i < endIndex; i++)
                 {
                     var episode = rawEpisodes.Data[i];
 
                     var episodeToAdd = new EpisodeModel()
                     {
-                        Title = $"{episode.Anime.Title} - Episodio {episode.Number}",
+                        Title = $"{episode.Anime.Title}",
                         AnimeId = episode.Anime.Id.ToString(),
                         EpisodeNumber = episode.Number,
                         Host = Hosts.AnimeUnity,
@@ -105,12 +107,15 @@ namespace Tengu.Business.Core
                         DownloadUrl = episode.Link,
                         Image = episode.Anime.ImageUrl
                     };
-
-                  
+                
                     episodeList.Add(episodeToAdd);
                 }
-
+            
                 requestUrl = rawEpisodes.Next_page_url;
+            
+                count -= endIndex - startIndex;
+                offset = ++currentPage * 30;
+            
             }
 
             return episodeList.ToArray();

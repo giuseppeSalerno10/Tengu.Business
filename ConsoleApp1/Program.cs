@@ -230,11 +230,15 @@ async static Task<EpisodeModel[]> GetEpisodesMenu(ITenguApi tenguApi, AnimeModel
 }
 async static Task<EpisodeModel[]> GetLatestEpisodesMenu(ITenguApi tenguApi)
 {
+    Console.WriteLine("Inserisci lowe e uppe");
+    var lowe = Convert.ToInt32(Console.ReadLine());
+    var uppe = Convert.ToInt32(Console.ReadLine());
+
     Console.WriteLine(
     "Lista Episodi:\n"
     );
 
-    var episodes = await tenguApi.GetLatestEpisodeAsync();
+    var episodes = await tenguApi.GetLatestEpisodeAsync(lowe,uppe);
 
     Console.WriteLine($"Lista episodi ({episodes.Length}):");
     for (int i = 0; i < episodes.Length; i++)

@@ -215,58 +215,57 @@ namespace Tengu.Business.Core
 
         public async Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
         {
-            var episodeList = new ConcurrentBag<EpisodeModel>();
+            var episodeList = new List<EpisodeModel>();
 
             var doc = new HtmlDocument();
 
             var requestUrl = Config.AnimeSaturn.BaseLatestEpisodeUrl;
 
-            var currentPage = offset / 15 + 1;
+            var currentPage = offset / 15;
 
-            var ignoreCount = offset - currentPage * 15;
-            var episodeCount = limit - offset;
+            var count = limit - offset;
 
-            while (!cancellationToken.IsCancellationRequested && episodeList.Count < episodeCount)
+            while (!cancellationToken.IsCancellationRequested && count > 0)
             {
+                var startIndex = offset - currentPage * 15;
+                var endIndex = Math.Min(15, startIndex + count);
+
                 var response = await requestUrl
                     .WithHeader("X-Requested-With", "XMLHttpRequest")
                     .WithHeader("Content-Type", "application/x-www-form-urlencoded")
-                    .PostStringAsync($"page={currentPage}", cancellationToken)
+                    .PostStringAsync($"page={currentPage + 1}", cancellationToken)
                     .ReceiveString();
 
                 doc.LoadHtml(response);
 
                 var latestNodes = doc.DocumentNode.SelectNodes("./div/div[@class='anime-card main-anime-card']");
 
-                await Parallel.ForEachAsync(latestNodes, async (node, cancellationToken) =>
+                for (int i = startIndex; i < endIndex; i++)
                 {
-                    if (ignoreCount > 0)
+                    var node = latestNodes[i];
+
+                    var urlNode = node.SelectSingleNode("./div[@class='card mb-4 shadow-sm']/a[1]");
+                    var titleNode = node.SelectSingleNode("./div[@class='card mb-4 shadow-sm']/a[2]");
+
+                    var url = urlNode.GetAttributeValue("href", "");
+                    var streamUrl = await GetAnimeStreamUrl(url, cancellationToken);
+
+                    var episode = new EpisodeModel()
                     {
-                        ignoreCount--;
-                    }
-                    else if (episodeList.Count < episodeCount)
-                    {
-                        var urlNode = node.SelectSingleNode("./div[@class='card mb-4 shadow-sm']/a[1]");
-                        var titleNode = node.SelectSingleNode("./div[@class='card mb-4 shadow-sm']/a[2]");
+                        Host = Hosts.AnimeSaturn,
+                        Url = streamUrl,
+                        Title = $"{urlNode.GetAttributeValue("title", "").Trim()}",
+                        Image = urlNode.SelectSingleNode("./img").GetAttributeValue("src", ""),
+                        Id = streamUrl.Split('=')[^1],
+                        EpisodeNumber = (titleNode.InnerText.Trim().Split(" ")[^1]),
+                        DownloadUrl = streamUrl
+                    };
 
-                        var url = urlNode.GetAttributeValue("href", "");
-                        var streamUrl = await GetAnimeStreamUrl(url, cancellationToken);
-
-                        var episode = new EpisodeModel()
-                        {
-                            Host = Hosts.AnimeSaturn,
-                            Url = streamUrl,
-                            Title = $"{urlNode.GetAttributeValue("title", "").Trim()} {titleNode.InnerText.Trim()}",
-                            Image = urlNode.SelectSingleNode("./img").GetAttributeValue("src", ""),
-                            Id = streamUrl.Split('=')[^1],
-                            EpisodeNumber = (titleNode.InnerText.Trim().Split(" ")[^1]),
-                            DownloadUrl = streamUrl
-                        };
-
-                        episodeList.Add(episode);
-                    }
-                });
-                currentPage++;
+                    episodeList.Add(episode);
+                }
+                
+                count -= endIndex - startIndex;
+                offset = ++currentPage * 15;
             }
 
             return episodeList.ToArray();

@@ -86,6 +86,7 @@ namespace Tengu.Business.Core
                         AverageRating = item.Attributes.AverageRating ?? "",
                         Synopsis = item.Attributes.Synopsis ?? "",
                         Title = item.Attributes.CanonicalTitle ?? "",
+                        Image = item.Attributes.PosterImage?.Small ?? ""
                     });
                 }
 

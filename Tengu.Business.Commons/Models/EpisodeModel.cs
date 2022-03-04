@@ -19,7 +19,10 @@ namespace Tengu.Business.Commons
 
         public int CompareTo(EpisodeModel? other)
         {
-            return EpisodeNumber.CompareTo(other?.EpisodeNumber);
+            var currentEpisode = Convert.ToInt32(EpisodeNumber);
+            var otherEpisode = Convert.ToInt32(other?.EpisodeNumber);
+
+            return currentEpisode.CompareTo(otherEpisode);
         }
     }
 }
