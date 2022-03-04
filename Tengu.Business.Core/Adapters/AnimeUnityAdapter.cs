@@ -144,15 +144,18 @@ namespace Tengu.Business.Core
 
                 foreach (var record in response.Records)
                 {
-                    var anime = new AnimeModel()
+                    if (animeList.Count < count)
                     {
-                        Host = Hosts.AnimeUnity,
-                        Id = $"{record.Id}-{record.Slug}",
-                        Image = record.ImageUrl,
-                        Title = record.Title,
-                        Url = $"{Config.AnimeUnity.BaseAnimeUrl}/{record.Id}-{record.Slug}"
-                    };
-                    animeList.Add(anime);
+                        var anime = new AnimeModel()
+                        {
+                            Host = Hosts.AnimeUnity,
+                            Id = $"{record.Id}-{record.Slug}",
+                            Image = record.ImageUrl,
+                            Title = record.Title,
+                            Url = $"{Config.AnimeUnity.BaseAnimeUrl}/{record.Id}-{record.Slug}"
+                        };
+                        animeList.Add(anime);
+                    }
                 }
 
                 searchFilter.Offset += 30;

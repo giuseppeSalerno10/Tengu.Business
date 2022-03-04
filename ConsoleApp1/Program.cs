@@ -143,7 +143,7 @@ async static Task<AnimeModel[]> SearchAnimeMenu(ITenguApi tenguApi)
             if(title != null)
             {
                 Console.WriteLine("\nRisultati:");
-                animes = await tenguApi.SearchAnimeAsync(title);
+                animes = await tenguApi.SearchAnimeAsync(title,1);
                 for (int i = 0; i < animes.Length; i++)
                 {
                     AnimeModel? anime = animes[i];
