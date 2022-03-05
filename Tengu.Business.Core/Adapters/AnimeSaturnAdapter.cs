@@ -159,9 +159,9 @@ namespace Tengu.Business.Core
                         Id = url.Split("=")[^1],
                         AnimeId = animeId,
                         Host = Hosts.AnimeSaturn,
-                        Title = $"Episode {index}",
+                        Title = $"Episode {index + 1}",
                         Url = url,
-                        EpisodeNumber = index.ToString(),
+                        EpisodeNumber = (index + 1).ToString(),
                         DownloadUrl = url,
                     };
                     episodeBag.Add(episode);
