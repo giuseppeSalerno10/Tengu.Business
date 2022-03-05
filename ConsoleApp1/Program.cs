@@ -34,7 +34,7 @@ async static Task App(IServiceProvider services)
 
     ITenguApi tenguApi = (ITenguApi) (services.GetService(typeof(ITenguApi)) ?? throw new Exception());
 
-    tenguApi.CurrentHosts = new Hosts[] { Hosts.AnimeUnity };
+    tenguApi.CurrentHosts = new Hosts[] { Hosts.AnimeSaturn, Hosts.AnimeUnity };
 
     while (true)
     {
