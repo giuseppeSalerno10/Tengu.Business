@@ -36,6 +36,8 @@ namespace Tengu.Business.Core
                 .Replace("&quot;", "\"")
                 .Replace("\\/", "/");
 
+            var animeTitle = doc.DocumentNode.SelectSingleNode("//h1[@class='title']").InnerText.Trim();
+
             var rawEpisodes = JsonConvert.DeserializeObject<AnimeUnityGetEpisodesOutput[]>(episodesJson);
 
             if (limit == 0) 
@@ -46,11 +48,11 @@ namespace Tengu.Business.Core
             for (int i = 0; i < limit; i++)
             {
                 var episode = rawEpisodes[i];
-
+                
                 var episodeToAdd = new EpisodeModel()
                 {
                     Url = requestUrl,
-                    Title = $"Episode {episode.Number}",
+                    Title = animeTitle,
                     AnimeId = animeId,
                     DownloadUrl = episode.Link,
                     EpisodeNumber = episode.Number,

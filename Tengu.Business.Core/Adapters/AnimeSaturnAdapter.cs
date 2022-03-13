@@ -136,6 +136,8 @@ namespace Tengu.Business.Core
 
             doc = await web.LoadFromWebAsync($"{animeUrl}", cancellationToken);
 
+            var animeTitle = doc.DocumentNode.SelectSingleNode("//div[@class='container anime-title-as mb-3 w-100']/b").InnerText;
+
             var episodesNodes = doc
                 .GetElementbyId("resultsxd")
                 .SelectNodes("./div/div/div");
@@ -159,7 +161,7 @@ namespace Tengu.Business.Core
                         Id = url.Split("=")[^1],
                         AnimeId = animeId,
                         Host = Hosts.AnimeSaturn,
-                        Title = $"Episode {index + 1}",
+                        Title = animeTitle,
                         Url = url,
                         EpisodeNumber = (index + 1).ToString(),
                         DownloadUrl = url,

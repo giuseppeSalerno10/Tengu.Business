@@ -7,7 +7,6 @@ using Tengu.Business.API;
 using Tengu.Business.Commons;
 
 #region DI
-
 using IHost host = Host.CreateDefaultBuilder(args)
     .UseSerilog(
     (hostingContext, loggerConfiguration) => loggerConfiguration.WriteTo.File($"C:\\Users\\Giuse\\Desktop\\log.txt"))
@@ -16,14 +15,11 @@ using IHost host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
-
 var tengu = (TenguApi) ActivatorUtilities.CreateInstance(host.Services, typeof(TenguApi));
-
 
 host.Start();
 
 await App(host.Services);
-
 #endregion
 
 async static Task App(IServiceProvider services)
