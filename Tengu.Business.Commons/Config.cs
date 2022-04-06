@@ -43,6 +43,7 @@ namespace Tengu.Business.Commons
     {
         public string BaseUrl { get; } = "https://www.animeunity.tv";
         public string BaseAnimeUrl { get; } = "https://www.animeunity.tv/anime";
+        public string BaseEpisodeUrl { get; } = "https://www.animeunity.tv/info_api";
         public string SearchUrl { get; } = "https://www.animeunity.tv/archivio/get-animes";
         public object CalendarUrl { get; } = "https://www.animeunity.tv/calendario";
     }

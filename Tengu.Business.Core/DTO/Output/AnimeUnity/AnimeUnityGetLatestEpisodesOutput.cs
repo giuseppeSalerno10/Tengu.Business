@@ -8,7 +8,7 @@ namespace Tengu.Business.Core
 {
     public class AnimeUnityGetLatestEpisodesOutput
     {
-        public AnimeUnityGetEpisodesOutput[] Data { get; set; } = Array.Empty<AnimeUnityGetEpisodesOutput>();
+        public AnimeUnityEpisodesInfo[] Data { get; set; } = Array.Empty<AnimeUnityEpisodesInfo>();
         public string Next_page_url { get; set; } = string.Empty;
     }
 }

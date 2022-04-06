@@ -30,7 +30,7 @@ async static Task App(IServiceProvider services)
 
     ITenguApi tenguApi = (ITenguApi) (services.GetService(typeof(ITenguApi)) ?? throw new Exception());
 
-    tenguApi.CurrentHosts = new Hosts[] { Hosts.AnimeSaturn, Hosts.AnimeUnity };
+    tenguApi.CurrentHosts = new Hosts[] { Hosts.AnimeSaturn };
 
     while (true)
     {
@@ -139,7 +139,7 @@ async static Task<AnimeModel[]> SearchAnimeMenu(ITenguApi tenguApi)
             if(title != null)
             {
                 Console.WriteLine("\nRisultati:");
-                animes = await tenguApi.SearchAnimeAsync(title,1);
+                animes = await tenguApi.SearchAnimeAsync(title);
                 for (int i = 0; i < animes.Length; i++)
                 {
                     AnimeModel? anime = animes[i];

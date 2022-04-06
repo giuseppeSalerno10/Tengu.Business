@@ -8,11 +8,9 @@ namespace Tengu.Business.Core
 {
     public class AnimeUnityGetEpisodesOutput
     {
-        public int Id { get; set; }
-        public AnimeUnityAnime Anime { get; set; } = new AnimeUnityAnime();
-        public string Number { get; set; } = string.Empty;
-        public string Link { get; set; } = string.Empty;
-        public string Scws_id { get; set; } = string.Empty;
-        public string File_name { get; set; } = string.Empty;
+        public int Episodes_count { get; set; }
+        public AnimeUnityEpisodesInfo[] Episodes { get; set; } = Array.Empty<AnimeUnityEpisodesInfo>();
+        public string Name { get; set; } = string.Empty;
+        public string Slug { get; set; } = string.Empty;
     }
 }
