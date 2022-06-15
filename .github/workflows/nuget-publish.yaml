@@ -6,7 +6,7 @@ on:
     tags: [ 'v*.*.*' ]
 
 env:
-  VERSION: ${GITHUB_REF/refs\/tags\/v/}
+  VERSION: 1.1.0
   NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
   
 jobs:
