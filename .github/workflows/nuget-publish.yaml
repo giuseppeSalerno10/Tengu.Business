@@ -3,22 +3,17 @@ name: Master Publish
 on:
   push:
     branches: [ master ]
-    tags: [ 'v*.*.*' ]
 
 env:
   NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
-  
+  VERSION: 1.1.0
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
      - name: Checkout
        uses: actions/checkout@v2
-     
-     - name: Set VERSION variable from tag
-       run: |
-        git fetch --prune --unshallow
-        git describe --tags
      
      - name: Build
        run: dotnet build --configuration Release
