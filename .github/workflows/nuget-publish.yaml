@@ -15,10 +15,9 @@ jobs:
      - name: Checkout
        uses: actions/checkout@v2
      
-        
      - name: Set VERSION variable from tag
        run: |
-        git describe
+        git describe --tags --always
         echo "VERSION=${GITHUB_REF#refs#tags}" >> $GITHUB_ENV
      
      - name: Build
