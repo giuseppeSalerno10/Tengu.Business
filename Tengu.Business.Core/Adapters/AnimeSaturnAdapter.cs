@@ -97,7 +97,7 @@ namespace Tengu.Business.Core
 
                 var finalPage = totalPages > count / 15 ? count / 15 : totalPages;
 
-                Parallel.For(1, totalPages + 1, i =>
+                Parallel.For(1, finalPage, i =>
                 {
                     HtmlWeb innerWeb = new HtmlWeb();
                     HtmlDocument innerDoc = innerWeb.Load($"{requestUrl}page={i}");

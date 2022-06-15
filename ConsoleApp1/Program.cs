@@ -154,7 +154,8 @@ async static Task<AnimeModel[]> SearchAnimeMenu(ITenguApi tenguApi)
 
             var filter = new SearchFilter() 
             { 
-                Genres = new Genres[] { Genres.ArtiMarziali }
+                Genres = new Genres[] { },
+                Status = Statuses.Completed
             };
 
             Console.WriteLine("Risultati:");
