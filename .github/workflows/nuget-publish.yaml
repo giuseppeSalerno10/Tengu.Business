@@ -18,7 +18,7 @@ jobs:
         
      - name: Set VERSION variable from tag
        run: |
-        git describe --tags --abbrev=0
+        git describe
         echo "VERSION=${GITHUB_REF#refs#tags}" >> $GITHUB_ENV
      
      - name: Build
