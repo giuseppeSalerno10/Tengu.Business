@@ -20,7 +20,15 @@ namespace Tengu.Business.API.Controller
 
         public Task<AnimeModel[]> SearchAnimeAsync(string title, int count, CancellationToken cancellationToken)
         {
-            return _manager.SearchAnimeAsync(title, count, cancellationToken);
+            try
+            {
+                return _manager.SearchAnimeAsync(title, count, cancellationToken);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public Task<AnimeModel[]> SearchAnimeAsync(SearchFilter filter, int count, CancellationToken cancellationToken)
