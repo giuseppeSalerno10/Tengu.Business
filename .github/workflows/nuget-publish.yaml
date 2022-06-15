@@ -15,18 +15,23 @@ jobs:
      - name: Checkout
        uses: actions/checkout@v2
      
-     - name: Set current date as env variable
-       run: echo "HASH=$($RANDOM | md5sum | head -c 5)" >> $GITHUB_ENV
+     - name: Set outputs
+       id: vars
+       run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+       
+     - name: Check outputs
+       run: echo ${{ steps.vars.outputs.sha_short }}
+     
        
      - name: Test
-       run: dotnet test --configuration Release /p:Version=${VERSION}-${HASH}
+       run: dotnet test --configuration Release /p:Version=${VERSION}-${{ steps.vars.outputs.sha_short }}
      - name: Build
-       run: dotnet build --configuration Release /p:Version=${VERSION}-${HASH}
+       run: dotnet build --configuration Release /p:Version=${VERSION}-${{ steps.vars.outputs.sha_short }}
      - name: Pack
-       run: dotnet pack --configuration Release /p:Version=${VERSION}-${HASH} --no-build --output .
+       run: dotnet pack --configuration Release /p:Version=${VERSION}-${{ steps.vars.outputs.sha_short }} --no-build --output .
    
      - name: Push
        run: |
-         dotnet nuget push Tengu.Business.API.${VERSION}-${HASH}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
-         dotnet nuget push Tengu.Business.Commons.${VERSION}-${HASH}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}   
-         dotnet nuget push Tengu.Business.Core.${VERSION}-${HASH}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
+         dotnet nuget push Tengu.Business.API.${VERSION}-${{ steps.vars.outputs.sha_short }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
+         dotnet nuget push Tengu.Business.Commons.${VERSION}-${{ steps.vars.outputs.sha_short }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}   
+         dotnet nuget push Tengu.Business.Core.${VERSION}-${{ steps.vars.outputs.sha_short }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
