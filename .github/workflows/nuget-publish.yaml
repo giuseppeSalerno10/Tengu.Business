@@ -13,15 +13,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+     - name: Checkout
+       uses: actions/checkout@v2
    
-   - name: Checkout
-      uses: actions/checkout@v2
+     - name: Pack
+       run: dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output .
    
-   - name: Pack
-      run: dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output .
-   
-   - name: Push
-      run: |
-        dotnet nuget push Tengu.Business.API.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
-        dotnet nuget push Tengu.Business.Commons.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}   
-        dotnet nuget push Tengu.Business.Core.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
+     - name: Push
+       run: |
+         dotnet nuget push Tengu.Business.API.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
+         dotnet nuget push Tengu.Business.Commons.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}   
+         dotnet nuget push Tengu.Business.Core.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
