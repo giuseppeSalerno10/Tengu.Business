@@ -15,13 +15,16 @@ jobs:
     steps:
      - name: Checkout
        uses: actions/checkout@v2
-   
+     
+     - name: Test
+       run: dotnet test --configuration Release /p:Version=${VERSION} --no-build --output .
+     - name: Build
+       run: dotnet build --configuration Release /p:Version=${VERSION} --no-build --output .
      - name: Pack
        run: dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output .
    
      - name: Push
        run: |
-         dotnet pack --configuration Release /p:Version=1.0.0 -o .
          dotnet nuget push Tengu.Business.API.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
          dotnet nuget push Tengu.Business.Commons.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}   
          dotnet nuget push Tengu.Business.Core.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
