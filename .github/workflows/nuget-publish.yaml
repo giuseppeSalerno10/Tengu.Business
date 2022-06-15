@@ -6,7 +6,7 @@ on:
 
 env:
   NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
-  VERSION: 1.2.0
+  VERSION: ${{ secrets.VERSION }}
 
 jobs:
   build:
