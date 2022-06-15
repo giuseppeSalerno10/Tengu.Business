@@ -20,10 +20,10 @@ jobs:
        run: |
          now=$(date "+%s")
          lastMidnight=$(date -d 'today 00:00:00' "+%s")
-         startYear=$(date +%s --date "1999-1-28")
+         startYear=$(date +%s --date "2020-1-1")
 
          days=$(( ($now-$startYear)/(3600*24) ))
-         seconds=$(( ($now-$lastMidnight) ))
+         seconds=$(( ($now-$lastMidnight)/60 ))
 
          build=$days.$seconds
          
