@@ -17,8 +17,8 @@ jobs:
      
      - name: Set VERSION variable from tag
        run: |
-        git describe --tags --always
-        echo "VERSION=${GITHUB_REF#refs#tags}" >> $GITHUB_ENV
+        git fetch --prune --unshallow
+        git describe --tags
      
      - name: Build
        run: dotnet build --configuration Release
