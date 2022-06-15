@@ -21,7 +21,7 @@ jobs:
    
      - name: Push
        run: |
-         dotnet nuget restore .
+         dotnet pack --configuration Release /p:Version=1.0.0 -o .
          dotnet nuget push Tengu.Business.API.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
          dotnet nuget push Tengu.Business.Commons.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}   
          dotnet nuget push Tengu.Business.Core.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
