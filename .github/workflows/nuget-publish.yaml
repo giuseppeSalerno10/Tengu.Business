@@ -16,7 +16,7 @@ jobs:
        uses: actions/checkout@v2
      
      - name: Set current date as env variable
-       run: echo "DATE=$( --date='Jen 1 00:00:00 BST 2020' +%s )" >> $GITHUB_ENV
+       run: echo "HASH=$($RANDOM | md5sum | head -c 5)" >> $GITHUB_ENV
        
      - name: Test
        run: dotnet test --configuration Release /p:Version=${VERSION}-${DATE}
@@ -27,6 +27,6 @@ jobs:
    
      - name: Push
        run: |
-         dotnet nuget push Tengu.Business.API.${VERSION}-${DATE}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
-         dotnet nuget push Tengu.Business.Commons.${VERSION}-${DATE}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}   
-         dotnet nuget push Tengu.Business.Core.${VERSION}-${DATE}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
+         dotnet nuget push Tengu.Business.API.${VERSION}-${HASH}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
+         dotnet nuget push Tengu.Business.Commons.${VERSION}-${HASH}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}   
+         dotnet nuget push Tengu.Business.Core.${VERSION}-${HASH}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
