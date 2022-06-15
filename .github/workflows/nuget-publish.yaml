@@ -18,23 +18,29 @@ jobs:
      - name: Set outputs
        id: vars
        run: |
-         DAYS="1"
-         SECONDS="2"
-         BUILD=$DAYS.$SECONDS
-         echo "::set-output name=build::$BUILD"
+         now=$(date "+%s")
+         lastMidnight=$(date -d 'today 00:00:00' "+%s")
+         startYear=$(date +%s --date "1999-1-28")
+
+         days=$(( ($now-$startYear)/(3600*24) ))
+         seconds=$(( ($now-$lastMidnight) ))
+
+         build=$days.$seconds
+         
+         echo "::set-output name=BUILD::$build"
        
      - name: Check Version and build
-       run: echo ${VERSION}.${{ steps.vars.outputs.build }}
+       run: echo ${VERSION}.${{ steps.vars.outputs.BUILD }}
      
      - name: Test
-       run: dotnet test --configuration Release /p:Version=${VERSION}.${{ steps.vars.outputs.build }}
+       run: dotnet test --configuration Release /p:Version=${VERSION}.${{ steps.vars.outputs.BUILD }}
      - name: Build
-       run: dotnet build --configuration Release /p:Version=${VERSION}.${{ steps.vars.outputs.build }}
+       run: dotnet build --configuration Release /p:Version=${VERSION}.${{ steps.vars.outputs.BUILD }}
      - name: Pack
-       run: dotnet pack --configuration Release /p:Version=${VERSION}.${{ steps.vars.outputs.build }} --no-build --output .
+       run: dotnet pack --configuration Release /p:Version=${VERSION}.${{ steps.vars.outputs.BUILD }} --no-build --output .
    
      #- name: Push
      #  run: |
-     #    dotnet nuget push Tengu.Business.API.${VERSION}.${{ steps.vars.outputs.build }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
-     #    dotnet nuget push Tengu.Business.Commons.${VERSION}.${{ steps.vars.outputs.build }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}   
-     #    dotnet nuget push Tengu.Business.Core.${VERSION}.${{ steps.vars.outputs.build }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
+     #    dotnet nuget push Tengu.Business.API.${VERSION}.${{ steps.vars.outputs.BUILD }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
+     #    dotnet nuget push Tengu.Business.Commons.${VERSION}.${{ steps.vars.outputs.BUILD }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}   
+     #    dotnet nuget push Tengu.Business.Core.${VERSION}.${{ steps.vars.outputs.BUILD }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
