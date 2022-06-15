@@ -17,7 +17,11 @@ jobs:
      
         
      - name: Set VERSION variable from tag
-       run: echo "VERSION=${GITHUB_REF#refs#tags}" >> $GITHUB_ENV
+       run: |
+        echo "VERSION=${GITHUB_REF#refs/tags}"
+        echo "VERSION=${GITHUB_REF#refs}"
+        echo "VERSION=${GITHUB_REF#refs/tags/v/}"
+        echo "VERSION=${GITHUB_REF#refs#tags}" >> $GITHUB_ENV
      
      - name: Build
        run: dotnet build --configuration Release
