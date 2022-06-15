@@ -41,8 +41,8 @@ jobs:
      - name: Pack
        run: dotnet pack --configuration Release /p:Version=${VERSION}.${{ steps.vars.outputs.BUILD }} --no-build --output .
    
-     #- name: Push
-     #  run: |
-     #    dotnet nuget push Tengu.Business.API.${VERSION}.${{ steps.vars.outputs.BUILD }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
-     #    dotnet nuget push Tengu.Business.Commons.${VERSION}.${{ steps.vars.outputs.BUILD }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}   
-     #    dotnet nuget push Tengu.Business.Core.${VERSION}.${{ steps.vars.outputs.BUILD }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
+     - name: Push
+       run: |
+         dotnet nuget push Tengu.Business.API.${VERSION}.${{ steps.vars.outputs.BUILD }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
+         dotnet nuget push Tengu.Business.Commons.${VERSION}.${{ steps.vars.outputs.BUILD }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}   
+         dotnet nuget push Tengu.Business.Core.${VERSION}.${{ steps.vars.outputs.BUILD }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
