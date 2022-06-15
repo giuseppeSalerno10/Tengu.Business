@@ -17,11 +17,6 @@ jobs:
      
      - name: Set current date as env variable
        run: echo "DATE=$(date +'%y.%m.%d.%H.%M')" >> $GITHUB_ENV
-     
-     - name: Build
-       run: dotnet build --configuration Release
-     - name: Test
-       run: dotnet test --configuration Release --no-build
        
      - name: Pack
        run: dotnet pack --configuration Release /p:Version=${VERSION}.${DATE} --no-build --output .
