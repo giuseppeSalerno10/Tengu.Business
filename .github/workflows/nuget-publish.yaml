@@ -3,6 +3,8 @@ name: Master Publish
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+      - '.github/workflows/**'
 
 env:
   NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
