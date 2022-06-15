@@ -6,7 +6,8 @@ on:
 
 env:
   NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
-  VERSION: 1.2.1
+  VERSION: ${{ secrets.VERSION }}
+  BUILD: 0.0
 
 jobs:
   build:
@@ -22,16 +23,15 @@ jobs:
      - name: Check outputs
        run: echo ${{ steps.vars.outputs.sha_short }}
      
-       
      - name: Test
-       run: dotnet test --configuration Release /p:Version=${VERSION}-${{ steps.vars.outputs.sha_short }}
+       run: dotnet test --configuration Release /p:Version=${VERSION}.${BUILD}
      - name: Build
-       run: dotnet build --configuration Release /p:Version=${VERSION}-${{ steps.vars.outputs.sha_short }}
+       run: dotnet build --configuration Release /p:Version=${VERSION}.${BUILD}
      - name: Pack
-       run: dotnet pack --configuration Release /p:Version=${VERSION}-${{ steps.vars.outputs.sha_short }} --no-build --output .
+       run: dotnet pack --configuration Release /p:Version=${VERSION}.${BUILD} --no-build --output .
    
      - name: Push
        run: |
-         dotnet nuget push Tengu.Business.API.${VERSION}-${{ steps.vars.outputs.sha_short }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
-         dotnet nuget push Tengu.Business.Commons.${VERSION}-${{ steps.vars.outputs.sha_short }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}   
-         dotnet nuget push Tengu.Business.Core.${VERSION}-${{ steps.vars.outputs.sha_short }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
+         dotnet nuget push Tengu.Business.API.${VERSION}.${BUILD}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
+         dotnet nuget push Tengu.Business.Commons.${VERSION}.${BUILD}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}   
+         dotnet nuget push Tengu.Business.Core.${VERSION}.${BUILD}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
