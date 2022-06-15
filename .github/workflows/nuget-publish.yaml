@@ -19,11 +19,11 @@ jobs:
        run: echo "HASH=$($RANDOM | md5sum | head -c 5)" >> $GITHUB_ENV
        
      - name: Test
-       run: dotnet test --configuration Release /p:Version=${VERSION}-${DATE}
+       run: dotnet test --configuration Release /p:Version=${VERSION}-${HASH}
      - name: Build
-       run: dotnet build --configuration Release /p:Version=${VERSION}-${DATE}
+       run: dotnet build --configuration Release /p:Version=${VERSION}-${HASH}
      - name: Pack
-       run: dotnet pack --configuration Release /p:Version=${VERSION}-${DATE} --no-build --output .
+       run: dotnet pack --configuration Release /p:Version=${VERSION}-${HASH} --no-build --output .
    
      - name: Push
        run: |
