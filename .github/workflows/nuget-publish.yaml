@@ -1,0 +1,33 @@
+name: Master Publish
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
+  VERSION: 1.1
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+     - name: Checkout
+       uses: actions/checkout@v2
+     
+     - name: Set current date as env variable
+       run: echo "DATE=$(date +'%y.%m.%d.%H.%M')" >> $GITHUB_ENV
+     
+     - name: Build
+       run: dotnet build --configuration Release
+     - name: Test
+       run: dotnet test --configuration Release --no-build
+       
+     - name: Pack
+       run: dotnet pack --configuration Release /p:Version=${VERSION}.${DATE} --no-build --output .
+   
+     - name: Push
+       run: |
+         dotnet nuget push Tengu.Business.API.${VERSION}.${DATE}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
+         dotnet nuget push Tengu.Business.Commons.${VERSION}.${DATE}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}   
+         dotnet nuget push Tengu.Business.Core.${VERSION}.${DATE}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
