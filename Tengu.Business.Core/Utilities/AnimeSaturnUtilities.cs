@@ -1,16 +1,30 @@
-﻿using HtmlAgilityPack;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Flurl.Http;
 using Tengu.Business.Commons;
+using Tengu.Business.Core.DTO.Output.AnimeSaturn;
 
 namespace Tengu.Business.Core
 {
     public class AnimeSaturnUtilities : IAnimeSaturnUtilities
     {
+        public async Task<AnimeSaturnCreateSessionOutput> CreateSession()
+        {
+            var requestUrl = Config.AnimeSaturn.BaseUrl;
+
+            var headResponse = await requestUrl
+                .WithHeader("User-Agent", Config.Common.UserAgent)
+                .HeadAsync();
+
+            var sessionId = headResponse.Cookies.First(cookie => cookie.Name.Equals("PHPSESSID")).Value;
+
+
+            var sessionResult = new AnimeSaturnCreateSessionOutput()
+            {
+                SessionId = sessionId.Replace("%3D", "="),
+            };
+
+            return sessionResult;
+        }
+
         public string[] GetGenreArray(IEnumerable<Genres> genres)
         {
             Dictionary<Genres, string> genreMap = new Dictionary<Genres, string>()

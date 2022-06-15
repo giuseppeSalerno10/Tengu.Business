@@ -127,7 +127,7 @@ namespace Tengu.Business.Core
             return animeList.ToArray();
         }
 
-        public async Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
+        public async Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
         {
             var web = new HtmlWeb();
             HtmlDocument doc;
@@ -135,23 +135,19 @@ namespace Tengu.Business.Core
             var animeUrl = $"{Config.AnimeSaturn.BaseAnimeUrl}/{animeId}";
 
             doc = await web.LoadFromWebAsync($"{animeUrl}", cancellationToken);
-
-            var animeTitle = doc.DocumentNode.SelectSingleNode("//div[@class='container anime-title-as mb-3 w-100']/b").InnerText;
-
-            var episodesNodes = doc
-                .GetElementbyId("resultsxd")
-                .SelectNodes("./div/div/div");
-
+            
             var episodeBag = new ConcurrentBag<EpisodeModel>();
 
-            limit = limit == 0 ? episodesNodes.Count : limit;
+            var animeTitle = doc.DocumentNode.SelectSingleNode("//div[@class='container anime-title-as mb-3 w-100']/b").InnerText;
+            var episodes = doc.DocumentNode.SelectNodes("//div[@class='btn-group episodes-button episodi-link-button']/a");
+
+            limit = limit == 0 ? episodes.Count : limit;
 
             Parallel.For(offset, limit, index =>
             {
                 if (index >= offset && index <= limit)
                 {
-                    var episodeUrl = episodesNodes[index]
-                        .SelectSingleNode("./a")
+                    var episodeUrl = episodes[index]
                         .GetAttributeValue("href", "");
 
                     var url = GetAnimeStreamUrl(episodeUrl, cancellationToken).Result;
@@ -215,7 +211,7 @@ namespace Tengu.Business.Core
             return calendar;
         }
 
-        public async Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
+        public async Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset = 0, int limit = 15, CancellationToken cancellationToken = default)
         {
             var episodeList = new List<EpisodeModel>();
 
@@ -227,15 +223,17 @@ namespace Tengu.Business.Core
 
             var count = limit - offset;
 
+            var session = await _utilities.CreateSession();
+
             while (!cancellationToken.IsCancellationRequested && count > 0)
             {
                 var startIndex = offset - currentPage * 15;
-                var endIndex = Math.Min(15, startIndex + count);
+                var endIndex = startIndex + count;
 
                 var response = await requestUrl
                     .WithHeader("X-Requested-With", "XMLHttpRequest")
-                    .WithHeader("Content-Type", "application/x-www-form-urlencoded")
-                    .PostStringAsync($"page={currentPage + 1}", cancellationToken)
+                    .WithCookie("PHPSESSID", session.SessionId)
+                    .SendUrlEncodedAsync(HttpMethod.Get, $"page={currentPage + 1}", cancellationToken)
                     .ReceiveString();
 
                 doc.LoadHtml(response);

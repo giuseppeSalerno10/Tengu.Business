@@ -31,12 +31,12 @@ namespace Tengu.Business.Commons
 
     public class AnimeSaturnConfig
     {
-        public string BaseUrl { get; } = "https://www.animesaturn.it";
-        public string BaseAnimeUrl { get; } = "https://www.animesaturn.it/anime";
-        public string BaseLatestEpisodeUrl { get; } = "https://www.animesaturn.it/fetch_pages.php?request=episodes";
-        public string SearchByTitleUrl { get; } = "https://www.animesaturn.it/animelist?";
-        public string SearchByFilterUrl { get; } = "https://www.animesaturn.it/filter?";
-        public string CalendarUrl { get; } = "https://www.animesaturn.it/calendario";
+        public string BaseUrl { get; } = "https://www.animesaturn.cc";
+        public string BaseAnimeUrl { get; } = $"https://www.animesaturn.cc/anime";
+        public string BaseLatestEpisodeUrl { get; } = "https://www.animesaturn.cc/fetch_pages.php?request=episodes";
+        public string SearchByTitleUrl { get; } = "https://www.animesaturn.cc/animelist?";
+        public string SearchByFilterUrl { get; } = "https://www.animesaturn.cc/filter?";
+        public string CalendarUrl { get; } = "https://www.animesaturn.cc/calendario";
     }
 
     public class AnimeUnityConfig

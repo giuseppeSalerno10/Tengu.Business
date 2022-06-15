@@ -34,7 +34,7 @@ namespace Tengu.Business.API
             return _downlaClient.StartDownload(new Uri(downloadUrl), cancellationToken);
         }
 
-        public Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
+        public Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
         {
             return _adapter.GetEpisodesAsync(animeId, offset, limit, cancellationToken);
         }

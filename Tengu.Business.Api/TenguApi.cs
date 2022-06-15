@@ -1,11 +1,8 @@
 ﻿using Downla;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Tengu.Business.API.Controller;
+using Tengu.Business.API.Controller.Interfaces;
 using Tengu.Business.Commons;
 
 namespace Tengu.Business.API
@@ -17,19 +14,16 @@ namespace Tengu.Business.API
 
         private readonly ILogger<TenguApi> _logger;
 
-        private readonly IAnimeUnityManager _animeUnityManager;
-        private readonly IAnimeSaturnManager _animeSaturnManager;
-        private readonly IKitsuManager _kitsuManager;
+        private readonly IAnimeUnityController _animeUnityController;
+        private readonly IAnimeSaturnController _animeSaturnController;
+        private readonly IKitsuController _kitsuController;
 
         public TenguApi(
-            IAnimeUnityManager animeUnityManager, 
-            IAnimeSaturnManager animeSaturnManager, 
-            IKitsuManager kitsuManager,
-            ILogger<TenguApi> logger)
+            ILogger<TenguApi> logger, IAnimeUnityController animeUnityController, IAnimeSaturnController animeSaturnController, IKitsuController kitsuController)
         {
-            _animeUnityManager = animeUnityManager;
-            _animeSaturnManager = animeSaturnManager;
-            _kitsuManager = kitsuManager;
+            _animeUnityController = animeUnityController;
+            _animeSaturnController = animeSaturnController;
+            _kitsuController = kitsuController;
 
             _logger = logger;
 
@@ -39,13 +33,12 @@ namespace Tengu.Business.API
 
         public async Task<KitsuAnimeModel[]> KitsuUpcomingAnimeAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
         {
-            return await _kitsuManager.GetUpcomingAnimeAsync(offset, limit, cancellationToken);
+            return await _kitsuController.GetUpcomingAnimeAsync(offset, limit, cancellationToken);
         }
         public async Task<KitsuAnimeModel[]> KitsuSearchAnimeAsync(string title, int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
         {
-            return await _kitsuManager.SearchAnimeAsync(title, offset, limit, cancellationToken);
+            return await _kitsuController.SearchAnimeAsync(title, offset, limit, cancellationToken);
         }
-
 
         public async Task<AnimeModel[]> SearchAnimeAsync(string title, int count = 30, CancellationToken cancellationToken = default)
         {
@@ -59,10 +52,10 @@ namespace Tengu.Business.API
                 switch (host)
                 {
                     case Hosts.AnimeSaturn:
-                        searchTasks.Add(_animeSaturnManager.SearchAnimeAsync(title, count, cancellationToken));
+                        searchTasks.Add(_animeSaturnController.SearchAnimeAsync(title, count, cancellationToken));
                         break;
                     case Hosts.AnimeUnity:
-                        searchTasks.Add(_animeUnityManager.SearchAnimeAsync(title, count, cancellationToken));
+                        searchTasks.Add(_animeUnityController.SearchAnimeAsync(title, count, cancellationToken));
                         break;
                 }
             }
@@ -81,10 +74,10 @@ namespace Tengu.Business.API
                 switch (host)
                 {
                     case Hosts.AnimeSaturn:
-                        searchTasks.Add(_animeSaturnManager.SearchAnimeAsync(filter, count, cancellationToken));
+                        searchTasks.Add(_animeSaturnController.SearchAnimeAsync(filter, count, cancellationToken));
                         break;
                     case Hosts.AnimeUnity:
-                        searchTasks.Add(_animeUnityManager.SearchAnimeAsync(filter, count, cancellationToken));
+                        searchTasks.Add(_animeUnityController.SearchAnimeAsync(filter, count, cancellationToken));
                         break;
                 }
             }
@@ -102,10 +95,10 @@ namespace Tengu.Business.API
                 switch (host)
                 {
                     case Hosts.AnimeSaturn:
-                        searchTasks.Add(_animeSaturnManager.SearchAnimeAsync(title, filter, count, cancellationToken));
+                        searchTasks.Add(_animeSaturnController.SearchAnimeAsync(title, filter, count, cancellationToken));
                         break;
                     case Hosts.AnimeUnity:
-                        searchTasks.Add(_animeUnityManager.SearchAnimeAsync(title, filter, count, cancellationToken));
+                        searchTasks.Add(_animeUnityController.SearchAnimeAsync(title, filter, count, cancellationToken));
                         break;
                 }
             }
@@ -120,11 +113,11 @@ namespace Tengu.Business.API
             switch (host)
             {
                 case Hosts.AnimeSaturn:
-                    getEpisodesTask = _animeSaturnManager.GetEpisodesAsync(animeId, offset, limit, cancellationToken);
+                    getEpisodesTask = _animeSaturnController.GetEpisodesAsync(animeId, offset, limit, cancellationToken);
                     break;
 
                 case Hosts.AnimeUnity:
-                    getEpisodesTask = _animeUnityManager.GetEpisodesAsync(animeId, offset, limit, cancellationToken);
+                    getEpisodesTask = _animeUnityController.GetEpisodesAsync(animeId, offset, limit, cancellationToken);
                     break;
 
                 default:
@@ -158,10 +151,10 @@ namespace Tengu.Business.API
                 switch (host)
                 {
                     case Hosts.AnimeSaturn:
-                        searchTasks.Add(_animeSaturnManager.GetLatestEpisodesAsync(offset, limit, cancellationToken));
+                        searchTasks.Add(_animeSaturnController.GetLatestEpisodesAsync(offset, limit, cancellationToken));
                         break;
                     case Hosts.AnimeUnity:
-                        searchTasks.Add(_animeUnityManager.GetLatestEpisodesAsync(offset, limit, cancellationToken));
+                        searchTasks.Add(_animeUnityController.GetLatestEpisodesAsync(offset, limit, cancellationToken));
                         break;
                 }
             }
@@ -195,10 +188,10 @@ namespace Tengu.Business.API
                 switch (host)
                 {
                     case Hosts.AnimeSaturn:
-                        tasks.Add(_animeSaturnManager.GetCalendar(cancellationToken));
+                        tasks.Add(_animeSaturnController.GetCalendar(cancellationToken));
                         break;
                     case Hosts.AnimeUnity:
-                        tasks.Add(_animeUnityManager.GetCalendar(cancellationToken));
+                        tasks.Add(_animeUnityController.GetCalendar(cancellationToken));
                         break;
                 }
             }
@@ -220,7 +213,6 @@ namespace Tengu.Business.API
             return calendarList.ToArray();
         }
 
-
         public DownloadInfosModel DownloadAsync(string episodeUrl, Hosts host, CancellationToken cancellationToken = default)
         {
             DownloadInfosModel downloadInfo;
@@ -228,11 +220,11 @@ namespace Tengu.Business.API
             switch (host)
             {
                 case Hosts.AnimeSaturn:
-                    downloadInfo = _animeSaturnManager.DownloadAsync(DownloadPath, episodeUrl, cancellationToken);
+                    downloadInfo = _animeSaturnController.DownloadAsync(DownloadPath, episodeUrl, cancellationToken);
                     break;
 
                 case Hosts.AnimeUnity:
-                    downloadInfo = _animeUnityManager.DownloadAsync(DownloadPath, episodeUrl, cancellationToken);
+                    downloadInfo = _animeUnityController.DownloadAsync(DownloadPath, episodeUrl, cancellationToken);
                     break;
 
                 default:
@@ -241,7 +233,6 @@ namespace Tengu.Business.API
 
             return downloadInfo;
         }
-
 
         #region Private Methods
         private void CheckForHost()
