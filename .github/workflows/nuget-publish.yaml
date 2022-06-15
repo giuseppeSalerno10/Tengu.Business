@@ -19,10 +19,10 @@ jobs:
        run: echo "DATE=$(date +'%y.%m.%d.%H.%M')" >> $GITHUB_ENV
        
      - name: Pack
-       run: dotnet pack --configuration Release /p:Version=${VERSION}.${DATE} --no-build --output .
+       run: dotnet pack --configuration Release /p:Version=${VERSION}-${DATE} --no-build --output .
    
      - name: Push
        run: |
-         dotnet nuget push Tengu.Business.API.${VERSION}.${DATE}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
-         dotnet nuget push Tengu.Business.Commons.${VERSION}.${DATE}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}   
-         dotnet nuget push Tengu.Business.Core.${VERSION}.${DATE}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
+         dotnet nuget push Tengu.Business.API.${VERSION}-${DATE}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
+         dotnet nuget push Tengu.Business.Commons.${VERSION}-${DATE}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}   
+         dotnet nuget push Tengu.Business.Core.${VERSION}-${DATE}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
