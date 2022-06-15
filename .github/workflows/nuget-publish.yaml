@@ -7,7 +7,7 @@ on:
 env:
   NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
   VERSION: 1.2
-  BUILD: 0.0
+  BUILD: 0.1
 
 jobs:
   build:
