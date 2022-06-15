@@ -17,9 +17,11 @@ jobs:
      
      - name: Set outputs
        id: vars
-       run: | 
-         TEMP=$(git rev-parse --short HEAD | cut -c 1-5)
-         echo "::set-output name=build::$TEMP"
+       run: |
+         DAYS="1"
+         SECONDS="2"
+         BUILD="$(DAYS).$(SECONDS)"
+         echo "::set-output name=build::$BUILD"
        
      - name: Check Version and build
        run: echo ${VERSION}.${{ steps.vars.outputs.build }}
