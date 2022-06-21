@@ -7,7 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Tengu.Business.API.Controller;
 using Tengu.Business.API.Controller.Interfaces;
+using Tengu.Business.API.Interfaces;
 using Tengu.Business.Commons;
+using Tengu.Business.Commons.Services;
+using Tengu.Business.Commons.Services.Interfaces;
 using Tengu.Business.Core;
 
 namespace Tengu.Business.API
@@ -18,17 +21,19 @@ namespace Tengu.Business.API
         {
             services.AddSingleton<ITenguApi, TenguApi>();
 
-            services.AddTransient<IAnimeSaturnController, AnimeSaturnController>();
-            services.AddTransient<IAnimeUnityController, AnimeUnityController>();
-            services.AddTransient<IKitsuController, KitsuController>();
+            services.AddSingleton<IManipulationService, ManipulationService>();
 
-            services.AddTransient<IAnimeSaturnManager, AnimeSaturnManager>();
-            services.AddTransient<IAnimeUnityManager, AnimeUnityManager>();
-            services.AddTransient<IKitsuManager, KitsuManager>();
+            services.AddSingleton<IAnimeSaturnController, AnimeSaturnController>();
+            services.AddSingleton<IAnimeUnityController, AnimeUnityController>();
+            services.AddSingleton<IKitsuController, KitsuController>();
 
-            services.AddTransient<IAnimeSaturnAdapter, AnimeSaturnAdapter>();
-            services.AddTransient<IAnimeUnityAdapter, AnimeUnityAdapter>();
-            services.AddTransient<IKitsuAdapter, KitsuAdapter>();
+            services.AddSingleton<IAnimeSaturnManager, AnimeSaturnManager>();
+            services.AddSingleton<IAnimeUnityManager, AnimeUnityManager>();
+            services.AddSingleton<IKitsuManager, KitsuManager>();
+
+            services.AddSingleton<IAnimeSaturnAdapter, AnimeSaturnAdapter>();
+            services.AddSingleton<IAnimeUnityAdapter, AnimeUnityAdapter>();
+            services.AddSingleton<IKitsuAdapter, KitsuAdapter>();
 
             services.AddSingleton<IAnimeSaturnUtilities, AnimeSaturnUtilities>();
             services.AddSingleton<IAnimeUnityUtilities, AnimeUnityUtilities>();

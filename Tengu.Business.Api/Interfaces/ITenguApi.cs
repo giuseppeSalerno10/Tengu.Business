@@ -1,22 +1,22 @@
 ﻿using Downla;
 using Tengu.Business.Commons;
+using Tengu.Business.Commons.Objects;
 
-namespace Tengu.Business.API
+namespace Tengu.Business.API.Interfaces
 {
     public interface ITenguApi
     {
         Hosts[] CurrentHosts { get; set; }
-        public string DownloadPath { get; set; }
+        string DownloadPath { get; set; }
 
-        Task<KitsuAnimeModel[]> KitsuUpcomingAnimeAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default);
-        Task<KitsuAnimeModel[]> KitsuSearchAnimeAsync(string title, int offset = 0, int limit = 30, CancellationToken cancellationToken = default);
-
-        DownloadInfosModel DownloadAsync(string episodeUrl, Hosts host, CancellationToken cancellationToken = default);
-        Task<EpisodeModel[]> GetEpisodesAsync(string animeId, Hosts host, int offset = 0, int limit = 0, CancellationToken cancellationToken = default);
-        Task<EpisodeModel[]> GetLatestEpisodeAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default);
-        Task<AnimeModel[]> SearchAnimeAsync(SearchFilter filter, int count = 30, CancellationToken cancellationToken = default);
-        Task<AnimeModel[]> SearchAnimeAsync(string title, int count = 30, CancellationToken cancellationToken = default);
-        Task<AnimeModel[]> SearchAnimeAsync(string title, SearchFilter filter, int count = 30, CancellationToken cancellationToken = default);
-        Task<Calendar[]> GetCalendar(CancellationToken cancellationToken = default);
+        TenguResult<DownloadInfosModel> DownloadAsync(string episodeUrl, Hosts host, CancellationToken cancellationToken = default);
+        Task<TenguResult<Calendar>[]> GetCalendar(CancellationToken cancellationToken = default);
+        Task<TenguResult<EpisodeModel[]>> GetEpisodesAsync(string animeId, Hosts host, int offset = 0, int limit = 0, CancellationToken cancellationToken = default);
+        Task<TenguResult<EpisodeModel[]>[]> GetLatestEpisodeAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default);
+        Task<TenguResult<KitsuAnimeModel[]>> KitsuSearchAnimeAsync(string title, int offset = 0, int limit = 30, CancellationToken cancellationToken = default);
+        Task<TenguResult<KitsuAnimeModel[]>> KitsuUpcomingAnimeAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default);
+        Task<TenguResult<AnimeModel[]>[]> SearchAnimeAsync(SearchFilter filter, int count = 30, CancellationToken cancellationToken = default);
+        Task<TenguResult<AnimeModel[]>[]> SearchAnimeAsync(string title, int count = 30, CancellationToken cancellationToken = default);
+        Task<TenguResult<AnimeModel[]>[]> SearchAnimeAsync(string title, SearchFilter filter, int count = 30, CancellationToken cancellationToken = default);
     }
 }

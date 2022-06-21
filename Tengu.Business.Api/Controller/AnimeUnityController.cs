@@ -6,51 +6,139 @@ using System.Text;
 using System.Threading.Tasks;
 using Tengu.Business.API.Controller.Interfaces;
 using Tengu.Business.Commons;
+using Tengu.Business.Commons.Objects;
+using Tengu.Business.Commons.Services.Interfaces;
 
 namespace Tengu.Business.API.Controller
 {
     public class AnimeUnityController : IAnimeUnityController
     {
         private readonly IAnimeUnityManager _manager;
+        private readonly IManipulationService _manipulationService;
 
-        public AnimeUnityController(IAnimeUnityManager animeUnityManager)
+        public AnimeUnityController(IAnimeUnityManager animeUnityManager, IManipulationService manipulationService)
         {
             _manager = animeUnityManager;
+            _manipulationService = manipulationService;
         }
 
-        public Task<AnimeModel[]> SearchAnimeAsync(string title, int count, CancellationToken cancellationToken)
+        public async Task<TenguResult<AnimeModel[]>> SearchAnimeAsync(string title, int count, CancellationToken cancellationToken)
         {
-            return _manager.SearchAnimeAsync(title, count, cancellationToken);
+            var result = new TenguResult<AnimeModel[]>();
+
+            try
+            {
+                result.Data = await _manager.SearchAnimeAsync(title, count, cancellationToken);
+                result.Success = true;
+            }
+            catch (Exception e)
+            {
+                _manipulationService.HandleTenguException(e, ref result);
+            }
+
+            return result;
         }
 
-        public Task<AnimeModel[]> SearchAnimeAsync(SearchFilter filter, int count, CancellationToken cancellationToken)
+        public async Task<TenguResult<AnimeModel[]>> SearchAnimeAsync(SearchFilter filter, int count, CancellationToken cancellationToken)
         {
-            return _manager.SearchAnimeAsync(filter, count, cancellationToken);
+            var result = new TenguResult<AnimeModel[]>();
+
+            try
+            {
+                result.Data = await _manager.SearchAnimeAsync(filter, count, cancellationToken);
+                result.Success = true;
+            }
+            catch (Exception e)
+            {
+                _manipulationService.HandleTenguException(e, ref result);
+            }
+
+            return result;
         }
 
-        public Task<AnimeModel[]> SearchAnimeAsync(string title, SearchFilter filter, int count, CancellationToken cancellationToken)
+        public async Task<TenguResult<AnimeModel[]>> SearchAnimeAsync(string title, SearchFilter filter, int count, CancellationToken cancellationToken)
         {
-            return _manager.SearchAnimeAsync(title, filter, count, cancellationToken);
+            var result = new TenguResult<AnimeModel[]>();
+
+            try
+            {
+                result.Data = await _manager.SearchAnimeAsync(title, filter, count, cancellationToken);
+                result.Success = true;
+            }
+            catch (Exception e)
+            {
+                _manipulationService.HandleTenguException(e, ref result);
+            }
+
+            return result;
         }
 
-        public Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset, int limit, CancellationToken cancellationToken)
+        public async Task<TenguResult<EpisodeModel[]>> GetEpisodesAsync(string animeId, int offset, int limit, CancellationToken cancellationToken)
         {
-            return _manager.GetEpisodesAsync(animeId, offset, limit, cancellationToken);
+            var result = new TenguResult<EpisodeModel[]>();
+
+            try
+            {
+                result.Data = await _manager.GetEpisodesAsync(animeId, offset, limit, cancellationToken);
+                result.Success = true;
+            }
+            catch (Exception e)
+            {
+                _manipulationService.HandleTenguException(e, ref result);
+            }
+
+            return result;
         }
 
-        public Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset, int limit, CancellationToken cancellationToken)
+        public async Task<TenguResult<EpisodeModel[]>> GetLatestEpisodesAsync(int offset, int limit, CancellationToken cancellationToken)
         {
-            return _manager.GetLatestEpisodesAsync(offset, limit, cancellationToken);
+            var result = new TenguResult<EpisodeModel[]>();
+
+            try
+            {
+                result.Data = await _manager.GetLatestEpisodesAsync(offset, limit, cancellationToken);
+                result.Success = true;
+            }
+            catch (Exception e)
+            {
+                _manipulationService.HandleTenguException(e, ref result);
+            }
+
+            return result;
         }
 
-        public Task<Calendar> GetCalendar(CancellationToken cancellationToken)
+        public async Task<TenguResult<Calendar>> GetCalendar(CancellationToken cancellationToken)
         {
-            return _manager.GetCalendar(cancellationToken);
+            var result = new TenguResult<Calendar>();
+
+            try
+            {
+                result.Data = await _manager.GetCalendar(cancellationToken);
+                result.Success = true;
+            }
+            catch (Exception e)
+            {
+                _manipulationService.HandleTenguException(e, ref result);
+            }
+
+            return result;
         }
 
-        public DownloadInfosModel DownloadAsync(string downloadPath, string episodeUrl, CancellationToken cancellationToken)
+        public TenguResult<DownloadInfosModel> DownloadAsync(string downloadPath, string episodeUrl, CancellationToken cancellationToken)
         {
-            return _manager.DownloadAsync(downloadPath, episodeUrl, cancellationToken);
+            var result = new TenguResult<DownloadInfosModel>();
+
+            try
+            {
+                result.Data = _manager.DownloadAsync(downloadPath, episodeUrl, cancellationToken);
+                result.Success = true;
+            }
+            catch (Exception e)
+            {
+                _manipulationService.HandleTenguException(e, ref result);
+            }
+
+            return result;
         }
     }
 }

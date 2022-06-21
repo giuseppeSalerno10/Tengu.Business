@@ -3,7 +3,9 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using Tengu.Business.API.Controller;
 using Tengu.Business.API.Controller.Interfaces;
+using Tengu.Business.API.Interfaces;
 using Tengu.Business.Commons;
+using Tengu.Business.Commons.Objects;
 
 namespace Tengu.Business.API
 {
@@ -31,22 +33,21 @@ namespace Tengu.Business.API
         }
 
 
-        public async Task<KitsuAnimeModel[]> KitsuUpcomingAnimeAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
+        public Task<TenguResult<KitsuAnimeModel[]>> KitsuUpcomingAnimeAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
         {
-            return await _kitsuController.GetUpcomingAnimeAsync(offset, limit, cancellationToken);
+            return _kitsuController.GetUpcomingAnimeAsync(offset, limit, cancellationToken);
         }
-        public async Task<KitsuAnimeModel[]> KitsuSearchAnimeAsync(string title, int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
+        public Task<TenguResult<KitsuAnimeModel[]>> KitsuSearchAnimeAsync(string title, int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
         {
-            return await _kitsuController.SearchAnimeAsync(title, offset, limit, cancellationToken);
+            return _kitsuController.SearchAnimeAsync(title, offset, limit, cancellationToken);
         }
 
-        public async Task<AnimeModel[]> SearchAnimeAsync(string title, int count = 30, CancellationToken cancellationToken = default)
+        public Task<TenguResult<AnimeModel[]>[]> SearchAnimeAsync(string title, int count = 30, CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
-            var animeList = new ConcurrentBag<AnimeModel>();
-            var searchTasks = new List<Task<AnimeModel[]>>();
-            
+            var searchTasks = new List<Task<TenguResult<AnimeModel[]>>>();
+
             foreach (var host in CurrentHosts)
             {
                 switch (host)
@@ -60,14 +61,14 @@ namespace Tengu.Business.API
                 }
             }
 
-            return await ElaborateSearch(searchTasks, cancellationToken);
+            return ElaborateSearch(searchTasks, cancellationToken);
         }
-        public async Task<AnimeModel[]> SearchAnimeAsync(SearchFilter filter, int count = 30, CancellationToken cancellationToken = default)
+        public Task<TenguResult<AnimeModel[]>[]> SearchAnimeAsync(SearchFilter filter, int count = 30, CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
             var animeList = new ConcurrentBag<AnimeModel>();
-            var searchTasks = new List<Task<AnimeModel[]>>();
+            var searchTasks = new List<Task<TenguResult<AnimeModel[]>>>();
 
             foreach (var host in CurrentHosts)
             {
@@ -82,13 +83,13 @@ namespace Tengu.Business.API
                 }
             }
 
-            return await ElaborateSearch(searchTasks, cancellationToken);
+            return ElaborateSearch(searchTasks, cancellationToken);
         }
-        public async Task<AnimeModel[]> SearchAnimeAsync(string title, SearchFilter filter, int count = 30, CancellationToken cancellationToken = default)
+        public Task<TenguResult<AnimeModel[]>[]> SearchAnimeAsync(string title, SearchFilter filter, int count = 30, CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
-            var searchTasks = new List<Task<AnimeModel[]>>();
+            var searchTasks = new List<Task<TenguResult<AnimeModel[]>>>();
 
             foreach (var host in CurrentHosts)
             {
@@ -102,49 +103,27 @@ namespace Tengu.Business.API
                         break;
                 }
             }
-            return await ElaborateSearch(searchTasks, cancellationToken);
+
+            return ElaborateSearch(searchTasks, cancellationToken);
         }
 
-        public async Task<EpisodeModel[]> GetEpisodesAsync(string animeId, Hosts host, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
-        {
-            CheckForHost();
-            Task<EpisodeModel[]> getEpisodesTask;
-
-            switch (host)
-            {
-                case Hosts.AnimeSaturn:
-                    getEpisodesTask = _animeSaturnController.GetEpisodesAsync(animeId, offset, limit, cancellationToken);
-                    break;
-
-                case Hosts.AnimeUnity:
-                    getEpisodesTask = _animeUnityController.GetEpisodesAsync(animeId, offset, limit, cancellationToken);
-                    break;
-
-                default:
-                    throw new TenguException("No host found");
-            }
-
-            EpisodeModel[] episodes;
-
-            try
-            {
-                episodes = await getEpisodesTask;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in GetEpisodes");
-                throw;
-            }
-
-             return episodes;
-        }
-
-        public async Task<EpisodeModel[]> GetLatestEpisodeAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
+        public Task<TenguResult<EpisodeModel[]>> GetEpisodesAsync(string animeId, Hosts host, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
-            var episodeList = new List<EpisodeModel>();
-            var searchTasks = new List<Task<EpisodeModel[]>>();
+            return host switch
+            {
+                Hosts.AnimeSaturn => _animeSaturnController.GetEpisodesAsync(animeId, offset, limit, cancellationToken),
+                Hosts.AnimeUnity => _animeUnityController.GetEpisodesAsync(animeId, offset, limit, cancellationToken),
+                _ => throw new TenguException("No host found")
+            };
+        }
+
+        public async Task<TenguResult<EpisodeModel[]>[]> GetLatestEpisodeAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
+        {
+            CheckForHost();
+
+            var searchTasks = new List<Task<TenguResult<EpisodeModel[]>>>();
 
             foreach (var host in CurrentHosts)
             {
@@ -159,29 +138,21 @@ namespace Tengu.Business.API
                 }
             }
 
+            var episodeList = new List<TenguResult<EpisodeModel[]>>();
+
             foreach (var task in searchTasks)
             {
-                try
-                {
-                    var result = await task;
-                    episodeList.AddRange(result);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error in GetLatestEpisode");
-                    throw;
-                }
+                episodeList.Add(await task);
             }
 
             return episodeList.ToArray();
         }
 
-        public async Task<Calendar[]> GetCalendar(CancellationToken cancellationToken = default)
+        public async Task<TenguResult<Calendar>[]> GetCalendar(CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
-            var calendarList = new List<Calendar>();
-            var tasks = new List<Task<Calendar>>();
+            var tasks = new List<Task<TenguResult<Calendar>>>();
 
             foreach (var host in CurrentHosts)
             {
@@ -196,42 +167,28 @@ namespace Tengu.Business.API
                 }
             }
 
+            var calendarList = new List<TenguResult<Calendar>>();
+
             foreach (var task in tasks)
             {
-                try
-                {
-                    var result = await task;
-                    calendarList.Add(result);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error in GetCalendar");
-                    throw;
-                }
+                var result = await task;
+                calendarList.Add(result);
             }
 
             return calendarList.ToArray();
         }
 
-        public DownloadInfosModel DownloadAsync(string episodeUrl, Hosts host, CancellationToken cancellationToken = default)
+        public TenguResult<DownloadInfosModel> DownloadAsync(string episodeUrl, Hosts host, CancellationToken cancellationToken = default)
         {
-            DownloadInfosModel downloadInfo;
+            CheckForHost();
 
-            switch (host)
+            return host switch
             {
-                case Hosts.AnimeSaturn:
-                    downloadInfo = _animeSaturnController.DownloadAsync(DownloadPath, episodeUrl, cancellationToken);
-                    break;
+                Hosts.AnimeSaturn => _animeSaturnController.DownloadAsync(DownloadPath, episodeUrl, cancellationToken),
+                Hosts.AnimeUnity => _animeUnityController.DownloadAsync(DownloadPath, episodeUrl, cancellationToken),
+                _ => throw new TenguException("No host found")
+            };
 
-                case Hosts.AnimeUnity:
-                    downloadInfo = _animeUnityController.DownloadAsync(DownloadPath, episodeUrl, cancellationToken);
-                    break;
-
-                default:
-                    throw new TenguException("No host found");
-            }
-
-            return downloadInfo;
         }
 
         #region Private Methods
@@ -239,24 +196,14 @@ namespace Tengu.Business.API
         {
             if (CurrentHosts.Length == 0) { throw new TenguException("No host defined"); }
         }
-        private async Task<AnimeModel[]> ElaborateSearch(List<Task<AnimeModel[]>> searchTasks, CancellationToken cancellationToken)
+        private async Task<TenguResult<AnimeModel[]>[]> ElaborateSearch(List<Task<TenguResult<AnimeModel[]>>> searchTasks, CancellationToken cancellationToken)
         {
-            var animeList = new List<AnimeModel>();
+            var animeList = new List<TenguResult<AnimeModel[]>>();
 
             foreach (var task in searchTasks)
             {
-                foreach (var anime in await task)
-                {
-                    try
-                    {
-                        animeList.Add(anime);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Error in SearchAnime -> ElaborateSearch");
-                        throw;
-                    }
-                }
+
+                animeList.Add(await task);
             }
 
             return animeList.ToArray();
