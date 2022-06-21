@@ -1,15 +1,14 @@
 ﻿using Flurl.Http;
 using HtmlAgilityPack;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.XPath;
 using Tengu.Business.Commons;
+using Tengu.Business.Commons.Models;
+using Tengu.Business.Commons.Objects;
+using Tengu.Business.Core.Adapters.Interfaces;
+using Tengu.Business.Core.DTO.Input.AnimeSaturn;
+using Tengu.Business.Core.Utilities.Interfaces;
 
-namespace Tengu.Business.Core
+namespace Tengu.Business.Core.Adapters
 {
     public class AnimeSaturnAdapter : IAnimeSaturnAdapter
     {
@@ -135,7 +134,7 @@ namespace Tengu.Business.Core
             var animeUrl = $"{Config.AnimeSaturn.BaseAnimeUrl}/{animeId}";
 
             doc = await web.LoadFromWebAsync($"{animeUrl}", cancellationToken);
-            
+
             var episodeBag = new ConcurrentBag<EpisodeModel>();
 
             var animeTitle = doc.DocumentNode.SelectSingleNode("//div[@class='container anime-title-as mb-3 w-100']/b").InnerText;
@@ -177,7 +176,7 @@ namespace Tengu.Business.Core
 
         public async Task<Calendar> GetCalendar(CancellationToken cancellationToken = default)
         {
-            var days = (WeekDays[]) Enum.GetValues(typeof(WeekDays));
+            var days = (WeekDays[])Enum.GetValues(typeof(WeekDays));
 
             var calendar = new Calendar() { Host = Hosts.AnimeSaturn };
 
@@ -188,10 +187,10 @@ namespace Tengu.Business.Core
 
             var entriesRows = doc.DocumentNode.SelectNodes("//tbody/tr");
 
-            foreach(var row in entriesRows)
+            foreach (var row in entriesRows)
             {
                 var entries = row.SelectNodes("./td");
-                
+
                 for (int i = 0; i < entries.Count; i++)
                 {
                     if (!string.IsNullOrEmpty(entries[i].InnerText))
@@ -257,13 +256,13 @@ namespace Tengu.Business.Core
                         Title = $"{urlNode.GetAttributeValue("title", "").Trim()}",
                         Image = urlNode.SelectSingleNode("./img").GetAttributeValue("src", ""),
                         Id = streamUrl.Split('=')[^1],
-                        EpisodeNumber = (titleNode.InnerText.Trim().Split(" ")[^1]),
+                        EpisodeNumber = titleNode.InnerText.Trim().Split(" ")[^1],
                         DownloadUrl = streamUrl
                     };
 
                     episodeList.Add(episode);
                 }
-                
+
                 count -= endIndex - startIndex;
                 offset = ++currentPage * 15;
             }
@@ -331,7 +330,7 @@ namespace Tengu.Business.Core
 
             return url;
         }
-       
+
 
     }
 }

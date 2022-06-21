@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Tengu.Business.Commons.Objects;
 
-namespace Tengu.Business.Commons
+namespace Tengu.Business.Commons.Models
 {
     public class AnimeModel
     {

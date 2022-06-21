@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Tengu.Business.Core
+﻿namespace Tengu.Business.Core.DTO.Output.Kitsu
 {
     public class KitsuSearchOutput
     {
@@ -12,7 +6,7 @@ namespace Tengu.Business.Core
     }
 
     public class KitsuData
-    { 
+    {
         public KintsuLinks Links { get; set; } = new KintsuLinks();
         public KintsuAttribute Attributes { get; set; } = new KintsuAttribute();
     }

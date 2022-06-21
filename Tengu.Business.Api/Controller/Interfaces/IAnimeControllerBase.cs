@@ -1,10 +1,6 @@
 ﻿using Downla;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tengu.Business.Commons;
+using Tengu.Business.API.DTO;
+using Tengu.Business.Commons.Models;
 using Tengu.Business.Commons.Objects;
 
 namespace Tengu.Business.API.Controller.Interfaces

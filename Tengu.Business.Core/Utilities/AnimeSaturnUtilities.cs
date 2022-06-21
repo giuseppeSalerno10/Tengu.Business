@@ -1,8 +1,10 @@
 ﻿using Flurl.Http;
 using Tengu.Business.Commons;
+using Tengu.Business.Commons.Objects;
 using Tengu.Business.Core.DTO.Output.AnimeSaturn;
+using Tengu.Business.Core.Utilities.Interfaces;
 
-namespace Tengu.Business.Core
+namespace Tengu.Business.Core.Utilities
 {
     public class AnimeSaturnUtilities : IAnimeSaturnUtilities
     {
@@ -81,8 +83,8 @@ namespace Tengu.Business.Core
             {
                 string? mappedGenre;
                 genreMap.TryGetValue(genre, out mappedGenre);
-                
-                if(mappedGenre != null)
+
+                if (mappedGenre != null)
                 {
                     genresList.Add(mappedGenre);
                 }

@@ -1,12 +1,10 @@
 ﻿using Flurl.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tengu.Business.Commons;
+using Tengu.Business.Commons.Models;
+using Tengu.Business.Core.Adapters.Interfaces;
+using Tengu.Business.Core.DTO.Output.Kitsu;
 
-namespace Tengu.Business.Core
+namespace Tengu.Business.Core.Adapters
 {
     public class KitsuAdapter : IKitsuAdapter
     {
@@ -17,7 +15,7 @@ namespace Tengu.Business.Core
             var lowerBound = offset;
             var upperBound = Math.Min(limit - offset, Config.Kitsu.MaxAnimes);
 
-            while(upperBound > 0)
+            while (upperBound > 0)
             {
                 var requestUrl = $"{Config.Kitsu.BaseUrl}filter[status]=upcoming&" +
                     $"page[offset]={lowerBound}&" +

@@ -1,17 +1,16 @@
 ﻿using Downla;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tengu.Business.API.Controller;
 using Tengu.Business.API.Controller.Interfaces;
 using Tengu.Business.API.Interfaces;
-using Tengu.Business.Commons;
+using Tengu.Business.API.Managers;
+using Tengu.Business.API.Managers.Interfaces;
 using Tengu.Business.Commons.Services;
 using Tengu.Business.Commons.Services.Interfaces;
-using Tengu.Business.Core;
+using Tengu.Business.Core.Adapters;
+using Tengu.Business.Core.Adapters.Interfaces;
+using Tengu.Business.Core.Utilities;
+using Tengu.Business.Core.Utilities.Interfaces;
 
 namespace Tengu.Business.API
 {

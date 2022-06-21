@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Tengu.Business.Core.DTO.Output.AnimeUnity.Object;
 
-namespace Tengu.Business.Core
+namespace Tengu.Business.Core.DTO.Output.AnimeUnity
 {
     public class AnimeUnityGetEpisodesOutput
     {

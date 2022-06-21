@@ -1,5 +1,6 @@
 ﻿using Downla;
-using Tengu.Business.Commons;
+using Tengu.Business.API.DTO;
+using Tengu.Business.Commons.Models;
 using Tengu.Business.Commons.Objects;
 
 namespace Tengu.Business.API.Interfaces

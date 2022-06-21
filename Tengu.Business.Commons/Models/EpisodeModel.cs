@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Tengu.Business.Commons.Objects;
 
-namespace Tengu.Business.Commons
+namespace Tengu.Business.Commons.Models
 {
     public class EpisodeModel : IComparable<EpisodeModel>
     {
@@ -14,7 +10,7 @@ namespace Tengu.Business.Commons
         public string Title { get; set; } = string.Empty;
         public string Url { get; set; } = string.Empty;
         public string Image { get; set; } = string.Empty;
-        public string EpisodeNumber { get; set; } = string.Empty ;
+        public string EpisodeNumber { get; set; } = string.Empty;
         public string DownloadUrl { get; set; } = string.Empty;
 
         public int CompareTo(EpisodeModel? other)

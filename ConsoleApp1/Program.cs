@@ -4,20 +4,22 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using System.Collections.Concurrent;
 using Tengu.Business.API;
+using Tengu.Business.API.DTO;
 using Tengu.Business.API.Interfaces;
-using Tengu.Business.Commons;
+using Tengu.Business.Commons.Models;
 using Tengu.Business.Commons.Objects;
 
 #region DI
 using IHost host = Host.CreateDefaultBuilder(args)
     .UseSerilog(
     (hostingContext, loggerConfiguration) => loggerConfiguration.WriteTo.File($"C:\\Users\\Giuse\\Desktop\\log.txt"))
-    .ConfigureServices((_, services) => {
+    .ConfigureServices((_, services) =>
+    {
         services.AddTenguServices();
     })
     .Build();
 
-var tengu = (TenguApi) ActivatorUtilities.CreateInstance(host.Services, typeof(TenguApi));
+var tengu = (TenguApi)ActivatorUtilities.CreateInstance(host.Services, typeof(TenguApi));
 
 host.Start();
 
@@ -30,7 +32,7 @@ async static Task App(IServiceProvider services)
     AnimeModel[] currentAnimes = Array.Empty<AnimeModel>();
     EpisodeModel[] currentEpisodes = Array.Empty<EpisodeModel>();
 
-    ITenguApi tenguApi = (ITenguApi) (services.GetService(typeof(ITenguApi)) ?? throw new Exception());
+    ITenguApi tenguApi = (ITenguApi)(services.GetService(typeof(ITenguApi)) ?? throw new Exception());
 
     tenguApi.CurrentHosts = new Hosts[] { Hosts.AnimeSaturn };
 
@@ -109,7 +111,7 @@ static void ChangeHostMenu(ITenguApi tenguApi)
             break;
         case 1:
             Console.Clear();
-            tenguApi.CurrentHosts = new Hosts[] {  Hosts.AnimeUnity };
+            tenguApi.CurrentHosts = new Hosts[] { Hosts.AnimeUnity };
             break;
         case 2:
             Console.Clear();
@@ -138,7 +140,7 @@ async static Task<AnimeModel[]> SearchAnimeMenu(ITenguApi tenguApi)
 
             var title = Console.ReadLine();
 
-            if(title != null)
+            if (title != null)
             {
                 Console.WriteLine("\nRisultati:");
                 results = await tenguApi.SearchAnimeAsync(title);
@@ -166,8 +168,8 @@ async static Task<AnimeModel[]> SearchAnimeMenu(ITenguApi tenguApi)
         case 1:
             Console.Clear();
 
-            var filter = new SearchFilter() 
-            { 
+            var filter = new SearchFilter()
+            {
                 Genres = new Genres[] { Genres.ArtiMarziali }
             };
 
@@ -270,10 +272,10 @@ async static Task<EpisodeModel[]> GetLatestEpisodesMenu(ITenguApi tenguApi)
     "Lista Episodi:\n"
     );
 
-    var results = await tenguApi.GetLatestEpisodeAsync(lowe,uppe);
+    var results = await tenguApi.GetLatestEpisodeAsync(lowe, uppe);
     foreach (var result in results)
     {
-        if(result.Success)
+        if (result.Success)
         {
             Console.WriteLine($"Lista episodi {result.Host} ({result.Data.Length}):");
             for (int i = 0; i < result.Data.Length; i++)
@@ -306,7 +308,7 @@ static void DownloadEpisodeMenu(ITenguApi tenguApi, EpisodeModel[] episodes)
 
     var queues = new Dictionary<Hosts, List<EpisodeModel>>();
 
-    foreach(var host in tenguApi.CurrentHosts)
+    foreach (var host in tenguApi.CurrentHosts)
     {
         queues.Add(host, new List<EpisodeModel>());
     }
@@ -324,7 +326,7 @@ static void DownloadEpisodeMenu(ITenguApi tenguApi, EpisodeModel[] episodes)
     foreach (var queue in queues)
     {
         tasks.Add(
-            Task.Run( async () => 
+            Task.Run(async () =>
             {
                 foreach (var episode in queue.Value)
                 {
@@ -407,11 +409,11 @@ async static Task<KitsuAnimeModel[]> KitsuMenu(ITenguApi tenguApi)
             Console.WriteLine("Inserisci il titolo");
 
             var title = Console.ReadLine();
-            
-            if(title != null)
+
+            if (title != null)
             {
                 Console.WriteLine("\nRisultati:");
-                
+
                 result = await tenguApi.KitsuSearchAnimeAsync(title, 0, 3);
                 if (result.Success)
                 {

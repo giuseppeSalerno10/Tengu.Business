@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Tengu.Business.Commons.Objects;
 
-namespace Tengu.Business.Commons
+namespace Tengu.Business.Commons.Models
 {
     public class Calendar
     {
 
-        public Dictionary<WeekDays, List<CalendarEntryModel>> DaysDictionary { get;} = new Dictionary<WeekDays, List<CalendarEntryModel>>() 
+        public Dictionary<WeekDays, List<CalendarEntryModel>> DaysDictionary { get; } = new Dictionary<WeekDays, List<CalendarEntryModel>>()
         {
             { WeekDays.Monday, new List<CalendarEntryModel>() },
             { WeekDays.Tuesday, new List<CalendarEntryModel>() },

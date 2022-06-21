@@ -1,15 +1,15 @@
 ﻿using Flurl.Http;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tengu.Business.Commons;
+using Tengu.Business.Commons.Models;
+using Tengu.Business.Commons.Objects;
+using Tengu.Business.Core.Adapters.Interfaces;
+using Tengu.Business.Core.DTO.Input.AnimeUnity;
+using Tengu.Business.Core.DTO.Output.AnimeUnity;
+using Tengu.Business.Core.Utilities.Interfaces;
 
-namespace Tengu.Business.Core
+namespace Tengu.Business.Core.Adapters
 {
     public class AnimeUnityAdapter : IAnimeUnityAdapter
     {
@@ -90,7 +90,7 @@ namespace Tengu.Business.Core
                     .Replace("\\/", "/");
 
                 var rawEpisodes = JsonConvert.DeserializeObject<AnimeUnityGetLatestEpisodesOutput>(episodesJson);
-                
+
                 for (int i = startIndex; i < endIndex; i++)
                 {
                     var episode = rawEpisodes.Data[i];
@@ -105,15 +105,15 @@ namespace Tengu.Business.Core
                         DownloadUrl = episode.Link,
                         Image = episode.Anime.ImageUrl
                     };
-                
+
                     episodeList.Add(episodeToAdd);
                 }
-            
+
                 requestUrl = rawEpisodes.Next_page_url;
-            
+
                 count -= endIndex - startIndex;
                 offset = ++currentPage * 30;
-            
+
             }
 
             return episodeList.ToArray();
@@ -202,7 +202,7 @@ namespace Tengu.Business.Core
                 calendar.DaysDictionary[day].Add(entryToAdd);
             }
 
-            
+
 
             return calendar;
         }

@@ -1,6 +1,6 @@
-﻿using Tengu.Business.Commons;
+﻿using Tengu.Business.Commons.Models;
 
-namespace Tengu.Business.API
+namespace Tengu.Business.API.Managers.Interfaces
 {
     public interface IKitsuManager
     {

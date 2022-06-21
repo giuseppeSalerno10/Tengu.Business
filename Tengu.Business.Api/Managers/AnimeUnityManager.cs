@@ -1,13 +1,14 @@
 ﻿using Downla;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Tengu.Business.API.DTO;
+using Tengu.Business.API.Managers.Interfaces;
 using Tengu.Business.Commons;
-using Tengu.Business.Core;
+using Tengu.Business.Commons.Models;
+using Tengu.Business.Commons.Objects;
+using Tengu.Business.Core.Adapters.Interfaces;
+using Tengu.Business.Core.DTO.Input.AnimeUnity;
+using Tengu.Business.Core.Utilities.Interfaces;
 
-namespace Tengu.Business.API
+namespace Tengu.Business.API.Managers
 {
     public class AnimeUnityManager : IAnimeUnityManager
     {
@@ -49,14 +50,14 @@ namespace Tengu.Business.API
         {
             var adapterFilter = new AnimeUnitySearchInput();
 
-            if(filter.Genres.Count() > 0)
+            if (filter.Genres.Count() > 0)
             {
                 adapterFilter.Genres = _utilities.GetGenreArray(filter.Genres);
             }
 
-            if (filter.Status != Statuses.None) 
-            { 
-                adapterFilter.Status = _utilities.GetStatus(filter.Status); 
+            if (filter.Status != Statuses.None)
+            {
+                adapterFilter.Status = _utilities.GetStatus(filter.Status);
             }
 
             return _adapter.SearchAsync(adapterFilter, count, cancellationToken);
@@ -76,7 +77,7 @@ namespace Tengu.Business.API
         {
             var adapterFilter = new AnimeUnitySearchInput()
             {
-                Title=title,
+                Title = title,
             };
 
             if (filter.Genres.Count() > 0)

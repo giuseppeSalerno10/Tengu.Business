@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tengu.Business.API.Controller.Interfaces;
-using Tengu.Business.Commons;
+﻿using Tengu.Business.API.Controller.Interfaces;
+using Tengu.Business.API.Managers.Interfaces;
+using Tengu.Business.Commons.Models;
 using Tengu.Business.Commons.Objects;
 using Tengu.Business.Commons.Services.Interfaces;
 

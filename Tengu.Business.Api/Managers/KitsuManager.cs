@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tengu.Business.Commons;
-using Tengu.Business.Core;
+﻿using Tengu.Business.API.Managers.Interfaces;
+using Tengu.Business.Commons.Models;
+using Tengu.Business.Core.Adapters.Interfaces;
 
-namespace Tengu.Business.API
+namespace Tengu.Business.API.Managers
 {
     public class KitsuManager : IKitsuManager
     {

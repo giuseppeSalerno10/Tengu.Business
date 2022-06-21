@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tengu.Business.Commons.Objects;
+﻿using Tengu.Business.Commons.Objects;
 using Tengu.Business.Commons.Services.Interfaces;
 
 namespace Tengu.Business.Commons.Services

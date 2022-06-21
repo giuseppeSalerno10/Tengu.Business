@@ -1,6 +1,6 @@
-﻿using Tengu.Business.Commons;
+﻿using Tengu.Business.Commons.Objects;
 
-namespace Tengu.Business.API
+namespace Tengu.Business.API.DTO
 {
     public class SearchFilter
     {

@@ -1,12 +1,11 @@
 ﻿using Flurl.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tengu.Business.Commons;
+using Tengu.Business.Commons.Objects;
+using Tengu.Business.Core.DTO.Output.AnimeUnity;
+using Tengu.Business.Core.DTO.Output.AnimeUnity.Object;
+using Tengu.Business.Core.Utilities.Interfaces;
 
-namespace Tengu.Business.Core
+namespace Tengu.Business.Core.Utilities
 {
     public class AnimeUnityUtilities : IAnimeUnityUtilities
     {
@@ -18,13 +17,13 @@ namespace Tengu.Business.Core
                 .WithHeader("User-Agent", Config.Common.UserAgent)
                 .HeadAsync();
 
-            var xsrfToken = headResponse.Cookies.First( cookie => cookie.Name.Equals("XSRF-TOKEN")).Value;
+            var xsrfToken = headResponse.Cookies.First(cookie => cookie.Name.Equals("XSRF-TOKEN")).Value;
             var animeUnitySession = headResponse.Cookies.First(cookie => cookie.Name.Equals("animeunity_session")).Value;
 
 
             var sessionResult = new AnimeUnityCreateSessionOutput()
             {
-                XSRFToken = xsrfToken.Replace("%3D","="),
+                XSRFToken = xsrfToken.Replace("%3D", "="),
                 XSRFCookieToken = xsrfToken,
                 AnimeUnitySession = animeUnitySession
             };

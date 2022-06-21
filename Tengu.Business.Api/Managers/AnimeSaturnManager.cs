@@ -1,13 +1,14 @@
 ﻿using Downla;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Tengu.Business.API.DTO;
+using Tengu.Business.API.Managers.Interfaces;
 using Tengu.Business.Commons;
-using Tengu.Business.Core;
+using Tengu.Business.Commons.Models;
+using Tengu.Business.Commons.Objects;
+using Tengu.Business.Core.Adapters.Interfaces;
+using Tengu.Business.Core.DTO.Input.AnimeSaturn;
+using Tengu.Business.Core.Utilities.Interfaces;
 
-namespace Tengu.Business.API
+namespace Tengu.Business.API.Managers
 {
     public class AnimeSaturnManager : IAnimeSaturnManager
     {
@@ -56,7 +57,7 @@ namespace Tengu.Business.API
                 Genres = _utilities.GetGenreArray(filter.Genres),
             };
 
-            if(filter.Status != Statuses.None)
+            if (filter.Status != Statuses.None)
             {
                 adapterFilter.Status = _utilities.GetStatus(filter.Status);
             }

@@ -1,7 +1,7 @@
-﻿using Tengu.Business.Commons;
+﻿using Tengu.Business.Commons.Objects;
 using Tengu.Business.Core.DTO.Output.AnimeSaturn;
 
-namespace Tengu.Business.Core
+namespace Tengu.Business.Core.Utilities.Interfaces
 {
     public interface IAnimeSaturnUtilities
     {

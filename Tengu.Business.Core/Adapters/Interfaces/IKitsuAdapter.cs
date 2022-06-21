@@ -1,6 +1,6 @@
-﻿using Tengu.Business.Commons;
+﻿using Tengu.Business.Commons.Models;
 
-namespace Tengu.Business.Core
+namespace Tengu.Business.Core.Adapters.Interfaces
 {
     public interface IKitsuAdapter
     {
