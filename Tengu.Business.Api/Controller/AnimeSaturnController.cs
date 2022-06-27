@@ -19,9 +19,9 @@ namespace Tengu.Business.API.Controller
             _manipulationService = manipulationService;
         }
 
-        public async Task<TenguResult<AnimeModel[]>> SearchAnimeAsync(string title, int count, CancellationToken cancellationToken)
+        public async Task<OperationResult<AnimeModel[]>> SearchAnimeAsync(string title, int count, CancellationToken cancellationToken)
         {
-            var result = new TenguResult<AnimeModel[]>() { Host = Hosts.AnimeSaturn };
+            var result = new OperationResult<AnimeModel[]>() { Host = Hosts.AnimeSaturn };
 
             try
             {
@@ -36,9 +36,9 @@ namespace Tengu.Business.API.Controller
             return result;
         }
 
-        public async Task<TenguResult<AnimeModel[]>> SearchAnimeAsync(SearchFilter filter, int count, CancellationToken cancellationToken)
+        public async Task<OperationResult<AnimeModel[]>> SearchAnimeAsync(SearchFilter filter, int count, CancellationToken cancellationToken)
         {
-            var result = new TenguResult<AnimeModel[]>() { Host = Hosts.AnimeSaturn };
+            var result = new OperationResult<AnimeModel[]>() { Host = Hosts.AnimeSaturn };
 
             try
             {
@@ -53,9 +53,9 @@ namespace Tengu.Business.API.Controller
             return result;
         }
 
-        public async Task<TenguResult<AnimeModel[]>> SearchAnimeAsync(string title, SearchFilter filter, int count, CancellationToken cancellationToken)
+        public async Task<OperationResult<AnimeModel[]>> SearchAnimeAsync(string title, SearchFilter filter, int count, CancellationToken cancellationToken)
         {
-            var result = new TenguResult<AnimeModel[]>() { Host = Hosts.AnimeSaturn };
+            var result = new OperationResult<AnimeModel[]>() { Host = Hosts.AnimeSaturn };
 
             try
             {
@@ -70,9 +70,9 @@ namespace Tengu.Business.API.Controller
             return result;
         }
 
-        public async Task<TenguResult<EpisodeModel[]>> GetEpisodesAsync(string animeId, int offset, int limit, CancellationToken cancellationToken)
+        public async Task<OperationResult<EpisodeModel[]>> GetEpisodesAsync(string animeId, int offset, int limit, CancellationToken cancellationToken)
         {
-            var result = new TenguResult<EpisodeModel[]>() { Host = Hosts.AnimeSaturn };
+            var result = new OperationResult<EpisodeModel[]>() { Host = Hosts.AnimeSaturn };
 
             try
             {
@@ -87,9 +87,9 @@ namespace Tengu.Business.API.Controller
             return result;
         }
 
-        public async Task<TenguResult<EpisodeModel[]>> GetLatestEpisodesAsync(int offset, int limit, CancellationToken cancellationToken)
+        public async Task<OperationResult<EpisodeModel[]>> GetLatestEpisodesAsync(int offset, int limit, CancellationToken cancellationToken)
         {
-            var result = new TenguResult<EpisodeModel[]>() { Host = Hosts.AnimeSaturn };
+            var result = new OperationResult<EpisodeModel[]>() { Host = Hosts.AnimeSaturn };
 
             try
             {
@@ -104,9 +104,9 @@ namespace Tengu.Business.API.Controller
             return result;
         }
 
-        public async Task<TenguResult<Calendar>> GetCalendar(CancellationToken cancellationToken)
+        public async Task<OperationResult<Calendar>> GetCalendar(CancellationToken cancellationToken)
         {
-            var result = new TenguResult<Calendar>() { Host = Hosts.AnimeSaturn };
+            var result = new OperationResult<Calendar>() { Host = Hosts.AnimeSaturn };
 
             try
             {
@@ -121,9 +121,9 @@ namespace Tengu.Business.API.Controller
             return result;
         }
 
-        public TenguResult<DownloadInfosModel> DownloadAsync(string downloadPath, string episodeUrl, CancellationToken cancellationToken)
+        public OperationResult<DownloadInfosModel> DownloadAsync(string downloadPath, string episodeUrl, CancellationToken cancellationToken)
         {
-            var result = new TenguResult<DownloadInfosModel>() { Host = Hosts.AnimeSaturn };
+            var result = new OperationResult<DownloadInfosModel>() { Host = Hosts.AnimeSaturn };
 
             try
             {

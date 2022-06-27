@@ -130,7 +130,7 @@ async static Task<AnimeModel[]> SearchAnimeMenu(ITenguApi tenguApi)
         "2 - Filtri e Titolo"
         );
 
-    TenguResult<AnimeModel[]>[] results = null!;
+    TenguResult<AnimeModel[]> results = null!;
 
     switch (Convert.ToInt32(Console.ReadLine()))
     {
@@ -144,22 +144,6 @@ async static Task<AnimeModel[]> SearchAnimeMenu(ITenguApi tenguApi)
             {
                 Console.WriteLine("\nRisultati:");
                 results = await tenguApi.SearchAnimeAsync(title);
-                foreach (var result in results)
-                {
-                    if (result.Success)
-                    {
-                        for (int i = 0; i < result.Data.Length; i++)
-                        {
-                            AnimeModel? anime = result.Data[i];
-                            Console.WriteLine($"[{i}] {anime.Title} - {anime.Id} - {anime.Host}");
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(result.Exception!.Message);
-
-                    }
-                }
 
             }
 
@@ -175,22 +159,7 @@ async static Task<AnimeModel[]> SearchAnimeMenu(ITenguApi tenguApi)
 
             Console.WriteLine("Risultati:");
             results = await tenguApi.SearchAnimeAsync(filter);
-            foreach (var result in results)
-            {
-                if (result.Success)
-                {
-                    for (int i = 0; i < result.Data.Length; i++)
-                    {
-                        AnimeModel? anime = result.Data[i];
-                        Console.WriteLine($"[{i}] {anime.Title} - {anime.Id} - {anime.Host}");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine(result.Exception!.Message);
 
-                }
-            }
             break;
 
         case 2:
@@ -207,29 +176,13 @@ async static Task<AnimeModel[]> SearchAnimeMenu(ITenguApi tenguApi)
             Console.WriteLine("Risultati:");
             results = await tenguApi.SearchAnimeAsync(titleWithFilter, filterWithTitle);
 
-            foreach (var result in results)
-            {
-                if (result.Success)
-                {
-                    for (int i = 0; i < result.Data.Length; i++)
-                    {
-                        AnimeModel? anime = result.Data[i];
-                        Console.WriteLine($"[{i}] {anime.Title} - {anime.Id} - {anime.Host}");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine(result.Exception!.Message);
-
-                }
-            }
             break;
         default:
             Console.WriteLine("Input Errato");
             break;
     }
 
-    return results[0].Data;
+    return results.Data;
 }
 async static Task<EpisodeModel[]> GetEpisodesMenu(ITenguApi tenguApi, AnimeModel[] animes)
 {
@@ -250,16 +203,6 @@ async static Task<EpisodeModel[]> GetEpisodesMenu(ITenguApi tenguApi, AnimeModel
 
     var results = await tenguApi.GetEpisodesAsync(animes[animeIndex].Id, animes[animeIndex].Host);
 
-    if (results.Success)
-    {
-        Console.WriteLine($"Lista episodi ({results.Data.Length}):");
-        for (int i = 0; i < results.Data.Length; i++)
-        {
-            EpisodeModel? epsisode = results.Data[i];
-            Console.WriteLine($"[{i}] {epsisode.Title} - {epsisode.Id} - {epsisode.Host}");
-        }
-    }
-
     return results.Data;
 }
 async static Task<EpisodeModel[]> GetLatestEpisodesMenu(ITenguApi tenguApi)
@@ -273,23 +216,8 @@ async static Task<EpisodeModel[]> GetLatestEpisodesMenu(ITenguApi tenguApi)
     );
 
     var results = await tenguApi.GetLatestEpisodeAsync(lowe, uppe);
-    foreach (var result in results)
-    {
-        if (result.Success)
-        {
-            Console.WriteLine($"Lista episodi {result.Host} ({result.Data.Length}):");
-            for (int i = 0; i < result.Data.Length; i++)
-            {
-                EpisodeModel? epsisode = result.Data[i];
-                Console.WriteLine($"[{i}] {epsisode.Title} - {epsisode.Id} - {epsisode.Host}");
-            }
-        }
-        else
-        {
-            Console.WriteLine(result.Exception!.Message);
-        }
-    }
-    return results[0].Data;
+
+    return results.Data;
 }
 static void DownloadEpisodeMenu(ITenguApi tenguApi, EpisodeModel[] episodes)
 {
@@ -330,8 +258,10 @@ static void DownloadEpisodeMenu(ITenguApi tenguApi, EpisodeModel[] episodes)
             {
                 foreach (var episode in queue.Value)
                 {
-                    var download = tenguApi.DownloadAsync(episode.DownloadUrl, episode.Host);
-                    if (download.Success)
+                    var download = tenguApi
+                        .DownloadAsync(episode.DownloadUrl, episode.Host);
+
+                    if (download != null)
                     {
                         downloadList.Add(download.Data);
 
@@ -385,20 +315,6 @@ async static Task<KitsuAnimeModel[]> KitsuMenu(ITenguApi tenguApi)
             Console.WriteLine("\nRisultati:");
 
             result = await tenguApi.KitsuUpcomingAnimeAsync(0, 25);
-            if (result.Success)
-            {
-                for (int i = 0; i < result.Data.Length; i++)
-                {
-                    KitsuAnimeModel? anime = result.Data[i];
-                    Console.WriteLine($"[{i}] {anime.Title}");
-                }
-            }
-            else
-            {
-                Console.WriteLine(result.Exception!.Message);
-            }
-
-
 
             break;
 
@@ -415,18 +331,6 @@ async static Task<KitsuAnimeModel[]> KitsuMenu(ITenguApi tenguApi)
                 Console.WriteLine("\nRisultati:");
 
                 result = await tenguApi.KitsuSearchAnimeAsync(title, 0, 3);
-                if (result.Success)
-                {
-                    for (int i = 0; i < result.Data.Length; i++)
-                    {
-                        KitsuAnimeModel? anime = result.Data[i];
-                        Console.WriteLine($"[{i}] {anime.Title}");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine(result.Exception!.Message);
-                }
 
             }
 

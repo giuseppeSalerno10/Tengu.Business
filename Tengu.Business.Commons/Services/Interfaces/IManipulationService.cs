@@ -4,8 +4,6 @@ namespace Tengu.Business.Commons.Services.Interfaces
 {
     public interface IManipulationService
     {
-        void HandleTenguException<TModel>(Exception e, ref TenguResult<TModel> result);
-        void HandleTenguException(Exception e, ref TenguResult result);
-
+        void HandleTenguException<TModel>(Exception e, ref OperationResult<TModel> result);
     }
 }

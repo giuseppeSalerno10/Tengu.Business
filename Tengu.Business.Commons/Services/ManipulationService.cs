@@ -5,12 +5,7 @@ namespace Tengu.Business.Commons.Services
 {
     public class ManipulationService : IManipulationService
     {
-        public void HandleTenguException<TModel>(Exception e, ref TenguResult<TModel> result)
-        {
-            HandleTenguException(e, ref result);
-        }
-
-        public void HandleTenguException(Exception e, ref TenguResult result)
+        public void HandleTenguException<TModel>(Exception e, ref OperationResult<TModel> result)
         {
             switch (e)
             {

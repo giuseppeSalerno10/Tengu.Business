@@ -17,9 +17,9 @@ namespace Tengu.Business.API.Controller
             _manipulationService = manipulationService;
         }
 
-        public async Task<TenguResult<KitsuAnimeModel[]>> GetUpcomingAnimeAsync(int offset, int limit, CancellationToken cancellationToken)
+        public async Task<OperationResult<KitsuAnimeModel[]>> GetUpcomingAnimeAsync(int offset, int limit, CancellationToken cancellationToken)
         {
-            var result = new TenguResult<KitsuAnimeModel[]>();
+            var result = new OperationResult<KitsuAnimeModel[]>() { Host = Hosts.None};
 
             try
             {
@@ -34,9 +34,9 @@ namespace Tengu.Business.API.Controller
             return result;
         }
 
-        public async Task<TenguResult<KitsuAnimeModel[]>> SearchAnimeAsync(string title, int offset, int limit, CancellationToken cancellationToken)
+        public async Task<OperationResult<KitsuAnimeModel[]>> SearchAnimeAsync(string title, int offset, int limit, CancellationToken cancellationToken)
         {
-            var result = new TenguResult<KitsuAnimeModel[]>();
+            var result = new OperationResult<KitsuAnimeModel[]>() { Host = Hosts.None };
 
             try
             {

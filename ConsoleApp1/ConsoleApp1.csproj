@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Tengu.Business.Api\Tengu.Business.API.csproj" />
+    <ProjectReference Include="..\Tengu.Business.Commons\Tengu.Business.Commons.csproj" />
   </ItemGroup>
 
 </Project>
