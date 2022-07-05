@@ -9,7 +9,7 @@ namespace Tengu.Business.Core.DTO.Output.AnimeSaturn
         public string Link
         {
             get => link;
-            set => link = $"{Config.AnimeSaturn.BaseAnimeUrl}/{value}";
+            set => link = $"{Config.AnimeSaturnConfig.BaseAnimeUrl}/{value}";
         }
         public string Image { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;

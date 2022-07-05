@@ -13,11 +13,11 @@ namespace Tengu.Business.Core.Adapters
             var animeList = new List<KitsuAnimeModel>();
 
             var lowerBound = offset;
-            var upperBound = Math.Min(limit - offset, Config.Kitsu.MaxAnimes);
+            var upperBound = Math.Min(limit - offset, Config.KitsuConfig.MaxAnimes);
 
             while (upperBound > 0)
             {
-                var requestUrl = $"{Config.Kitsu.BaseUrl}filter[status]=upcoming&" +
+                var requestUrl = $"{Config.KitsuConfig.BaseUrl}filter[status]=upcoming&" +
                     $"page[offset]={lowerBound}&" +
                     $"page[limit]={upperBound}&" +
                     $"sort=popularityRank";
@@ -45,7 +45,7 @@ namespace Tengu.Business.Core.Adapters
                 }
 
                 lowerBound = lowerBound + upperBound + 1;
-                upperBound = Math.Min(limit - lowerBound + 1, Config.Kitsu.MaxAnimes);
+                upperBound = Math.Min(limit - lowerBound + 1, Config.KitsuConfig.MaxAnimes);
             }
 
 
@@ -57,12 +57,12 @@ namespace Tengu.Business.Core.Adapters
             var animeList = new List<KitsuAnimeModel>();
 
             var lowerBound = offset;
-            var upperBound = Math.Min(limit - offset, Config.Kitsu.MaxAnimes);
+            var upperBound = Math.Min(limit - offset, Config.KitsuConfig.MaxAnimes);
 
             while (upperBound > 0)
             {
 
-                var requestUrl = $"{Config.Kitsu.BaseUrl}filter[text]={title}&" +
+                var requestUrl = $"{Config.KitsuConfig.BaseUrl}filter[text]={title}&" +
                     $"page[offset]={lowerBound}&" +
                     $"page[limit]={upperBound}&";
 
@@ -89,7 +89,7 @@ namespace Tengu.Business.Core.Adapters
                 }
 
                 lowerBound = lowerBound + upperBound + 1;
-                upperBound = Math.Min(limit - lowerBound + 1, Config.Kitsu.MaxAnimes);
+                upperBound = Math.Min(limit - lowerBound + 1, Config.KitsuConfig.MaxAnimes);
             }
 
             return animeList.ToArray();

@@ -1,4 +1,6 @@
 ﻿using Downla;
+using Downla.Interfaces;
+using Downla.Models;
 using Tengu.Business.API.DTO;
 using Tengu.Business.API.Managers.Interfaces;
 using Tengu.Business.Commons;
@@ -23,30 +25,33 @@ namespace Tengu.Business.API.Managers
             _downlaClient = client;
         }
 
-        public DownloadInfosModel DownloadAsync(string downloadPath, string episodeUrl, CancellationToken cancellationToken = default)
+        public void UpdateDownlaSettings(string? downloadPath, int maxConnections, long maxPacketSize)
         {
-            _downlaClient.DownloadPath = downloadPath;
-
-            _downlaClient.MaxPacketSize = Config.Common.PacketSize;
-            _downlaClient.MaxConnections = Config.Common.Connections;
-
-            return _downlaClient.StartDownload(new Uri(episodeUrl), cancellationToken);
+            _downlaClient.DownloadPath = downloadPath != null ? downloadPath : _downlaClient.DownloadPath;
+            _downlaClient.MaxConnections = maxConnections != default ? maxConnections : _downlaClient.MaxConnections;
+            _downlaClient.MaxPacketSize = maxPacketSize != default ? maxPacketSize : _downlaClient.MaxPacketSize;
         }
 
-        public Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
+        public DownloadMonitor DownloadAsync(string episodeUrl, out Task downloadTask, CancellationToken cancellationToken)
+        {
+            downloadTask = _downlaClient.StartFileDownloadAsync(new Uri(episodeUrl), out DownloadMonitor downloadMonitor, ct: cancellationToken);
+            return downloadMonitor;
+        }
+
+        public Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset, int limit, CancellationToken cancellationToken)
         {
             return _adapter.GetEpisodesAsync(animeId, offset, limit, cancellationToken);
         }
 
-        public Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
+        public Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset, int limit, CancellationToken cancellationToken)
         {
             return _adapter.GetLatestEpisodesAsync(offset, limit, cancellationToken);
         }
-        public Task<Calendar> GetCalendar(CancellationToken cancellationToken = default)
+        public Task<Calendar> GetCalendar(CancellationToken cancellationToken)
         {
             return _adapter.GetCalendar(cancellationToken);
         }
-        public Task<AnimeModel[]> SearchAnimeAsync(SearchFilter filter, int count = 30, CancellationToken cancellationToken = default)
+        public Task<AnimeModel[]> SearchAnimeAsync(SearchFilter filter, int count, CancellationToken cancellationToken)
         {
             var adapterFilter = new AnimeUnitySearchInput();
 
@@ -63,7 +68,7 @@ namespace Tengu.Business.API.Managers
             return _adapter.SearchAsync(adapterFilter, count, cancellationToken);
         }
 
-        public Task<AnimeModel[]> SearchAnimeAsync(string title, int count = 30, CancellationToken cancellationToken = default)
+        public Task<AnimeModel[]> SearchAnimeAsync(string title, int count, CancellationToken cancellationToken)
         {
             var adapterFilter = new AnimeUnitySearchInput()
             {
@@ -73,7 +78,7 @@ namespace Tengu.Business.API.Managers
             return _adapter.SearchAsync(adapterFilter, count, cancellationToken);
         }
 
-        public Task<AnimeModel[]> SearchAnimeAsync(string title, SearchFilter filter, int count = 30, CancellationToken cancellationToken = default)
+        public Task<AnimeModel[]> SearchAnimeAsync(string title, SearchFilter filter, int count, CancellationToken cancellationToken)
         {
             var adapterFilter = new AnimeUnitySearchInput()
             {

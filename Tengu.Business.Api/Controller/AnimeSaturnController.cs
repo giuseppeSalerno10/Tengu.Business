@@ -1,4 +1,5 @@
 ﻿using Downla;
+using Downla.Models;
 using Tengu.Business.API.Controller.Interfaces;
 using Tengu.Business.API.DTO;
 using Tengu.Business.API.Managers.Interfaces;
@@ -17,6 +18,11 @@ namespace Tengu.Business.API.Controller
         {
             _manager = manager;
             _manipulationService = manipulationService;
+        }
+
+        public void UpdateDownlaSettings(string? downloadPath, int maxConnections, long maxPacketSize)
+        {
+            _manager.UpdateDownlaSettings(downloadPath, maxConnections, maxPacketSize);
         }
 
         public async Task<OperationResult<AnimeModel[]>> SearchAnimeAsync(string title, int count, CancellationToken cancellationToken)
@@ -121,18 +127,19 @@ namespace Tengu.Business.API.Controller
             return result;
         }
 
-        public OperationResult<DownloadInfosModel> DownloadAsync(string downloadPath, string episodeUrl, CancellationToken cancellationToken)
+        public OperationResult<DownloadMonitor> DownloadAsync(string episodeUrl, out Task downloadTask, CancellationToken cancellationToken)
         {
-            var result = new OperationResult<DownloadInfosModel>() { Host = Hosts.AnimeSaturn };
+            var result = new OperationResult<DownloadMonitor>() { Host = Hosts.AnimeSaturn };
 
             try
             {
-                result.Data = _manager.DownloadAsync(downloadPath, episodeUrl, cancellationToken);
+                result.Data = _manager.DownloadAsync(episodeUrl, out downloadTask, cancellationToken);
                 result.Success = true;
             }
             catch (Exception e)
             {
                 _manipulationService.HandleTenguException(e, ref result);
+                downloadTask = Task.FromException(e);
             }
 
             return result;

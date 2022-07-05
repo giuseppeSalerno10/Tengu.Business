@@ -11,10 +11,10 @@ namespace Tengu.Business.Core.Utilities
     {
         public async Task<AnimeUnityCreateSessionOutput> CreateSession()
         {
-            var requestUrl = Config.AnimeUnity.BaseUrl;
+            var requestUrl = Config.AnimeUnityConfig.BaseUrl;
 
             var headResponse = await requestUrl
-                .WithHeader("User-Agent", Config.Common.UserAgent)
+                .WithHeader("User-Agent", Config.HttpConfig.UserAgent)
                 .HeadAsync();
 
             var xsrfToken = headResponse.Cookies.First(cookie => cookie.Name.Equals("XSRF-TOKEN")).Value;

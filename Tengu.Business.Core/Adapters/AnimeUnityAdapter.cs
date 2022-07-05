@@ -23,7 +23,7 @@ namespace Tengu.Business.Core.Adapters
 
         public async Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
         {
-            var requestUrl = $"{Config.AnimeUnity.BaseEpisodeUrl}/{animeId}";
+            var requestUrl = $"{Config.AnimeUnityConfig.BaseEpisodeUrl}/{animeId}";
 
             var episodeList = new List<EpisodeModel>();
 
@@ -43,7 +43,7 @@ namespace Tengu.Business.Core.Adapters
 
                     var episodeToAdd = new EpisodeModel()
                     {
-                        Url = $"{Config.AnimeUnity.BaseAnimeUrl}/{animeId}-{response.Slug}",
+                        Url = $"{Config.AnimeUnityConfig.BaseAnimeUrl}/{animeId}-{response.Slug}",
                         Title = response.Name,
                         AnimeId = animeId,
                         DownloadUrl = episode.Link,
@@ -66,7 +66,7 @@ namespace Tengu.Business.Core.Adapters
         {
             var episodeList = new List<EpisodeModel>();
 
-            var requestUrl = $"{Config.AnimeUnity.BaseUrl}";
+            var requestUrl = $"{Config.AnimeUnityConfig.BaseUrl}";
 
             var currentPage = offset / 30;
 
@@ -123,7 +123,7 @@ namespace Tengu.Business.Core.Adapters
         {
             var animeList = new List<AnimeModel>();
 
-            var requestUrl = Config.AnimeUnity.SearchUrl;
+            var requestUrl = Config.AnimeUnityConfig.SearchUrl;
 
             var session = await _utilities.CreateSession();
 
@@ -134,7 +134,7 @@ namespace Tengu.Business.Core.Adapters
                 response = await requestUrl
                 .WithHeader("X-Requested-With", "XMLHttpRequest")
                 .WithHeader("X-XSRF-TOKEN", session.XSRFToken)
-                .WithHeader("User-Agent", Config.Common.UserAgent)
+                .WithHeader("User-Agent", Config.HttpConfig.UserAgent)
                 .WithCookie("XSRF-TOKEN", session.XSRFCookieToken)
                 .WithCookie("animeunity_session", session.AnimeUnitySession)
                 .PostJsonAsync(searchFilter)
@@ -150,7 +150,7 @@ namespace Tengu.Business.Core.Adapters
                             Id = $"{record.Id}",
                             Image = record.ImageUrl,
                             Title = record.Title,
-                            Url = $"{Config.AnimeUnity.BaseAnimeUrl}/{record.Id}-{record.Slug}"
+                            Url = $"{Config.AnimeUnityConfig.BaseAnimeUrl}/{record.Id}-{record.Slug}"
                         };
                         animeList.Add(anime);
                     }
@@ -166,7 +166,7 @@ namespace Tengu.Business.Core.Adapters
         {
             var calendar = new Calendar();
 
-            var requestUrl = $"{Config.AnimeUnity.CalendarUrl}";
+            var requestUrl = $"{Config.AnimeUnityConfig.CalendarUrl}";
 
             var web = new HtmlWeb();
             var doc = await web.LoadFromWebAsync(requestUrl, cancellationToken);

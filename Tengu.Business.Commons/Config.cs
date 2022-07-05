@@ -2,18 +2,24 @@
 {
     public static class Config
     {
-        public static AnimeSaturnConfig AnimeSaturn { get; } = new AnimeSaturnConfig();
-        public static AnimeUnityConfig AnimeUnity { get; } = new AnimeUnityConfig();
-        public static KitsuConfig Kitsu { get; } = new KitsuConfig();
+        public static AnimeSaturnConfig AnimeSaturnConfig { get; } = new AnimeSaturnConfig();
+        public static AnimeUnityConfig AnimeUnityConfig { get; } = new AnimeUnityConfig();
+        public static KitsuConfig KitsuConfig { get; } = new KitsuConfig();
 
-        public static CommonConfig Common { get; } = new CommonConfig();
+        public static HttpConfig HttpConfig { get; } = new HttpConfig();
+        public static DownloadConfig DownloadConfig { get; } = new DownloadConfig();
     }
 
-    public class CommonConfig
+    public class HttpConfig
     {
-        public string UserAgent { get; set; } = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 OPR/83.0.4254.46";
-        public long PacketSize { get; set; } = 2621440;
-        public int Connections { get; set; } = 10;
+        public string UserAgent { get; } = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 OPR/83.0.4254.46";
+    }
+
+    public class DownloadConfig
+    {
+        public string DownloadPath { get; } = $"{Environment.CurrentDirectory}\\DownloadedAnime";
+        public long MaxPacketSize { get; } = 2621440;
+        public int MaxConnections { get; } = 10;
     }
 
     public class KitsuConfig

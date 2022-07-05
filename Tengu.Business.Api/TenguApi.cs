@@ -1,9 +1,11 @@
 ﻿using Downla;
+using Downla.Models;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using Tengu.Business.API.Controller.Interfaces;
 using Tengu.Business.API.DTO;
 using Tengu.Business.API.Interfaces;
+using Tengu.Business.Commons;
 using Tengu.Business.Commons.Models;
 using Tengu.Business.Commons.Objects;
 
@@ -12,7 +14,6 @@ namespace Tengu.Business.API
     public class TenguApi : ITenguApi
     {
         public Hosts[] CurrentHosts { get; set; } = Array.Empty<Hosts>();
-        public string DownloadPath { get; set; } = $"{Environment.CurrentDirectory}\\DownloadedAnime";
 
         private readonly ILogger<TenguApi> _logger;
 
@@ -28,6 +29,8 @@ namespace Tengu.Business.API
             _kitsuController = kitsuController;
 
             _logger = logger;
+
+            UpdateDownlaSettings(Config.DownloadConfig.DownloadPath, Config.DownloadConfig.MaxConnections, Config.DownloadConfig.MaxPacketSize);
 
             _logger.LogInformation("TenguApi is READY", new { Infos = "NONE" });
         }
@@ -244,18 +247,18 @@ namespace Tengu.Business.API
 
         }
 
-        public TenguResult<DownloadInfosModel> DownloadAsync(string episodeUrl, Hosts host, CancellationToken cancellationToken = default)
+        public TenguResult<DownloadMonitor> DownloadAsync(string episodeUrl, Hosts host, out Task downloadTask, CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
             var result = host switch
             {
-                Hosts.AnimeSaturn => _animeSaturnController.DownloadAsync(DownloadPath, episodeUrl, cancellationToken),
-                Hosts.AnimeUnity => _animeUnityController.DownloadAsync(DownloadPath, episodeUrl, cancellationToken),
+                Hosts.AnimeSaturn => _animeSaturnController.DownloadAsync(episodeUrl, out downloadTask, cancellationToken),
+                Hosts.AnimeUnity => _animeUnityController.DownloadAsync(episodeUrl, out downloadTask, cancellationToken),
                 _ => throw new TenguException("No host found")
             };
 
-            return new TenguResult<DownloadInfosModel>()
+            return new TenguResult<DownloadMonitor>()
             {
                 Data = result.Data,
                 Infos = new TenguResultInfo[]
@@ -269,6 +272,12 @@ namespace Tengu.Business.API
                 }
             };
 
+        }
+
+        public void UpdateDownlaSettings(string? downloadPath = null, int maxConnections = default, long maxPacketSize = default)
+        {
+            _animeUnityController.UpdateDownlaSettings(downloadPath, maxConnections, maxPacketSize);
+            _animeSaturnController.UpdateDownlaSettings(downloadPath, maxConnections, maxPacketSize);
         }
 
         #region Private Methods

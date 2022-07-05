@@ -10,10 +10,10 @@ namespace Tengu.Business.Core.Utilities
     {
         public async Task<AnimeSaturnCreateSessionOutput> CreateSession()
         {
-            var requestUrl = Config.AnimeSaturn.BaseUrl;
+            var requestUrl = Config.AnimeSaturnConfig.BaseUrl;
 
             var headResponse = await requestUrl
-                .WithHeader("User-Agent", Config.Common.UserAgent)
+                .WithHeader("User-Agent", Config.HttpConfig.UserAgent)
                 .HeadAsync();
 
             var sessionId = headResponse.Cookies.First(cookie => cookie.Name.Equals("PHPSESSID")).Value;

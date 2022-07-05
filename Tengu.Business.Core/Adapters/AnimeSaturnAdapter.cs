@@ -23,7 +23,7 @@ namespace Tengu.Business.Core.Adapters
         {
             var animeList = new List<AnimeModel>();
 
-            var requestUrl = $"{Config.AnimeSaturn.SearchByTitleUrl}" +
+            var requestUrl = $"{Config.AnimeSaturnConfig.SearchByTitleUrl}" +
                 $"search={title}";
 
             var web = new HtmlWeb();
@@ -64,7 +64,7 @@ namespace Tengu.Business.Core.Adapters
             var animeList = new ConcurrentBag<AnimeModel>();
             var web = new HtmlWeb();
 
-            var requestUrl = $"{Config.AnimeSaturn.SearchByFilterUrl}";
+            var requestUrl = $"{Config.AnimeSaturnConfig.SearchByFilterUrl}";
 
             foreach (var state in searchFilter.Status)
             {
@@ -131,7 +131,7 @@ namespace Tengu.Business.Core.Adapters
             var web = new HtmlWeb();
             HtmlDocument doc;
 
-            var animeUrl = $"{Config.AnimeSaturn.BaseAnimeUrl}/{animeId}";
+            var animeUrl = $"{Config.AnimeSaturnConfig.BaseAnimeUrl}/{animeId}";
 
             doc = await web.LoadFromWebAsync($"{animeUrl}", cancellationToken);
 
@@ -180,7 +180,7 @@ namespace Tengu.Business.Core.Adapters
 
             var calendar = new Calendar() { Host = Hosts.AnimeSaturn };
 
-            var url = Config.AnimeSaturn.CalendarUrl;
+            var url = Config.AnimeSaturnConfig.CalendarUrl;
             var web = new HtmlWeb();
 
             var doc = await web.LoadFromWebAsync(url, cancellationToken);
@@ -216,7 +216,7 @@ namespace Tengu.Business.Core.Adapters
 
             var doc = new HtmlDocument();
 
-            var requestUrl = Config.AnimeSaturn.BaseLatestEpisodeUrl;
+            var requestUrl = Config.AnimeSaturnConfig.BaseLatestEpisodeUrl;
 
             var currentPage = offset / 15;
 
@@ -272,51 +272,30 @@ namespace Tengu.Business.Core.Adapters
 
         }
 
-        public async Task<string> GetDownloadUrl(string episodeStreamUrl, CancellationToken cancellationToken = default)
+        public async Task<string> GetDownloadUrl(string episodeUrl, CancellationToken cancellationToken = default)
         {
             var web = new HtmlWeb();
-            var doc = await web.LoadFromWebAsync(episodeStreamUrl, cancellationToken);
+            var doc = await web.LoadFromWebAsync(episodeUrl, cancellationToken);
 
             var sourceNode = doc.DocumentNode.SelectSingleNode("//source");
 
-            var serverNodes = doc.DocumentNode.SelectNodes("//a[@class='dropdown-item']");
-
-            var url = "";
+            string downloadUrl;
 
             if (sourceNode != null)
             {
-                url = sourceNode.GetAttributeValue("src", "");
+                downloadUrl = sourceNode.GetAttributeValue("src", "");
             }
             else
             {
-                var nextPageUrl = serverNodes[0].GetAttributeValue("href", "");
+                var streamNode = doc.DocumentNode.SelectNodes("./div[@class='embed-responsive-item']/script[@type='text/javascript']")[1];
 
-                var internalWeb = new HtmlWeb();
-                var internalDoc = await web.LoadFromWebAsync(nextPageUrl, cancellationToken);
+                var rawUrl = streamNode.InnerText.Split("file:")[1];
+                rawUrl = rawUrl.Split("tracks")[0];
 
-                var siteRef = internalDoc.DocumentNode.SelectSingleNode("//div[@class='button']/a").GetAttributeValue("href", "");
-
-                if (siteRef.Contains("streamtape"))
-                {
-                    siteRef = siteRef.Replace("/v/", "/e/");
-
-                    internalDoc = await web.LoadFromWebAsync(siteRef, cancellationToken);
-
-                    var cryptInfo = internalDoc.DocumentNode.SelectSingleNode("//script[6]").InnerText.Split("?id=")[1].Split("').")[0];
-
-                    var informationUrl = $"https://streamtape.com/get_video?id={cryptInfo}&stream=1";
-
-                    var infoResponse = await informationUrl
-                        .WithAutoRedirect(false)
-                        .HeadAsync(cancellationToken);
-
-                    url = infoResponse.Headers.FirstOrDefault(header => header.Name == "Location").Value;
-
-                }
-
+                downloadUrl = rawUrl.Trim().Replace("\"", "");
             }
 
-            return url;
+            return downloadUrl;
         }
 
         private async Task<string> GetAnimeStreamUrl(string episodeUrl, CancellationToken cancellationToken)
