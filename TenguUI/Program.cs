@@ -1,10 +1,13 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Tengu.Business.API;
 using TenguUI.Controllers;
 using TenguUI.Controllers.Interfaces;
 using TenguUI.Managers;
 using TenguUI.Managers.Interfaces;
+using Serilog;
+using Serilog.Sinks.File;
 
 namespace TenguUI
 {
@@ -23,6 +26,7 @@ namespace TenguUI
         static IHostBuilder CreateHostBuilder()
         {
             return Host.CreateDefaultBuilder()
+                .UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.WriteTo.File($"{Environment.CurrentDirectory}/log.txt"))
                 .ConfigureServices((context, services) => {
                     services.AddTenguServices();
 
@@ -30,8 +34,6 @@ namespace TenguUI
 
                     services.AddSingleton<ITenguController, TenguController>();
                     services.AddSingleton<ITenguManager, TenguManager>();
-
-                    services.AddLogging();
                 });
         }
     }

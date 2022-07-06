@@ -35,6 +35,8 @@ namespace TenguUI.Managers
 
             searchResult = await _tenguApi.SearchAnimeAsync(title);
 
+            CheckForError(searchResult);
+
             return searchResult.Data;
         }
         public async Task<AnimeModel[]> SearchAnimesAsync(TenguSearchFilter filter)
@@ -42,6 +44,7 @@ namespace TenguUI.Managers
             TenguResult<AnimeModel[]> searchResult;
 
             searchResult = await _tenguApi.SearchAnimeAsync(filter);
+            CheckForError(searchResult);
 
             return searchResult.Data;
         }
@@ -50,6 +53,7 @@ namespace TenguUI.Managers
             TenguResult<AnimeModel[]> searchResult;
 
             searchResult = await _tenguApi.SearchAnimeAsync(title, filter);
+            CheckForError(searchResult);
 
             return searchResult.Data;
         }
@@ -59,6 +63,7 @@ namespace TenguUI.Managers
             TenguResult<EpisodeModel[]> searchResult;
 
             searchResult = await _tenguApi.GetEpisodesAsync(animeId, animeHost, offset, limit);
+            CheckForError(searchResult);
 
             return searchResult.Data;
 
@@ -68,10 +73,20 @@ namespace TenguUI.Managers
         {
             TenguResult<DownloadMonitor> searchResult;
             searchResult = _tenguApi.DownloadAsync(episodeUrl, episodeHost, out _);
+            CheckForError(searchResult);
 
             return searchResult.Data;
 
         }
 
+
+        private void CheckForError(TenguResult result)
+        {
+            var errors = result.Infos.Where( info => info.Success == false);
+            foreach(var error in errors)
+            {
+                _logger.LogError($"Error! {error.Exception.Message}");
+            }
+        }
     }
 }
