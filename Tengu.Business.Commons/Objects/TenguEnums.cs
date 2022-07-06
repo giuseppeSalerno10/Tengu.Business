@@ -1,18 +1,18 @@
 ﻿namespace Tengu.Business.Commons.Objects
 {
-    public enum Hosts
+    public enum TenguHosts
     {
         AnimeSaturn,
         AnimeUnity,
         None
     }
-    public enum Languages
+    public enum TenguLanguages
     {
         Subbed,
         Dubbed,
         None
     }
-    public enum Statuses
+    public enum TenguStatuses
     {
         InProgress,
         Completed,
@@ -20,7 +20,7 @@
         Canceled,
         None
     }
-    public enum Genres
+    public enum TenguGenres
     {
         ArtiMarziali,
         Avventura,
@@ -68,7 +68,7 @@
         Yuri,
         None
     }
-    public enum WeekDays
+    public enum TenguWeekDays
     {
         Monday,
         Tuesday,

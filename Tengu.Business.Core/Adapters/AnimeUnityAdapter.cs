@@ -48,7 +48,7 @@ namespace Tengu.Business.Core.Adapters
                         AnimeId = animeId,
                         DownloadUrl = episode.Link,
                         EpisodeNumber = episode.Number,
-                        Host = Hosts.AnimeUnity,
+                        Host = TenguHosts.AnimeUnity,
                         Id = episode.Id.ToString(),
                     };
 
@@ -100,7 +100,7 @@ namespace Tengu.Business.Core.Adapters
                         Title = $"{episode.Anime.Title}",
                         AnimeId = episode.Anime.Id.ToString(),
                         EpisodeNumber = episode.Number,
-                        Host = Hosts.AnimeUnity,
+                        Host = TenguHosts.AnimeUnity,
                         Id = episode.Id.ToString(),
                         DownloadUrl = episode.Link,
                         Image = episode.Anime.ImageUrl
@@ -146,7 +146,7 @@ namespace Tengu.Business.Core.Adapters
                     {
                         var anime = new AnimeModel()
                         {
-                            Host = Hosts.AnimeUnity,
+                            Host = TenguHosts.AnimeUnity,
                             Id = $"{record.Id}",
                             Image = record.ImageUrl,
                             Title = record.Title,
@@ -183,14 +183,14 @@ namespace Tengu.Business.Core.Adapters
 
                 var day = rawCalendarEntry.Day switch
                 {
-                    "Lunedì" => WeekDays.Monday,
-                    "Martedì" => WeekDays.Tuesday,
-                    "Mercoledì" => WeekDays.Wednesday,
-                    "Giovedì" => WeekDays.Thursday,
-                    "Venerdì" => WeekDays.Friday,
-                    "Sabato" => WeekDays.Saturday,
-                    "Domenica" => WeekDays.Sunday,
-                    _ => WeekDays.None
+                    "Lunedì" => TenguWeekDays.Monday,
+                    "Martedì" => TenguWeekDays.Tuesday,
+                    "Mercoledì" => TenguWeekDays.Wednesday,
+                    "Giovedì" => TenguWeekDays.Thursday,
+                    "Venerdì" => TenguWeekDays.Friday,
+                    "Sabato" => TenguWeekDays.Saturday,
+                    "Domenica" => TenguWeekDays.Sunday,
+                    _ => TenguWeekDays.None
                 };
 
                 var entryToAdd = new CalendarEntryModel()

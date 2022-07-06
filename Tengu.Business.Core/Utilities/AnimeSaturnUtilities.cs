@@ -27,54 +27,54 @@ namespace Tengu.Business.Core.Utilities
             return sessionResult;
         }
 
-        public string[] GetGenreArray(IEnumerable<Genres> genres)
+        public string[] GetGenreArray(IEnumerable<TenguGenres> genres)
         {
-            Dictionary<Genres, string> genreMap = new Dictionary<Genres, string>()
+            Dictionary<TenguGenres, string> genreMap = new Dictionary<TenguGenres, string>()
             {
-                { Genres.ArtiMarziali, "Arti Marziali" },
-                { Genres.Avventura, "Avventura" },
-                { Genres.Azione, "Azione" },
-                { Genres.Bambini, "Bambini" },
-                { Genres.Commedia, "Commedia" },
-                { Genres.Demenziale, "Demenziale" },
-                { Genres.Demoni, "Demoni" },
-                { Genres.Drammatico, "Drammatico" },
-                { Genres.Ecchi, "Ecchi" },
-                { Genres.Fantasy, "Fantasy" },
-                { Genres.Gioco, "Gioco" },
-                { Genres.Harem, "Harem" },
-                { Genres.Hentai, "Hentai" },
-                { Genres.Horror, "Horror" },
-                { Genres.Josei, "Josei" },
-                { Genres.Magia, "Magia" },
-                { Genres.Mecha, "Mecha" },
-                { Genres.Militari, "Militari" },
-                { Genres.Mistero, "Mistero" },
-                { Genres.Musicale, "Musicale" },
-                { Genres.Parodia, "Parodia" },
-                { Genres.Polizia, "Polizia" },
-                { Genres.Psicologico, "Psicologico" },
-                { Genres.Romantico, "Romantico" },
-                { Genres.Samurai, "Samurai" },
-                { Genres.SciFi, "Sci-Fi" },
-                { Genres.Scolastico, "Scolastico" },
-                { Genres.Seinen, "Seinen" },
-                { Genres.Sentimentale, "Sentimentale" },
-                { Genres.ShoujoAi, "Shoujo Ai" },
-                { Genres.Shoujo, "Shoujo" },
-                { Genres.ShounenAi, "Shounen Ai" },
-                { Genres.Shounen, "Shounen" },
-                { Genres.SliceOfLife, "Slice of Life" },
-                { Genres.Soprannaturale, "Soprannaturale" },
-                { Genres.Spazio, "Spazio" },
-                { Genres.Sport, "Sport" },
-                { Genres.Storico, "Storico" },
-                { Genres.Superpoteri, "Superpoteri" },
-                { Genres.Thriller, "Thriller" },
-                { Genres.Vampiri, "Vampiri" },
-                { Genres.Veicoli, "Veicoli" },
-                { Genres.Yaoi, "Yaoi" },
-                { Genres.Yuri, "Yuri" }
+                { TenguGenres.ArtiMarziali, "Arti Marziali" },
+                { TenguGenres.Avventura, "Avventura" },
+                { TenguGenres.Azione, "Azione" },
+                { TenguGenres.Bambini, "Bambini" },
+                { TenguGenres.Commedia, "Commedia" },
+                { TenguGenres.Demenziale, "Demenziale" },
+                { TenguGenres.Demoni, "Demoni" },
+                { TenguGenres.Drammatico, "Drammatico" },
+                { TenguGenres.Ecchi, "Ecchi" },
+                { TenguGenres.Fantasy, "Fantasy" },
+                { TenguGenres.Gioco, "Gioco" },
+                { TenguGenres.Harem, "Harem" },
+                { TenguGenres.Hentai, "Hentai" },
+                { TenguGenres.Horror, "Horror" },
+                { TenguGenres.Josei, "Josei" },
+                { TenguGenres.Magia, "Magia" },
+                { TenguGenres.Mecha, "Mecha" },
+                { TenguGenres.Militari, "Militari" },
+                { TenguGenres.Mistero, "Mistero" },
+                { TenguGenres.Musicale, "Musicale" },
+                { TenguGenres.Parodia, "Parodia" },
+                { TenguGenres.Polizia, "Polizia" },
+                { TenguGenres.Psicologico, "Psicologico" },
+                { TenguGenres.Romantico, "Romantico" },
+                { TenguGenres.Samurai, "Samurai" },
+                { TenguGenres.SciFi, "Sci-Fi" },
+                { TenguGenres.Scolastico, "Scolastico" },
+                { TenguGenres.Seinen, "Seinen" },
+                { TenguGenres.Sentimentale, "Sentimentale" },
+                { TenguGenres.ShoujoAi, "Shoujo Ai" },
+                { TenguGenres.Shoujo, "Shoujo" },
+                { TenguGenres.ShounenAi, "Shounen Ai" },
+                { TenguGenres.Shounen, "Shounen" },
+                { TenguGenres.SliceOfLife, "Slice of Life" },
+                { TenguGenres.Soprannaturale, "Soprannaturale" },
+                { TenguGenres.Spazio, "Spazio" },
+                { TenguGenres.Sport, "Sport" },
+                { TenguGenres.Storico, "Storico" },
+                { TenguGenres.Superpoteri, "Superpoteri" },
+                { TenguGenres.Thriller, "Thriller" },
+                { TenguGenres.Vampiri, "Vampiri" },
+                { TenguGenres.Veicoli, "Veicoli" },
+                { TenguGenres.Yaoi, "Yaoi" },
+                { TenguGenres.Yuri, "Yuri" }
             };
 
             var genresList = new List<string>();
@@ -92,14 +92,14 @@ namespace Tengu.Business.Core.Utilities
 
             return genresList.ToArray();
         }
-        public string GetStatus(Statuses status)
+        public string GetStatus(TenguStatuses status)
         {
-            Dictionary<Statuses, string> statusMap = new Dictionary<Statuses, string>()
+            Dictionary<TenguStatuses, string> statusMap = new Dictionary<TenguStatuses, string>()
             {
-                { Statuses.InProgress, "0"},
-                { Statuses.Completed, "1"},
-                { Statuses.NotReleased, "2"},
-                { Statuses.Canceled, "3"},
+                { TenguStatuses.InProgress, "0"},
+                { TenguStatuses.Completed, "1"},
+                { TenguStatuses.NotReleased, "2"},
+                { TenguStatuses.Canceled, "3"},
             };
 
             return statusMap[status];

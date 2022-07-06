@@ -51,7 +51,7 @@ namespace Tengu.Business.API.Managers
         {
             return _adapter.GetCalendar(cancellationToken);
         }
-        public Task<AnimeModel[]> SearchAnimeAsync(SearchFilter filter, int count, CancellationToken cancellationToken)
+        public Task<AnimeModel[]> SearchAnimeAsync(TenguSearchFilter filter, int count, CancellationToken cancellationToken)
         {
             var adapterFilter = new AnimeUnitySearchInput();
 
@@ -60,7 +60,7 @@ namespace Tengu.Business.API.Managers
                 adapterFilter.Genres = _utilities.GetGenreArray(filter.Genres);
             }
 
-            if (filter.Status != Statuses.None)
+            if (filter.Status != TenguStatuses.None)
             {
                 adapterFilter.Status = _utilities.GetStatus(filter.Status);
             }
@@ -78,7 +78,7 @@ namespace Tengu.Business.API.Managers
             return _adapter.SearchAsync(adapterFilter, count, cancellationToken);
         }
 
-        public Task<AnimeModel[]> SearchAnimeAsync(string title, SearchFilter filter, int count, CancellationToken cancellationToken)
+        public Task<AnimeModel[]> SearchAnimeAsync(string title, TenguSearchFilter filter, int count, CancellationToken cancellationToken)
         {
             var adapterFilter = new AnimeUnitySearchInput()
             {
@@ -90,7 +90,7 @@ namespace Tengu.Business.API.Managers
                 adapterFilter.Genres = _utilities.GetGenreArray(filter.Genres);
             }
 
-            if (filter.Status != Statuses.None)
+            if (filter.Status != TenguStatuses.None)
             {
                 adapterFilter.Status = _utilities.GetStatus(filter.Status);
             }

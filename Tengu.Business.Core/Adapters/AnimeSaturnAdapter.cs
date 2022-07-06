@@ -46,7 +46,7 @@ namespace Tengu.Business.Core.Adapters
                         {
                             Url = url,
                             Id = url.Split("/")[^1],
-                            Host = Hosts.AnimeSaturn,
+                            Host = TenguHosts.AnimeSaturn,
                             Title = urlNode.InnerText,
                             Image = node.SelectSingleNode("./li/div[@class='item-archivio']/a/img[@class='rounded locandina-archivio']")
                             .GetAttributeValue("src", "")
@@ -112,7 +112,7 @@ namespace Tengu.Business.Core.Adapters
                         var anime = new AnimeModel()
                         {
                             Id = url.Split("/")[^1],
-                            Host = Hosts.AnimeSaturn,
+                            Host = TenguHosts.AnimeSaturn,
                             Image = aNode.SelectSingleNode("./img").GetAttributeValue("src", ""),
                             Url = url,
                             Title = aNode.GetAttributeValue("title", ""),
@@ -149,13 +149,13 @@ namespace Tengu.Business.Core.Adapters
                     var episodeUrl = episodes[index]
                         .GetAttributeValue("href", "");
 
-                    var url = GetEpisodeUrl(episodeUrl, cancellationToken).Result;
+                    var url = GetEpisodeUrl(episodeUrl);
 
                     var episode = new EpisodeModel
                     {
                         Id = url.Split("=")[^1],
                         AnimeId = animeId,
-                        Host = Hosts.AnimeSaturn,
+                        Host = TenguHosts.AnimeSaturn,
                         Title = animeTitle,
                         Url = url,
                         EpisodeNumber = (index + 1).ToString(),
@@ -163,6 +163,7 @@ namespace Tengu.Business.Core.Adapters
                     };
                     episodeBag.Add(episode);
                 }
+                Task.Delay(500).Wait();
             });
 
             var episodesList = episodeBag
@@ -176,9 +177,9 @@ namespace Tengu.Business.Core.Adapters
 
         public async Task<Calendar> GetCalendar(CancellationToken cancellationToken = default)
         {
-            var days = (WeekDays[])Enum.GetValues(typeof(WeekDays));
+            var days = (TenguWeekDays[])Enum.GetValues(typeof(TenguWeekDays));
 
-            var calendar = new Calendar() { Host = Hosts.AnimeSaturn };
+            var calendar = new Calendar() { Host = TenguHosts.AnimeSaturn };
 
             var url = Config.AnimeSaturnConfig.CalendarUrl;
             var web = new HtmlWeb();
@@ -247,11 +248,11 @@ namespace Tengu.Business.Core.Adapters
                     var titleNode = node.SelectSingleNode("./div[@class='card mb-4 shadow-sm']/a[2]");
 
                     var url = urlNode.GetAttributeValue("href", "");
-                    var streamUrl = await GetEpisodeUrl(url, cancellationToken);
+                    var streamUrl = GetEpisodeUrl(url);
 
                     var episode = new EpisodeModel()
                     {
-                        Host = Hosts.AnimeSaturn,
+                        Host = TenguHosts.AnimeSaturn,
                         Url = streamUrl,
                         Title = $"{urlNode.GetAttributeValue("title", "").Trim()}",
                         Image = urlNode.SelectSingleNode("./img").GetAttributeValue("src", ""),
@@ -306,10 +307,10 @@ namespace Tengu.Business.Core.Adapters
 
             return streamUrl;
         }
-        private async Task<string> GetEpisodeUrl(string episodeUrl, CancellationToken cancellationToken)
+        private string GetEpisodeUrl(string episodeUrl)
         {
             var internalWeb = new HtmlWeb();
-            var internalDoc = await internalWeb.LoadFromWebAsync(episodeUrl, cancellationToken);
+            var internalDoc = internalWeb.Load(episodeUrl);
 
             var url = internalDoc.DocumentNode
                     .SelectSingleNode("./div/div/div[@class='card-body']/a")

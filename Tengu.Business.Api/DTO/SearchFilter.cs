@@ -2,10 +2,10 @@
 
 namespace Tengu.Business.API.DTO
 {
-    public class SearchFilter
+    public class TenguSearchFilter
     {
-        public IEnumerable<Genres> Genres { get; set; } = Array.Empty<Genres>();
+        public IEnumerable<TenguGenres> Genres { get; set; } = Array.Empty<TenguGenres>();
         public string Year { get; set; } = string.Empty;
-        public Statuses Status { get; set; } = Statuses.None;
+        public TenguStatuses Status { get; set; } = TenguStatuses.None;
     }
 }

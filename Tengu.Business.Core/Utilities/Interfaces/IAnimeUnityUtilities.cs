@@ -7,7 +7,7 @@ namespace Tengu.Business.Core.Utilities.Interfaces
     public interface IAnimeUnityUtilities
     {
         Task<AnimeUnityCreateSessionOutput> CreateSession();
-        AnimeUnityGenre[] GetGenreArray(IEnumerable<Genres> genres);
-        string GetStatus(Statuses status);
+        AnimeUnityGenre[] GetGenreArray(IEnumerable<TenguGenres> genres);
+        string GetStatus(TenguStatuses status);
     }
 }

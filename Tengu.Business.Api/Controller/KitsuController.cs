@@ -19,7 +19,7 @@ namespace Tengu.Business.API.Controller
 
         public async Task<OperationResult<KitsuAnimeModel[]>> GetUpcomingAnimeAsync(int offset, int limit, CancellationToken cancellationToken)
         {
-            var result = new OperationResult<KitsuAnimeModel[]>() { Host = Hosts.None};
+            var result = new OperationResult<KitsuAnimeModel[]>() { Host = TenguHosts.None};
 
             try
             {
@@ -36,7 +36,7 @@ namespace Tengu.Business.API.Controller
 
         public async Task<OperationResult<KitsuAnimeModel[]>> SearchAnimeAsync(string title, int offset, int limit, CancellationToken cancellationToken)
         {
-            var result = new OperationResult<KitsuAnimeModel[]>() { Host = Hosts.None };
+            var result = new OperationResult<KitsuAnimeModel[]>() { Host = TenguHosts.None };
 
             try
             {

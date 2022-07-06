@@ -31,53 +31,53 @@ namespace Tengu.Business.Core.Utilities
             return sessionResult;
         }
 
-        public AnimeUnityGenre[] GetGenreArray(IEnumerable<Genres> genres)
+        public AnimeUnityGenre[] GetGenreArray(IEnumerable<TenguGenres> genres)
         {
-            var genreMap = new Dictionary<Genres, AnimeUnityGenre>()
+            var genreMap = new Dictionary<TenguGenres, AnimeUnityGenre>()
             {
-                { Genres.Azione, new  AnimeUnityGenre { Id = 51, Name = "Action" } },
-                { Genres.Avventura, new  AnimeUnityGenre { Id = 21, Name =  "Adventure" } },
-                { Genres.Veicoli, new  AnimeUnityGenre { Id = 29, Name = "Cars" } },
-                { Genres.Commedia, new  AnimeUnityGenre { Id = 37, Name = "Comedy" } },
-                { Genres.Demenziale, new  AnimeUnityGenre { Id = 43, Name = "Dementia" } },
-                { Genres.Demoni, new  AnimeUnityGenre { Id = 13, Name = "Demons" } },
-                { Genres.Drammatico, new  AnimeUnityGenre { Id = 22, Name = "Drama" } },
-                { Genres.Ecchi, new  AnimeUnityGenre { Id = 5, Name = "Ecchi" } },
-                { Genres.Fantasy, new  AnimeUnityGenre { Id = 9, Name = "Fantasy" } },
-                { Genres.Gioco, new  AnimeUnityGenre { Id = 44, Name = "Game" } },
-                { Genres.Harem, new  AnimeUnityGenre { Id = 15, Name = "Harem" } },
-                { Genres.Hentai, new  AnimeUnityGenre { Id = 4, Name = "Hentai" } },
-                { Genres.Storico, new  AnimeUnityGenre { Id = 30, Name = "Historical" } },
-                { Genres.Horror, new  AnimeUnityGenre { Id = 3, Name = "Horror" } },
-                { Genres.Josei, new  AnimeUnityGenre { Id = 45, Name = "Josei" } },
-                { Genres.Bambini, new  AnimeUnityGenre { Id = 14, Name = "Kids" } },
-                { Genres.Magia, new  AnimeUnityGenre { Id = 23, Name = "Magic" } },
-                { Genres.ArtiMarziali, new  AnimeUnityGenre { Id = 31, Name = "Martial Arts" } },
-                { Genres.Mecha, new  AnimeUnityGenre { Id = 38, Name = "Mecha" } },
-                { Genres.Militari, new  AnimeUnityGenre { Id = 46, Name = "Military" } },
-                { Genres.Mistero, new  AnimeUnityGenre { Id = 24, Name = "Mistery" } },
-                { Genres.Musicale, new  AnimeUnityGenre { Id = 16, Name = "Music" } },
-                { Genres.Parodia, new  AnimeUnityGenre { Id = 32, Name = "Parody" } },
-                { Genres.Polizia, new  AnimeUnityGenre { Id = 39, Name = "Police" } },
-                { Genres.Psicologico, new  AnimeUnityGenre { Id = 47, Name = "Psychological" } },
-                { Genres.Romantico, new  AnimeUnityGenre { Id = 17, Name = "Romance" } },
-                { Genres.Samurai, new  AnimeUnityGenre { Id = 25, Name = "Samurai" } },
-                { Genres.Scolastico, new  AnimeUnityGenre { Id = 33, Name = "School" } },
-                { Genres.SciFi, new  AnimeUnityGenre { Id = 40, Name = "Sci - fi" } },
-                { Genres.Seinen, new  AnimeUnityGenre { Id = 49, Name = "Seinen" } },
-                { Genres.Shoujo, new  AnimeUnityGenre { Id = 18, Name = "Shoujo" } },
-                { Genres.ShoujoAi, new  AnimeUnityGenre { Id = 26, Name = "Shoujo Ai" } },
-                { Genres.Shounen, new  AnimeUnityGenre { Id = 34, Name = "Shounen" } },
-                { Genres.ShounenAi, new  AnimeUnityGenre { Id = 41, Name = "Shounen Ai" } },
-                { Genres.SliceOfLife, new  AnimeUnityGenre { Id = 50, Name = "Slice of Life" } },
-                { Genres.Spazio, new  AnimeUnityGenre { Id = 19, Name = "Space" } },
-                { Genres.Sport, new  AnimeUnityGenre { Id = 27, Name = "Sports" } },
-                { Genres.Superpoteri, new  AnimeUnityGenre { Id = 35, Name = "Super Power" } },
-                { Genres.Soprannaturale, new  AnimeUnityGenre { Id = 42, Name = "Supernatural" } },
-                { Genres.Thriller, new  AnimeUnityGenre { Id = 48, Name = "Thriller" } },
-                { Genres.Vampiri, new  AnimeUnityGenre { Id = 20, Name = "Vampire" } },
-                { Genres.Yaoi, new  AnimeUnityGenre { Id = 28, Name = "Yaoi" } },
-                { Genres.Yuri, new  AnimeUnityGenre { Id = 36, Name = "Yuri" } },
+                { TenguGenres.Azione, new  AnimeUnityGenre { Id = 51, Name = "Action" } },
+                { TenguGenres.Avventura, new  AnimeUnityGenre { Id = 21, Name =  "Adventure" } },
+                { TenguGenres.Veicoli, new  AnimeUnityGenre { Id = 29, Name = "Cars" } },
+                { TenguGenres.Commedia, new  AnimeUnityGenre { Id = 37, Name = "Comedy" } },
+                { TenguGenres.Demenziale, new  AnimeUnityGenre { Id = 43, Name = "Dementia" } },
+                { TenguGenres.Demoni, new  AnimeUnityGenre { Id = 13, Name = "Demons" } },
+                { TenguGenres.Drammatico, new  AnimeUnityGenre { Id = 22, Name = "Drama" } },
+                { TenguGenres.Ecchi, new  AnimeUnityGenre { Id = 5, Name = "Ecchi" } },
+                { TenguGenres.Fantasy, new  AnimeUnityGenre { Id = 9, Name = "Fantasy" } },
+                { TenguGenres.Gioco, new  AnimeUnityGenre { Id = 44, Name = "Game" } },
+                { TenguGenres.Harem, new  AnimeUnityGenre { Id = 15, Name = "Harem" } },
+                { TenguGenres.Hentai, new  AnimeUnityGenre { Id = 4, Name = "Hentai" } },
+                { TenguGenres.Storico, new  AnimeUnityGenre { Id = 30, Name = "Historical" } },
+                { TenguGenres.Horror, new  AnimeUnityGenre { Id = 3, Name = "Horror" } },
+                { TenguGenres.Josei, new  AnimeUnityGenre { Id = 45, Name = "Josei" } },
+                { TenguGenres.Bambini, new  AnimeUnityGenre { Id = 14, Name = "Kids" } },
+                { TenguGenres.Magia, new  AnimeUnityGenre { Id = 23, Name = "Magic" } },
+                { TenguGenres.ArtiMarziali, new  AnimeUnityGenre { Id = 31, Name = "Martial Arts" } },
+                { TenguGenres.Mecha, new  AnimeUnityGenre { Id = 38, Name = "Mecha" } },
+                { TenguGenres.Militari, new  AnimeUnityGenre { Id = 46, Name = "Military" } },
+                { TenguGenres.Mistero, new  AnimeUnityGenre { Id = 24, Name = "Mistery" } },
+                { TenguGenres.Musicale, new  AnimeUnityGenre { Id = 16, Name = "Music" } },
+                { TenguGenres.Parodia, new  AnimeUnityGenre { Id = 32, Name = "Parody" } },
+                { TenguGenres.Polizia, new  AnimeUnityGenre { Id = 39, Name = "Police" } },
+                { TenguGenres.Psicologico, new  AnimeUnityGenre { Id = 47, Name = "Psychological" } },
+                { TenguGenres.Romantico, new  AnimeUnityGenre { Id = 17, Name = "Romance" } },
+                { TenguGenres.Samurai, new  AnimeUnityGenre { Id = 25, Name = "Samurai" } },
+                { TenguGenres.Scolastico, new  AnimeUnityGenre { Id = 33, Name = "School" } },
+                { TenguGenres.SciFi, new  AnimeUnityGenre { Id = 40, Name = "Sci - fi" } },
+                { TenguGenres.Seinen, new  AnimeUnityGenre { Id = 49, Name = "Seinen" } },
+                { TenguGenres.Shoujo, new  AnimeUnityGenre { Id = 18, Name = "Shoujo" } },
+                { TenguGenres.ShoujoAi, new  AnimeUnityGenre { Id = 26, Name = "Shoujo Ai" } },
+                { TenguGenres.Shounen, new  AnimeUnityGenre { Id = 34, Name = "Shounen" } },
+                { TenguGenres.ShounenAi, new  AnimeUnityGenre { Id = 41, Name = "Shounen Ai" } },
+                { TenguGenres.SliceOfLife, new  AnimeUnityGenre { Id = 50, Name = "Slice of Life" } },
+                { TenguGenres.Spazio, new  AnimeUnityGenre { Id = 19, Name = "Space" } },
+                { TenguGenres.Sport, new  AnimeUnityGenre { Id = 27, Name = "Sports" } },
+                { TenguGenres.Superpoteri, new  AnimeUnityGenre { Id = 35, Name = "Super Power" } },
+                { TenguGenres.Soprannaturale, new  AnimeUnityGenre { Id = 42, Name = "Supernatural" } },
+                { TenguGenres.Thriller, new  AnimeUnityGenre { Id = 48, Name = "Thriller" } },
+                { TenguGenres.Vampiri, new  AnimeUnityGenre { Id = 20, Name = "Vampire" } },
+                { TenguGenres.Yaoi, new  AnimeUnityGenre { Id = 28, Name = "Yaoi" } },
+                { TenguGenres.Yuri, new  AnimeUnityGenre { Id = 36, Name = "Yuri" } },
             };
 
             var genresList = new List<AnimeUnityGenre>();
@@ -95,14 +95,14 @@ namespace Tengu.Business.Core.Utilities
             return genresList.ToArray();
         }
 
-        public string GetStatus(Statuses status)
+        public string GetStatus(TenguStatuses status)
         {
-            Dictionary<Statuses, string> statusMap = new Dictionary<Statuses, string>()
+            Dictionary<TenguStatuses, string> statusMap = new Dictionary<TenguStatuses, string>()
             {
-                { Statuses.InProgress, "In Corso"},
-                { Statuses.Completed, "Terminato"},
-                { Statuses.NotReleased, "In Uscita"},
-                { Statuses.Canceled, "Droppato"},
+                { TenguStatuses.InProgress, "In Corso"},
+                { TenguStatuses.Completed, "Terminato"},
+                { TenguStatuses.NotReleased, "In Uscita"},
+                { TenguStatuses.Canceled, "Droppato"},
             };
 
             return statusMap[status];

@@ -25,7 +25,7 @@ namespace Tengu.Business.API.Controller
         }
         public async Task<OperationResult<AnimeModel[]>> SearchAnimeAsync(string title, int count, CancellationToken cancellationToken)
         {
-            var result = new OperationResult<AnimeModel[]>() { Host = Hosts.AnimeUnity };
+            var result = new OperationResult<AnimeModel[]>() { Host = TenguHosts.AnimeUnity };
 
             try
             {
@@ -40,9 +40,9 @@ namespace Tengu.Business.API.Controller
             return result;
         }
 
-        public async Task<OperationResult<AnimeModel[]>> SearchAnimeAsync(SearchFilter filter, int count, CancellationToken cancellationToken)
+        public async Task<OperationResult<AnimeModel[]>> SearchAnimeAsync(TenguSearchFilter filter, int count, CancellationToken cancellationToken)
         {
-            var result = new OperationResult<AnimeModel[]>() { Host = Hosts.AnimeUnity };
+            var result = new OperationResult<AnimeModel[]>() { Host = TenguHosts.AnimeUnity };
 
             try
             {
@@ -57,9 +57,9 @@ namespace Tengu.Business.API.Controller
             return result;
         }
 
-        public async Task<OperationResult<AnimeModel[]>> SearchAnimeAsync(string title, SearchFilter filter, int count, CancellationToken cancellationToken)
+        public async Task<OperationResult<AnimeModel[]>> SearchAnimeAsync(string title, TenguSearchFilter filter, int count, CancellationToken cancellationToken)
         {
-            var result = new OperationResult<AnimeModel[]>() { Host = Hosts.AnimeUnity };
+            var result = new OperationResult<AnimeModel[]>() { Host = TenguHosts.AnimeUnity };
 
             try
             {
@@ -76,7 +76,7 @@ namespace Tengu.Business.API.Controller
 
         public async Task<OperationResult<EpisodeModel[]>> GetEpisodesAsync(string animeId, int offset, int limit, CancellationToken cancellationToken)
         {
-            var result = new OperationResult<EpisodeModel[]>() { Host = Hosts.AnimeUnity };
+            var result = new OperationResult<EpisodeModel[]>() { Host = TenguHosts.AnimeUnity };
 
             try
             {
@@ -93,7 +93,7 @@ namespace Tengu.Business.API.Controller
 
         public async Task<OperationResult<EpisodeModel[]>> GetLatestEpisodesAsync(int offset, int limit, CancellationToken cancellationToken)
         {
-            var result = new OperationResult<EpisodeModel[]>() { Host = Hosts.AnimeUnity };
+            var result = new OperationResult<EpisodeModel[]>() { Host = TenguHosts.AnimeUnity };
 
             try
             {
@@ -110,7 +110,7 @@ namespace Tengu.Business.API.Controller
 
         public async Task<OperationResult<Calendar>> GetCalendar(CancellationToken cancellationToken)
         {
-            var result = new OperationResult<Calendar>() { Host = Hosts.AnimeUnity };
+            var result = new OperationResult<Calendar>() { Host = TenguHosts.AnimeUnity };
 
             try
             {
@@ -127,7 +127,7 @@ namespace Tengu.Business.API.Controller
 
         public OperationResult<DownloadMonitor> DownloadAsync(string episodeUrl, out Task downloadTask, CancellationToken cancellationToken)
         {
-            var result = new OperationResult<DownloadMonitor>() { Host = Hosts.AnimeUnity };
+            var result = new OperationResult<DownloadMonitor>() { Host = TenguHosts.AnimeUnity };
 
             try
             {

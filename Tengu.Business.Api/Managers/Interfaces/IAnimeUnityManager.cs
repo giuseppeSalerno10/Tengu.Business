@@ -10,9 +10,9 @@ namespace Tengu.Business.API.Managers.Interfaces
         DownloadMonitor DownloadAsync(string episodeId, out Task downloadTask, CancellationToken cancellationToken);
         Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset, int limit, CancellationToken cancellationToken);
         Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset, int limit, CancellationToken cancellationToken);
-        Task<AnimeModel[]> SearchAnimeAsync(SearchFilter filter, int count, CancellationToken cancellationToken);
+        Task<AnimeModel[]> SearchAnimeAsync(TenguSearchFilter filter, int count, CancellationToken cancellationToken);
         Task<AnimeModel[]> SearchAnimeAsync(string title, int count, CancellationToken cancellationToken);
-        Task<AnimeModel[]> SearchAnimeAsync(string title, SearchFilter filter, int count, CancellationToken cancellationToken);
+        Task<AnimeModel[]> SearchAnimeAsync(string title, TenguSearchFilter filter, int count, CancellationToken cancellationToken);
         Task<Calendar> GetCalendar(CancellationToken cancellationToken);
         void UpdateDownlaSettings(string? downloadPath, int maxConnections, long maxPacketSize);
     }

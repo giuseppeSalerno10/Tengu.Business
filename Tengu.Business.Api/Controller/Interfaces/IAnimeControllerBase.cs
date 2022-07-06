@@ -14,8 +14,8 @@ namespace Tengu.Business.API.Controller.Interfaces
         Task<OperationResult<Calendar>> GetCalendar(CancellationToken cancellationToken);
         Task<OperationResult<EpisodeModel[]>> GetEpisodesAsync(string animeId, int offset, int limit, CancellationToken cancellationToken);
         Task<OperationResult<EpisodeModel[]>> GetLatestEpisodesAsync(int offset, int limit, CancellationToken cancellationToken);
-        Task<OperationResult<AnimeModel[]>> SearchAnimeAsync(SearchFilter filter, int count, CancellationToken cancellationToken);
+        Task<OperationResult<AnimeModel[]>> SearchAnimeAsync(TenguSearchFilter filter, int count, CancellationToken cancellationToken);
         Task<OperationResult<AnimeModel[]>> SearchAnimeAsync(string title, int count, CancellationToken cancellationToken);
-        Task<OperationResult<AnimeModel[]>> SearchAnimeAsync(string title, SearchFilter filter, int count, CancellationToken cancellationToken);
+        Task<OperationResult<AnimeModel[]>> SearchAnimeAsync(string title, TenguSearchFilter filter, int count, CancellationToken cancellationToken);
     }
 }
