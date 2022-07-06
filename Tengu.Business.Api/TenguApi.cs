@@ -136,14 +136,14 @@ namespace Tengu.Business.API
             return ElaborateSearch(searchTasks, cancellationToken);
         }
 
-        public async Task<TenguResult<EpisodeModel[]>> GetEpisodesAsync(string animeId, TenguHosts host, int offset = 0, int limit = 0, CancellationToken cancellationToken = default)
+        public async Task<TenguResult<EpisodeModel[]>> GetEpisodesAsync(string animeId, TenguHosts host, int offset = 0, int count = 0, CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
             var result = host switch
             {
-                TenguHosts.AnimeSaturn => await _animeSaturnController.GetEpisodesAsync(animeId, offset, limit, cancellationToken),
-                TenguHosts.AnimeUnity => await _animeUnityController.GetEpisodesAsync(animeId, offset, limit, cancellationToken),
+                TenguHosts.AnimeSaturn => await _animeSaturnController.GetEpisodesAsync(animeId, offset, count, cancellationToken),
+                TenguHosts.AnimeUnity => await _animeUnityController.GetEpisodesAsync(animeId, offset, count, cancellationToken),
                 _ => throw new TenguException("No host found")
             };
 

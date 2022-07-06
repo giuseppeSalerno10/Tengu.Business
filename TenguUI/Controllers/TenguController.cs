@@ -47,13 +47,13 @@ namespace TenguUI.Controllers
             return result;
         }
 
-        public async Task<EpisodeModel[]> GetEpisodesAsync(string animeId, TenguHosts animeHost)
+        public async Task<EpisodeModel[]> GetEpisodesAsync(string animeId, TenguHosts animeHost, int offset = 0, int limit = 0)
         {
             var result = Array.Empty<EpisodeModel>();
 
             try
             {
-                result = await _manager.GetEpisodesAsync(animeId, animeHost);
+                result = await _manager.GetEpisodesAsync(animeId, animeHost, offset, limit);
             }
             catch (Exception e)
             {

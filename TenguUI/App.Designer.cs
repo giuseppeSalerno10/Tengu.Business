@@ -44,6 +44,7 @@
             this.DownlaMaxConnectionsTextBox = new System.Windows.Forms.TextBox();
             this.DownlaDownloadPathTextBox = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.LoadMoreEpisodesButton = new System.Windows.Forms.Button();
             this.GetEpisodesButton = new System.Windows.Forms.Button();
             this.GetEpisodesComboBox = new System.Windows.Forms.ComboBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
@@ -203,6 +204,7 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.LoadMoreEpisodesButton);
             this.groupBox4.Controls.Add(this.GetEpisodesButton);
             this.groupBox4.Controls.Add(this.GetEpisodesComboBox);
             this.groupBox4.Location = new System.Drawing.Point(12, 127);
@@ -212,12 +214,23 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Get Episodes";
             // 
+            // LoadMoreEpisodesButton
+            // 
+            this.LoadMoreEpisodesButton.Enabled = false;
+            this.LoadMoreEpisodesButton.Location = new System.Drawing.Point(282, 52);
+            this.LoadMoreEpisodesButton.Name = "LoadMoreEpisodesButton";
+            this.LoadMoreEpisodesButton.Size = new System.Drawing.Size(97, 23);
+            this.LoadMoreEpisodesButton.TabIndex = 2;
+            this.LoadMoreEpisodesButton.Text = "Load More";
+            this.LoadMoreEpisodesButton.UseVisualStyleBackColor = true;
+            this.LoadMoreEpisodesButton.Click += new System.EventHandler(this.LoadMoreEpisodesButton_Click);
+            // 
             // GetEpisodesButton
             // 
             this.GetEpisodesButton.Enabled = false;
             this.GetEpisodesButton.Location = new System.Drawing.Point(6, 52);
             this.GetEpisodesButton.Name = "GetEpisodesButton";
-            this.GetEpisodesButton.Size = new System.Drawing.Size(373, 23);
+            this.GetEpisodesButton.Size = new System.Drawing.Size(270, 23);
             this.GetEpisodesButton.TabIndex = 1;
             this.GetEpisodesButton.Text = "Get Episodes";
             this.GetEpisodesButton.UseVisualStyleBackColor = true;
@@ -379,5 +392,6 @@
         private Label label7;
         private Label label6;
         private System.ComponentModel.BackgroundWorker VideoProgressBarUpdater;
+        private Button LoadMoreEpisodesButton;
     }
 }

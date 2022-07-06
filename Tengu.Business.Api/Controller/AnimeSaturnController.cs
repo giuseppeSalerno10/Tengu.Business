@@ -76,13 +76,13 @@ namespace Tengu.Business.API.Controller
             return result;
         }
 
-        public async Task<OperationResult<EpisodeModel[]>> GetEpisodesAsync(string animeId, int offset, int limit, CancellationToken cancellationToken)
+        public async Task<OperationResult<EpisodeModel[]>> GetEpisodesAsync(string animeId, int offset, int count, CancellationToken cancellationToken)
         {
             var result = new OperationResult<EpisodeModel[]>() { Host = TenguHosts.AnimeSaturn };
 
             try
             {
-                result.Data = await _manager.GetEpisodesAsync(animeId, offset, limit, cancellationToken);
+                result.Data = await _manager.GetEpisodesAsync(animeId, offset, count, cancellationToken);
                 result.Success = true;
             }
             catch (Exception e)

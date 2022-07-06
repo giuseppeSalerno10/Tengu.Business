@@ -12,7 +12,7 @@ namespace Tengu.Business.API.Controller.Interfaces
 
         OperationResult<DownloadMonitor> DownloadAsync(string episodeUrl, out Task downloadTask, CancellationToken cancellationToken);
         Task<OperationResult<Calendar>> GetCalendar(CancellationToken cancellationToken);
-        Task<OperationResult<EpisodeModel[]>> GetEpisodesAsync(string animeId, int offset, int limit, CancellationToken cancellationToken);
+        Task<OperationResult<EpisodeModel[]>> GetEpisodesAsync(string animeId, int offset, int count, CancellationToken cancellationToken);
         Task<OperationResult<EpisodeModel[]>> GetLatestEpisodesAsync(int offset, int limit, CancellationToken cancellationToken);
         Task<OperationResult<AnimeModel[]>> SearchAnimeAsync(TenguSearchFilter filter, int count, CancellationToken cancellationToken);
         Task<OperationResult<AnimeModel[]>> SearchAnimeAsync(string title, int count, CancellationToken cancellationToken);

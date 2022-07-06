@@ -12,6 +12,6 @@ namespace TenguUI.Managers.Interfaces
         Task<AnimeModel[]> SearchAnimesAsync(TenguSearchFilter filter);
         void SetHosts(TenguHosts[] hosts);
         DownloadMonitor DownloadAsync(string episodeUrl, TenguHosts episodeHost);
-        Task<EpisodeModel[]> GetEpisodesAsync(string animeId, TenguHosts animeHost);
+        Task<EpisodeModel[]> GetEpisodesAsync(string animeId, TenguHosts animeHost, int offset, int limit);
     }
 }

@@ -8,7 +8,7 @@ namespace TenguUI.Controllers.Interfaces
     public interface ITenguController
     {
         DownloadMonitor DownloadAsync(string episodeUrl, TenguHosts episodeHost);
-        Task<EpisodeModel[]> GetEpisodesAsync(string animeId, TenguHosts animeHost);
+        Task<EpisodeModel[]> GetEpisodesAsync(string animeId, TenguHosts animeHost, int offset = 0, int limit = 0);
         Task<AnimeModel[]> SearchAnimesAsync(string title, TenguSearchFilter searchFilter);
         void SetHosts(TenguHosts[] hosts);
     }

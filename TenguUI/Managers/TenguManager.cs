@@ -54,11 +54,11 @@ namespace TenguUI.Managers
             return searchResult.Data;
         }
 
-        public async Task<EpisodeModel[]> GetEpisodesAsync(string animeId, TenguHosts animeHost)
+        public async Task<EpisodeModel[]> GetEpisodesAsync(string animeId, TenguHosts animeHost, int offset, int limit)
         {
             TenguResult<EpisodeModel[]> searchResult;
 
-            searchResult = await _tenguApi.GetEpisodesAsync(animeId, animeHost);
+            searchResult = await _tenguApi.GetEpisodesAsync(animeId, animeHost, offset, limit);
 
             return searchResult.Data;
 

@@ -35,12 +35,12 @@ namespace Tengu.Business.API.Managers
 
         public DownloadMonitor DownloadAsync(string episodeUrl, out Task downloadTask, CancellationToken cancellationToken)
         {
-            var downloadUrl = _adapter.GetDownloadUrl(episodeUrl).Result;
+            var downloadUrl = _adapter.GetDownloadUrl(episodeUrl);
             DownloadMonitor downloadMonitor;
 
             if (downloadUrl.Contains("m3u8"))
             {
-                var urlSplit = episodeUrl.Split("/");
+                var urlSplit = downloadUrl.Split("/");
                 downloadTask = _downlaClient.StartM3U8DownloadAsync(new Uri(downloadUrl), $"{urlSplit[5]}-{urlSplit[6]}.mp4", 50, out downloadMonitor, ct: cancellationToken);
             }
             else
@@ -51,9 +51,9 @@ namespace Tengu.Business.API.Managers
             return downloadMonitor;
         }
 
-        public Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset, int limit, CancellationToken cancellationToken)
+        public Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset, int count, CancellationToken cancellationToken)
         {
-            return _adapter.GetEpisodesAsync(animeId, offset, limit, cancellationToken);
+            return _adapter.GetEpisodesAsync(animeId, offset, count, cancellationToken);
         }
 
         public Task<EpisodeModel[]> GetLatestEpisodesAsync(int offset, int limit, CancellationToken cancellationToken)

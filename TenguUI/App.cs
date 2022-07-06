@@ -41,14 +41,25 @@ namespace TenguUI
         private async void GetEpisodesButton_Click(object sender, EventArgs e)
         {
             var anime = (AnimeModel)GetEpisodesComboBox.SelectedItem;
-            var result = await _tenguController.GetEpisodesAsync(anime.Id, anime.Host);
+            var result = await _tenguController.GetEpisodesAsync(anime.Id, anime.Host, 0, 24);
+
+            VideoComboBox.DataSource = result;
+        }
+        private async void LoadMoreEpisodesButton_Click(object sender, EventArgs e)
+        {
+            var anime = (AnimeModel)GetEpisodesComboBox.SelectedItem;
+
+            var currentEpisodes = (EpisodeModel[])VideoComboBox.DataSource;
+            var lastIndex = int.Parse(currentEpisodes[^1].EpisodeNumber);
+
+            var result = await _tenguController.GetEpisodesAsync(anime.Id, anime.Host, lastIndex, lastIndex + 24);
 
             VideoComboBox.DataSource = result;
         }
 
         private void StartDownloadButton_Click(object sender, EventArgs e)
         {
-            var episode = (EpisodeModel)GetEpisodesComboBox.SelectedItem;
+            var episode = (EpisodeModel)VideoComboBox.SelectedItem;
 
             currentDownload = _tenguController.DownloadAsync(episode.Url, episode.Host);
 
@@ -61,7 +72,8 @@ namespace TenguUI
             {
                 while(currentDownload.Status == Downla.DownloadStatuses.Pending || currentDownload.Status == Downla.DownloadStatuses.Downloading)
                 {
-                    VideoProgressBar.Value = currentDownload.Percentage;
+                    //VideoProgressBar.Value = currentDownload.Percentage;
+                    Thread.Sleep(500);
                 }
             }
 
@@ -78,6 +90,8 @@ namespace TenguUI
             {
                 GetEpisodesComboBox.Enabled = true;
                 GetEpisodesButton.Enabled = true;
+
+                LoadMoreEpisodesButton.Enabled = true;
             }
             else
             {
@@ -106,5 +120,6 @@ namespace TenguUI
             }
         }
         #endregion
+
     }
 }

@@ -140,31 +140,27 @@ namespace Tengu.Business.Core.Adapters
             var animeTitle = doc.DocumentNode.SelectSingleNode("//div[@class='container anime-title-as mb-3 w-100']/b").InnerText;
             var episodes = doc.DocumentNode.SelectNodes("//div[@class='btn-group episodes-button episodi-link-button']/a");
 
-            limit = limit == 0 ? episodes.Count : limit;
+            limit = limit == 0 ? episodes.Count : Math.Min(episodes.Count,limit);
 
-            Parallel.For(offset, limit, index =>
+            for (int i = offset; i < limit; i++)
             {
-                if (index >= offset && index <= limit)
-                {
-                    var episodeUrl = episodes[index]
+                var episodeUrl = episodes[i]
                         .GetAttributeValue("href", "");
 
-                    var url = GetEpisodeUrl(episodeUrl);
+                var url = GetEpisodeUrl(episodeUrl);
 
-                    var episode = new EpisodeModel
-                    {
-                        Id = url.Split("=")[^1],
-                        AnimeId = animeId,
-                        Host = TenguHosts.AnimeSaturn,
-                        Title = animeTitle,
-                        Url = url,
-                        EpisodeNumber = (index + 1).ToString(),
-                        DownloadUrl = url,
-                    };
-                    episodeBag.Add(episode);
-                }
-                Task.Delay(500).Wait();
-            });
+                var episode = new EpisodeModel
+                {
+                    Id = url.Split("=")[^1],
+                    AnimeId = animeId,
+                    Host = TenguHosts.AnimeSaturn,
+                    Title = animeTitle,
+                    Url = url,
+                    EpisodeNumber = (i + 1).ToString(),
+                    DownloadUrl = url,
+                };
+                episodeBag.Add(episode);
+            }
 
             var episodesList = episodeBag
                 .ToList();
@@ -273,10 +269,11 @@ namespace Tengu.Business.Core.Adapters
 
         }
 
-        public async Task<string> GetDownloadUrl(string episodeUrl, CancellationToken cancellationToken = default)
+
+        public string GetDownloadUrl(string episodeUrl)
         {
             var web = new HtmlWeb();
-            var doc = await web.LoadFromWebAsync(episodeUrl, cancellationToken);
+            var doc = web.Load(episodeUrl);
 
             var sourceNode = doc.DocumentNode.SelectSingleNode("//source");
 
@@ -288,20 +285,24 @@ namespace Tengu.Business.Core.Adapters
             }
             else
             {
-                downloadUrl = await GetStreamUrl(episodeUrl, cancellationToken);
+                downloadUrl = GetStreamUrl(episodeUrl);
             }
 
             return downloadUrl;
         }
-        public async Task<string> GetStreamUrl(string episodeUrl, CancellationToken cancellationToken = default)
+        public string GetStreamUrl(string episodeUrl)
         {
             var web = new HtmlWeb();
-            var doc = await web.LoadFromWebAsync(episodeUrl, cancellationToken);
+            var doc = web.Load(episodeUrl);
 
-            var streamNode = doc.DocumentNode.SelectNodes("./div[@class='embed-responsive-item']/script[@type='text/javascript']")[1];
+            var streamNode = doc.DocumentNode.SelectNodes("//div[@class='embed-responsive-item']/script[@type='text/javascript']")[1];
 
-            var rawUrl = streamNode.InnerText.Split("file:")[1];
-            rawUrl = rawUrl.Split("tracks")[0];
+            var rawUrl = streamNode
+                .InnerText
+                .Split("file:")[1];
+
+            rawUrl = rawUrl
+                .Split(",")[0];
 
             var streamUrl = rawUrl.Trim().Replace("\"", "");
 
