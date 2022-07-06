@@ -307,6 +307,8 @@ namespace Tengu.Business.Core.Adapters
 
             return streamUrl;
         }
+
+
         private string GetEpisodeUrl(string episodeUrl)
         {
             var internalWeb = new HtmlWeb();
@@ -318,7 +320,5 @@ namespace Tengu.Business.Core.Adapters
 
             return url;
         }
-
-
     }
 }
