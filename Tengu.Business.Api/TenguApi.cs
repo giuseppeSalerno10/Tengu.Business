@@ -35,7 +35,6 @@ namespace Tengu.Business.API
             _logger.LogInformation("TenguApi is READY", new { Infos = "NONE" });
         }
 
-
         public async Task<TenguResult<KitsuAnimeModel[]>> KitsuUpcomingAnimeAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
         {
             var result = await _kitsuController.GetUpcomingAnimeAsync(offset, limit, cancellationToken);
@@ -205,7 +204,7 @@ namespace Tengu.Business.API
             };
         }
 
-        public async Task<TenguResult<Calendar[]>> GetCalendar(CancellationToken cancellationToken = default)
+        public async Task<TenguResult<Calendar[]>> GetCalendarAsync(CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
