@@ -149,7 +149,7 @@ namespace Tengu.Business.Core.Adapters
                     var episodeUrl = episodes[index]
                         .GetAttributeValue("href", "");
 
-                    var url = GetAnimeStreamUrl(episodeUrl, cancellationToken).Result;
+                    var url = GetEpisodeUrl(episodeUrl, cancellationToken).Result;
 
                     var episode = new EpisodeModel
                     {
@@ -247,7 +247,7 @@ namespace Tengu.Business.Core.Adapters
                     var titleNode = node.SelectSingleNode("./div[@class='card mb-4 shadow-sm']/a[2]");
 
                     var url = urlNode.GetAttributeValue("href", "");
-                    var streamUrl = await GetAnimeStreamUrl(url, cancellationToken);
+                    var streamUrl = await GetEpisodeUrl(url, cancellationToken);
 
                     var episode = new EpisodeModel()
                     {
@@ -287,18 +287,26 @@ namespace Tengu.Business.Core.Adapters
             }
             else
             {
-                var streamNode = doc.DocumentNode.SelectNodes("./div[@class='embed-responsive-item']/script[@type='text/javascript']")[1];
-
-                var rawUrl = streamNode.InnerText.Split("file:")[1];
-                rawUrl = rawUrl.Split("tracks")[0];
-
-                downloadUrl = rawUrl.Trim().Replace("\"", "");
+                downloadUrl = await GetStreamUrl(episodeUrl, cancellationToken);
             }
 
             return downloadUrl;
         }
+        public async Task<string> GetStreamUrl(string episodeUrl, CancellationToken cancellationToken = default)
+        {
+            var web = new HtmlWeb();
+            var doc = await web.LoadFromWebAsync(episodeUrl, cancellationToken);
 
-        private async Task<string> GetAnimeStreamUrl(string episodeUrl, CancellationToken cancellationToken)
+            var streamNode = doc.DocumentNode.SelectNodes("./div[@class='embed-responsive-item']/script[@type='text/javascript']")[1];
+
+            var rawUrl = streamNode.InnerText.Split("file:")[1];
+            rawUrl = rawUrl.Split("tracks")[0];
+
+            var streamUrl = rawUrl.Trim().Replace("\"", "");
+
+            return streamUrl;
+        }
+        private async Task<string> GetEpisodeUrl(string episodeUrl, CancellationToken cancellationToken)
         {
             var internalWeb = new HtmlWeb();
             var internalDoc = await internalWeb.LoadFromWebAsync(episodeUrl, cancellationToken);

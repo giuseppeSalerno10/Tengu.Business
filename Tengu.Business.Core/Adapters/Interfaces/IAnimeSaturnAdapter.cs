@@ -11,6 +11,6 @@ namespace Tengu.Business.Core.Adapters.Interfaces
         Task<AnimeModel[]> SearchByTitleAsync(string title, int count = 30, CancellationToken cancellationToken = default);
         Task<Calendar> GetCalendar(CancellationToken cancellationToken = default);
         Task<string> GetDownloadUrl(string episodeStreamUrl, CancellationToken cancellationToken = default);
-
+        Task<string> GetStreamUrl(string episodeUrl, CancellationToken cancellationToken = default);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Downla;
 using Downla.Interfaces;
 using Downla.Models;
+using Downla.Models.M3U8Models;
 using Tengu.Business.API.DTO;
 using Tengu.Business.API.Managers.Interfaces;
 using Tengu.Business.Commons;

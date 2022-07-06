@@ -206,5 +206,11 @@ namespace Tengu.Business.Core.Adapters
 
             return calendar;
         }
+
+        public async Task<string> GetStreamUrl(string episodeUrl, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }
