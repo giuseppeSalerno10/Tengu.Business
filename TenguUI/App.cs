@@ -72,7 +72,7 @@ namespace TenguUI
             {
                 while(currentDownload.Status == Downla.DownloadStatuses.Pending || currentDownload.Status == Downla.DownloadStatuses.Downloading)
                 {
-                    //VideoProgressBar.Value = currentDownload.Percentage;
+                    VideoProgressBar.Value = currentDownload.Percentage;
                     Thread.Sleep(500);
                 }
             }
