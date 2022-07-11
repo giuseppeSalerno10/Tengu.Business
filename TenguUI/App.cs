@@ -1,3 +1,4 @@
+using Downla;
 using Downla.Models;
 using Tengu.Business.API.DTO;
 using Tengu.Business.API.Interfaces;
@@ -9,7 +10,6 @@ namespace TenguUI
 {
     public partial class App : Form
     {
-        private DownloadMonitor? currentDownload;
         public TenguHosts[] Hosts { get; set; } = new TenguHosts[] { TenguHosts.AnimeSaturn, TenguHosts.AnimeUnity };
         
         private readonly ITenguController _tenguController;
@@ -25,6 +25,10 @@ namespace TenguUI
 
             _tenguController.SetHosts(Hosts);
 
+            _tenguApi.MaxConnections = 10;
+            _tenguApi.MaxPacketSize = 40000000;
+            _tenguApi.DownloadPath = $"{Environment.CurrentDirectory}/DownloadedAnime";
+
             GetEpisodesComboBox.DataSourceChanged += GetEpisodesSourceChangedHandler;
             VideoComboBox.DataSourceChanged += VideoSourceChangedHandler;
 
@@ -32,9 +36,9 @@ namespace TenguUI
             _tenguApi.OnPacketDownloaded += _tenguApi_OnPacketDownloaded;
         }
 
-        delegate void TenguCallback(Downla.DownloadStatuses status, DownloadMonitorInfos infos, IEnumerable<Exception> exceptions);
+        delegate void TenguCallback(DownloadStatuses status, DownloadMonitorInfos infos, IEnumerable<Exception> exceptions);
 
-        private void _tenguApi_OnPacketDownloaded(Downla.DownloadStatuses status, DownloadMonitorInfos infos, IEnumerable<Exception> exceptions)
+        private void _tenguApi_OnPacketDownloaded(DownloadStatuses status, DownloadMonitorInfos infos, IEnumerable<Exception> exceptions)
         {
             if (LogBox.InvokeRequired)
             {
@@ -49,7 +53,7 @@ namespace TenguUI
                 }
             }
         }
-        private void _tenguApi_OnStatusChange(Downla.DownloadStatuses status, DownloadMonitorInfos infos, IEnumerable<Exception> exceptions)
+        private void _tenguApi_OnStatusChange(DownloadStatuses status, DownloadMonitorInfos infos, IEnumerable<Exception> exceptions)
         {
             if (LogBox.InvokeRequired)
             {
@@ -99,7 +103,7 @@ namespace TenguUI
         {
             var episode = (EpisodeModel)VideoComboBox.SelectedItem;
 
-            currentDownload = await _tenguController.StartDownloadAsync(episode.Url, episode.Host);
+            await _tenguController.StartDownloadAsync(episode.DownloadUrl, episode.Host);
         }
 
 

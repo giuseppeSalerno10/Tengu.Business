@@ -172,7 +172,6 @@ namespace Tengu.Business.API
             };
 
         }
-
         public async Task<TenguResult<EpisodeModel[]>> GetLatestEpisodeAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
         {
             CheckForHost();
@@ -214,7 +213,6 @@ namespace Tengu.Business.API
                 Infos = tenguResults.ToArray()
             };
         }
-
         public async Task<TenguResult<Calendar[]>> GetCalendarAsync(CancellationToken cancellationToken = default)
         {
             CheckForHost();
@@ -256,7 +254,6 @@ namespace Tengu.Business.API
             };
 
         }
-
         public async Task<TenguResult<DownloadMonitor>> StartDownloadAsync(string episodeUrl, TenguHosts host, CancellationToken cancellationToken = default)
         {
             CheckForHost();
