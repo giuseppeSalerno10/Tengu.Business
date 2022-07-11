@@ -26,29 +26,22 @@ namespace Tengu.Business.API.Managers
             _downlaClient = downlaClient;
         }
 
-        public void UpdateDownlaSettings(string? downloadPath, int maxConnections, long maxPacketSize)
-        {
-            _downlaClient.DownloadPath = downloadPath != null ? downloadPath : _downlaClient.DownloadPath;
-            _downlaClient.MaxConnections = maxConnections != default ? maxConnections : _downlaClient.MaxConnections;
-            _downlaClient.MaxPacketSize = maxPacketSize != default ? maxPacketSize : _downlaClient.MaxPacketSize;
-        }
-
-        public DownloadMonitor DownloadAsync(string episodeUrl, out Task downloadTask, CancellationToken cancellationToken)
+        public Task<DownloadMonitor> StartDownloadAsync(string episodeUrl, CancellationToken cancellationToken)
         {
             var downloadUrl = _adapter.GetDownloadUrl(episodeUrl);
-            DownloadMonitor downloadMonitor;
+            Task<DownloadMonitor> downloadTask;
 
             if (downloadUrl.Contains("m3u8"))
             {
                 var urlSplit = downloadUrl.Split("/");
-                downloadTask = _downlaClient.StartM3U8DownloadAsync(new Uri(downloadUrl), $"{urlSplit[5]}-{urlSplit[6]}.mp4", 50, out downloadMonitor, ct: cancellationToken);
+                downloadTask = _downlaClient.StartM3U8DownloadAsync(new Uri(downloadUrl), $"{urlSplit[5]}-{urlSplit[6]}.mp4", 50, ct: cancellationToken);
             }
             else
             {
-                downloadTask = _downlaClient.StartFileDownloadAsync(new Uri(downloadUrl), out downloadMonitor, ct: cancellationToken);
+                downloadTask = _downlaClient.StartFileDownloadAsync(new Uri(downloadUrl), ct: cancellationToken);
             }
 
-            return downloadMonitor;
+            return downloadTask;
         }
 
         public Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset, int count, CancellationToken cancellationToken)

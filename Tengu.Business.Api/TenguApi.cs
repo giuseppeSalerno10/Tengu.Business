@@ -1,4 +1,5 @@
 ﻿using Downla;
+using Downla.Interfaces;
 using Downla.Models;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
@@ -14,15 +15,26 @@ namespace Tengu.Business.API
     public class TenguApi : ITenguApi
     {
         public TenguHosts[] CurrentHosts { get; set; } = Array.Empty<TenguHosts>();
+        public string DownloadPath { get => _downlaClient.DownloadPath; set => _downlaClient.DownloadPath = value; }
+        public long MaxPacketSize { get => _downlaClient.MaxPacketSize; set => _downlaClient.MaxPacketSize = value; }
+        public int MaxConnections { get => _downlaClient.MaxConnections; set => _downlaClient.MaxConnections = value; }
+
+        public event OnDownlaEventDelegate OnStatusChange { add => _downlaClient.OnStatusChange += value; remove => _downlaClient.OnPacketDownloaded -= value; }
+        public event OnDownlaEventDelegate OnPacketDownloaded { add => _downlaClient.OnPacketDownloaded += value; remove => _downlaClient.OnPacketDownloaded -= value; }
 
         private readonly ILogger<TenguApi> _logger;
-
         private readonly IAnimeUnityController _animeUnityController;
         private readonly IAnimeSaturnController _animeSaturnController;
         private readonly IKitsuController _kitsuController;
+        private readonly IDownlaClient _downlaClient;
 
         public TenguApi(
-            ILogger<TenguApi> logger, IAnimeUnityController animeUnityController, IAnimeSaturnController animeSaturnController, IKitsuController kitsuController)
+            ILogger<TenguApi> logger, 
+            IAnimeUnityController animeUnityController, 
+            IAnimeSaturnController animeSaturnController, 
+            IKitsuController kitsuController, 
+            IDownlaClient downlaClient
+            )
         {
             _animeUnityController = animeUnityController;
             _animeSaturnController = animeSaturnController;
@@ -30,9 +42,8 @@ namespace Tengu.Business.API
 
             _logger = logger;
 
-            UpdateDownlaSettings(Config.DownloadConfig.DownloadPath, Config.DownloadConfig.MaxConnections, Config.DownloadConfig.MaxPacketSize);
-
             _logger.LogInformation("TenguApi is READY", new { Infos = "NONE" });
+            _downlaClient = downlaClient;
         }
 
         public async Task<TenguResult<KitsuAnimeModel[]>> KitsuUpcomingAnimeAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default)
@@ -246,14 +257,14 @@ namespace Tengu.Business.API
 
         }
 
-        public TenguResult<DownloadMonitor> DownloadAsync(string episodeUrl, TenguHosts host, out Task downloadTask, CancellationToken cancellationToken = default)
+        public async Task<TenguResult<DownloadMonitor>> StartDownloadAsync(string episodeUrl, TenguHosts host, CancellationToken cancellationToken = default)
         {
             CheckForHost();
 
             var result = host switch
             {
-                TenguHosts.AnimeSaturn => _animeSaturnController.DownloadAsync(episodeUrl, out downloadTask, cancellationToken),
-                TenguHosts.AnimeUnity => _animeUnityController.DownloadAsync(episodeUrl, out downloadTask, cancellationToken),
+                TenguHosts.AnimeSaturn => await _animeSaturnController.StartDownloadAsync(episodeUrl, cancellationToken),
+                TenguHosts.AnimeUnity => await _animeUnityController.StartDownloadAsync(episodeUrl, cancellationToken),
                 _ => throw new TenguException("No host found")
             };
 
@@ -271,12 +282,6 @@ namespace Tengu.Business.API
                 }
             };
 
-        }
-
-        public void UpdateDownlaSettings(string? downloadPath = null, int maxConnections = default, long maxPacketSize = default)
-        {
-            _animeUnityController.UpdateDownlaSettings(downloadPath, maxConnections, maxPacketSize);
-            _animeSaturnController.UpdateDownlaSettings(downloadPath, maxConnections, maxPacketSize);
         }
 
         #region Private Methods

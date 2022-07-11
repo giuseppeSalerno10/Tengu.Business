@@ -1,5 +1,6 @@
 using Downla.Models;
 using Tengu.Business.API.DTO;
+using Tengu.Business.API.Interfaces;
 using Tengu.Business.Commons.Models;
 using Tengu.Business.Commons.Objects;
 using TenguUI.Controllers.Interfaces;
@@ -12,18 +13,55 @@ namespace TenguUI
         public TenguHosts[] Hosts { get; set; } = new TenguHosts[] { TenguHosts.AnimeSaturn, TenguHosts.AnimeUnity };
         
         private readonly ITenguController _tenguController;
-        
-        
-        public App(ITenguController commandsController)
+
+        private readonly ITenguApi _tenguApi;
+
+        public App(ITenguController commandsController, ITenguApi tenguApi)
         {
             InitializeComponent();
 
             _tenguController = commandsController;
+            _tenguApi = tenguApi;
 
             _tenguController.SetHosts(Hosts);
 
             GetEpisodesComboBox.DataSourceChanged += GetEpisodesSourceChangedHandler;
             VideoComboBox.DataSourceChanged += VideoSourceChangedHandler;
+
+            _tenguApi.OnStatusChange += _tenguApi_OnStatusChange;
+            _tenguApi.OnPacketDownloaded += _tenguApi_OnPacketDownloaded;
+        }
+
+        delegate void TenguCallback(Downla.DownloadStatuses status, DownloadMonitorInfos infos, IEnumerable<Exception> exceptions);
+
+        private void _tenguApi_OnPacketDownloaded(Downla.DownloadStatuses status, DownloadMonitorInfos infos, IEnumerable<Exception> exceptions)
+        {
+            if (LogBox.InvokeRequired)
+            {
+                TenguCallback callback = new TenguCallback(_tenguApi_OnPacketDownloaded);
+                Invoke(callback, new object[] { status, infos, exceptions });
+            }
+            else
+            {
+                {
+                    LogBox.Text += $"Packet downloaded: {infos.DownloadedPackets}\r\n";
+                    VideoProgressBar.Value = infos.Percentage;
+                }
+            }
+        }
+        private void _tenguApi_OnStatusChange(Downla.DownloadStatuses status, DownloadMonitorInfos infos, IEnumerable<Exception> exceptions)
+        {
+            if (LogBox.InvokeRequired)
+            {
+                TenguCallback callback = new TenguCallback(_tenguApi_OnStatusChange);
+                Invoke(callback, new object[] { status, infos, exceptions });
+            }
+            else
+            {
+                {
+                    LogBox.Text += $"Status changed: {status} - Errors: {exceptions.Count()}\r\n";
+                }
+            }
         }
 
         private async void SearchButton_Click(object sender, EventArgs e)
@@ -57,26 +95,11 @@ namespace TenguUI
             VideoComboBox.DataSource = result;
         }
 
-        private void StartDownloadButton_Click(object sender, EventArgs e)
+        private async void StartDownloadButton_Click(object sender, EventArgs e)
         {
             var episode = (EpisodeModel)VideoComboBox.SelectedItem;
 
-            currentDownload = _tenguController.DownloadAsync(episode.Url, episode.Host);
-
-            VideoProgressBarUpdater.RunWorkerAsync();
-        }
-
-        private void VideoProgressBarUpdater_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
-        {
-            if(currentDownload != null)
-            {
-                while(currentDownload.Status == Downla.DownloadStatuses.Pending || currentDownload.Status == Downla.DownloadStatuses.Downloading)
-                {
-                    VideoProgressBar.Value = currentDownload.Percentage;
-                    Thread.Sleep(500);
-                }
-            }
-
+            currentDownload = await _tenguController.StartDownloadAsync(episode.Url, episode.Host);
         }
 
 

@@ -54,9 +54,8 @@
             this.VideoProgressBar = new System.Windows.Forms.ProgressBar();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.LogBox = new System.Windows.Forms.TextBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.VideoProgressBarUpdater = new System.ComponentModel.BackgroundWorker();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -316,13 +315,13 @@
             this.label1.TabIndex = 5;
             this.label1.Text = "Logs";
             // 
-            // textBox1
+            // LogBox
             // 
-            this.textBox1.Location = new System.Drawing.Point(12, 460);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(776, 108);
-            this.textBox1.TabIndex = 6;
+            this.LogBox.Location = new System.Drawing.Point(12, 460);
+            this.LogBox.Multiline = true;
+            this.LogBox.Name = "LogBox";
+            this.LogBox.Size = new System.Drawing.Size(776, 108);
+            this.LogBox.TabIndex = 6;
             // 
             // groupBox6
             // 
@@ -333,17 +332,13 @@
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Kitsu";
             // 
-            // VideoProgressBarUpdater
-            // 
-            this.VideoProgressBarUpdater.DoWork += new System.ComponentModel.DoWorkEventHandler(this.VideoProgressBarUpdater_DoWork);
-            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 580);
             this.Controls.Add(this.groupBox6);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.LogBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
@@ -370,7 +365,7 @@
         private GroupBox groupBox5;
         private ProgressBar progressBar1;
         private Label label1;
-        private TextBox textBox1;
+        private TextBox LogBox;
         private TextBox SearchTitleTextBox;
         private ComboBox SearchGenresComboBox;
         private Button SearchButton;
@@ -391,7 +386,6 @@
         private Label label5;
         private Label label7;
         private Label label6;
-        private System.ComponentModel.BackgroundWorker VideoProgressBarUpdater;
         private Button LoadMoreEpisodesButton;
     }
 }

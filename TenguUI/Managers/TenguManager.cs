@@ -69,10 +69,9 @@ namespace TenguUI.Managers
 
         }
 
-        public DownloadMonitor DownloadAsync(string episodeUrl, TenguHosts episodeHost)
+        public async Task<DownloadMonitor> StartDownloadAsync(string episodeUrl, TenguHosts episodeHost)
         {
-            TenguResult<DownloadMonitor> searchResult;
-            searchResult = _tenguApi.DownloadAsync(episodeUrl, episodeHost, out _);
+            TenguResult<DownloadMonitor> searchResult = await _tenguApi.StartDownloadAsync(episodeUrl, episodeHost);
             CheckForError(searchResult);
 
             return searchResult.Data;

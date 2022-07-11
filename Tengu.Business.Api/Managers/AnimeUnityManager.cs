@@ -25,17 +25,9 @@ namespace Tengu.Business.API.Managers
             _downlaClient = client;
         }
 
-        public void UpdateDownlaSettings(string? downloadPath, int maxConnections, long maxPacketSize)
+        public Task<DownloadMonitor> StartDownloadAsync(string episodeUrl, CancellationToken cancellationToken)
         {
-            _downlaClient.DownloadPath = downloadPath != null ? downloadPath : _downlaClient.DownloadPath;
-            _downlaClient.MaxConnections = maxConnections != default ? maxConnections : _downlaClient.MaxConnections;
-            _downlaClient.MaxPacketSize = maxPacketSize != default ? maxPacketSize : _downlaClient.MaxPacketSize;
-        }
-
-        public DownloadMonitor DownloadAsync(string episodeUrl, out Task downloadTask, CancellationToken cancellationToken)
-        {
-            downloadTask = _downlaClient.StartFileDownloadAsync(new Uri(episodeUrl), out DownloadMonitor downloadMonitor, ct: cancellationToken);
-            return downloadMonitor;
+            return _downlaClient.StartFileDownloadAsync(new Uri(episodeUrl), ct: cancellationToken);
         }
 
         public Task<EpisodeModel[]> GetEpisodesAsync(string animeId, int offset, int limit, CancellationToken cancellationToken)

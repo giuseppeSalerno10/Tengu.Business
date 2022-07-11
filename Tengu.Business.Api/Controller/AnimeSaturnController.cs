@@ -20,11 +20,6 @@ namespace Tengu.Business.API.Controller
             _manipulationService = manipulationService;
         }
 
-        public void UpdateDownlaSettings(string? downloadPath, int maxConnections, long maxPacketSize)
-        {
-            _manager.UpdateDownlaSettings(downloadPath, maxConnections, maxPacketSize);
-        }
-
         public async Task<OperationResult<AnimeModel[]>> SearchAnimeAsync(string title, int count, CancellationToken cancellationToken)
         {
             var result = new OperationResult<AnimeModel[]>() { Host = TenguHosts.AnimeSaturn };
@@ -127,19 +122,18 @@ namespace Tengu.Business.API.Controller
             return result;
         }
 
-        public OperationResult<DownloadMonitor> DownloadAsync(string episodeUrl, out Task downloadTask, CancellationToken cancellationToken)
+        public async Task<OperationResult<DownloadMonitor>> StartDownloadAsync(string episodeUrl, CancellationToken cancellationToken)
         {
             var result = new OperationResult<DownloadMonitor>() { Host = TenguHosts.AnimeSaturn };
 
             try
             {
-                result.Data = _manager.DownloadAsync(episodeUrl, out downloadTask, cancellationToken);
+                result.Data = await _manager.StartDownloadAsync(episodeUrl, cancellationToken);
                 result.Success = true;
             }
             catch (Exception e)
             {
                 _manipulationService.HandleTenguException(e, ref result);
-                downloadTask = Task.FromException(e);
             }
 
             return result;

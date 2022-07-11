@@ -9,7 +9,14 @@ namespace Tengu.Business.API.Interfaces
     public interface ITenguApi
     {
         TenguHosts[] CurrentHosts { get; set; }
-        TenguResult<DownloadMonitor> DownloadAsync(string episodeUrl, TenguHosts host, out Task downloadTask, CancellationToken cancellationToken = default);
+        string DownloadPath { get; set; }
+        long MaxPacketSize { get; set; }
+        int MaxConnections { get; set; }
+
+        event OnDownlaEventDelegate OnStatusChange;
+        event OnDownlaEventDelegate OnPacketDownloaded;
+
+        Task<TenguResult<DownloadMonitor>> StartDownloadAsync(string episodeUrl, TenguHosts host, CancellationToken cancellationToken = default);
         Task<TenguResult<Calendar[]>> GetCalendarAsync(CancellationToken cancellationToken = default);
         Task<TenguResult<EpisodeModel[]>> GetEpisodesAsync(string animeId, TenguHosts host, int offset = 0, int count = 0, CancellationToken cancellationToken = default);
         Task<TenguResult<EpisodeModel[]>> GetLatestEpisodeAsync(int offset = 0, int limit = 30, CancellationToken cancellationToken = default);
@@ -18,6 +25,5 @@ namespace Tengu.Business.API.Interfaces
         Task<TenguResult<AnimeModel[]>> SearchAnimeAsync(TenguSearchFilter filter, int count = 30, CancellationToken cancellationToken = default);
         Task<TenguResult<AnimeModel[]>> SearchAnimeAsync(string title, int count = 30, CancellationToken cancellationToken = default);
         Task<TenguResult<AnimeModel[]>> SearchAnimeAsync(string title, TenguSearchFilter filter, int count = 30, CancellationToken cancellationToken = default);
-        void UpdateDownlaSettings(string? downloadPath = null, int maxConnections = 0, long maxPacketSize = 0);
     }
 }
