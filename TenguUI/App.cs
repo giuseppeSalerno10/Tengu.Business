@@ -48,7 +48,7 @@ namespace TenguUI
             else
             {
                 {
-                    LogBox.Text += $"Packet downloaded: {infos.DownloadedPackets}\r\n";
+                    LogBox.Text = $"Packet downloaded: {infos.DownloadedPackets}\r\n" + LogBox.Text;
                     VideoProgressBar.Value = infos.Percentage;
                 }
             }
@@ -63,7 +63,7 @@ namespace TenguUI
             else
             {
                 {
-                    LogBox.Text += $"Status changed: {status} - Errors: {exceptions.Count()}\r\n";
+                    LogBox.Text = $"Status changed: {status} - Errors: {exceptions.Count()}\r\n" + LogBox.Text;
                 }
             }
         }
