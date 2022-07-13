@@ -33,11 +33,11 @@ jobs:
        run: echo ${VERSION}.${{ steps.vars.outputs.BUILD }}
      
      - name: Test
-       run: dotnet test Tengu.Business.API.csprj --configuration Release /p:Version=${VERSION}.${{ steps.vars.outputs.BUILD }}
+       run: dotnet test Tengu.Business.API.csproj --configuration Release /p:Version=${VERSION}.${{ steps.vars.outputs.BUILD }}
      - name: Build
-       run: dotnet build Tengu.Business.API.csprj --configuration Release /p:Version=${VERSION}.${{ steps.vars.outputs.BUILD }}
+       run: dotnet build Tengu.Business.API.csproj --configuration Release /p:Version=${VERSION}.${{ steps.vars.outputs.BUILD }}
      - name: Pack
-       run: dotnet pack Tengu.Business.API.csprj --configuration Release /p:Version=${VERSION}.${{ steps.vars.outputs.BUILD }} --no-build --output .
+       run: dotnet pack Tengu.Business.API.csproj --configuration Release /p:Version=${VERSION}.${{ steps.vars.outputs.BUILD }} --no-build --output .
    
      - name: Push
        run: |
