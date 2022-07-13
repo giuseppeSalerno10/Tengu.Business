@@ -19,7 +19,7 @@ namespace Tengu.Business.API
         public static IServiceCollection AddTenguServices(this IServiceCollection services)
         {
             services.AddSingleton<ITenguApi, TenguApi>();
-
+             
             services.AddSingleton<IManipulationService, ManipulationService>(); 
 
             services.AddSingleton<IAnimeSaturnController, AnimeSaturnController>();
