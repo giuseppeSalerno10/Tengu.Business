@@ -20,7 +20,7 @@ namespace Tengu.Business.API
         {
             services.AddSingleton<ITenguApi, TenguApi>();
 
-            services.AddSingleton<IManipulationService, ManipulationService>();
+            services.AddSingleton<IManipulationService, ManipulationService>(); 
 
             services.AddSingleton<IAnimeSaturnController, AnimeSaturnController>();
             services.AddSingleton<IAnimeUnityController, AnimeUnityController>();
