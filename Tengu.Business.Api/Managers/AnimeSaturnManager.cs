@@ -38,7 +38,11 @@ namespace Tengu.Business.API.Managers
             }
             else
             {
-                downloadTask = _downlaClient.StartFileDownloadAsync(new Uri(downloadUrl), ct: cancellationToken);
+                Dictionary<string, string> headers = new Dictionary<string, string>()
+                {
+                    { "Referer", episodeUrl}
+                };
+                downloadTask = _downlaClient.StartFileDownloadAsync(new Uri(downloadUrl), sleepTime: 100, headers, ct: cancellationToken);
             }
 
             return downloadTask;

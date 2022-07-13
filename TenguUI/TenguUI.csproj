@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Downla" Version="1.2.922.1263-dev" />
+    <PackageReference Include="Downla" Version="1.2.924.704-dev" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Serilog" Version="2.11.0" />

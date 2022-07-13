@@ -72,7 +72,6 @@ namespace TenguUI
         {
             TenguSearchFilter tenguSearchFilter = new()
             {
-                Genres = new TenguGenres[] { TenguGenres.ArtiMarziali }
             };
 
             var result = await _tenguController.SearchAnimesAsync(SearchTitleTextBox.Text, tenguSearchFilter);
