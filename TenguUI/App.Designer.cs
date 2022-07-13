@@ -35,12 +35,13 @@
             this.SearchGenresComboBox = new System.Windows.Forms.ComboBox();
             this.SearchTitleTextBox = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.AnimeUnityCheckBox = new System.Windows.Forms.CheckBox();
+            this.AnimeSaturnCheckBox = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.DownlaMaxPacketSizeTextBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.TenguHostsComboBox = new System.Windows.Forms.ComboBox();
             this.DownlaMaxConnectionsTextBox = new System.Windows.Forms.TextBox();
             this.DownlaDownloadPathTextBox = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
@@ -48,6 +49,7 @@
             this.GetEpisodesButton = new System.Windows.Forms.Button();
             this.GetEpisodesComboBox = new System.Windows.Forms.ComboBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.StopDownloadButton = new System.Windows.Forms.Button();
             this.VideoComboBox = new System.Windows.Forms.ComboBox();
             this.StartStreamButton = new System.Windows.Forms.Button();
             this.StartDownloadButton = new System.Windows.Forms.Button();
@@ -121,12 +123,13 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.AnimeUnityCheckBox);
+            this.groupBox2.Controls.Add(this.AnimeSaturnCheckBox);
             this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.DownlaMaxPacketSizeTextBox);
             this.groupBox2.Controls.Add(this.label4);
-            this.groupBox2.Controls.Add(this.TenguHostsComboBox);
             this.groupBox2.Controls.Add(this.DownlaMaxConnectionsTextBox);
             this.groupBox2.Controls.Add(this.DownlaDownloadPathTextBox);
             this.groupBox2.Location = new System.Drawing.Point(403, 14);
@@ -135,6 +138,32 @@
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Settings";
+            // 
+            // AnimeUnityCheckBox
+            // 
+            this.AnimeUnityCheckBox.AutoSize = true;
+            this.AnimeUnityCheckBox.Checked = true;
+            this.AnimeUnityCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.AnimeUnityCheckBox.Location = new System.Drawing.Point(118, 51);
+            this.AnimeUnityCheckBox.Name = "AnimeUnityCheckBox";
+            this.AnimeUnityCheckBox.Size = new System.Drawing.Size(89, 19);
+            this.AnimeUnityCheckBox.TabIndex = 7;
+            this.AnimeUnityCheckBox.Text = "AnimeUnity";
+            this.AnimeUnityCheckBox.UseVisualStyleBackColor = true;
+            this.AnimeUnityCheckBox.CheckedChanged += new System.EventHandler(this.AnimeUnityCheckBox_CheckedChanged);
+            // 
+            // AnimeSaturnCheckBox
+            // 
+            this.AnimeSaturnCheckBox.AutoSize = true;
+            this.AnimeSaturnCheckBox.Checked = true;
+            this.AnimeSaturnCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.AnimeSaturnCheckBox.Location = new System.Drawing.Point(8, 51);
+            this.AnimeSaturnCheckBox.Name = "AnimeSaturnCheckBox";
+            this.AnimeSaturnCheckBox.Size = new System.Drawing.Size(95, 19);
+            this.AnimeSaturnCheckBox.TabIndex = 6;
+            this.AnimeSaturnCheckBox.Text = "AnimeSaturn";
+            this.AnimeSaturnCheckBox.UseVisualStyleBackColor = true;
+            this.AnimeSaturnCheckBox.CheckedChanged += new System.EventHandler(this.AnimeSaturnCheckBox_CheckedChanged);
             // 
             // label7
             // 
@@ -169,6 +198,7 @@
             this.DownlaMaxPacketSizeTextBox.Name = "DownlaMaxPacketSizeTextBox";
             this.DownlaMaxPacketSizeTextBox.Size = new System.Drawing.Size(185, 23);
             this.DownlaMaxPacketSizeTextBox.TabIndex = 2;
+            this.DownlaMaxPacketSizeTextBox.TextChanged += new System.EventHandler(this.DownlaMaxPacketSizeTextBox_TextChanged);
             // 
             // label4
             // 
@@ -179,20 +209,13 @@
             this.label4.TabIndex = 1;
             this.label4.Text = "Hosts";
             // 
-            // TenguHostsComboBox
-            // 
-            this.TenguHostsComboBox.FormattingEnabled = true;
-            this.TenguHostsComboBox.Location = new System.Drawing.Point(6, 49);
-            this.TenguHostsComboBox.Name = "TenguHostsComboBox";
-            this.TenguHostsComboBox.Size = new System.Drawing.Size(373, 23);
-            this.TenguHostsComboBox.TabIndex = 0;
-            // 
             // DownlaMaxConnectionsTextBox
             // 
             this.DownlaMaxConnectionsTextBox.Location = new System.Drawing.Point(6, 165);
             this.DownlaMaxConnectionsTextBox.Name = "DownlaMaxConnectionsTextBox";
             this.DownlaMaxConnectionsTextBox.Size = new System.Drawing.Size(181, 23);
             this.DownlaMaxConnectionsTextBox.TabIndex = 1;
+            this.DownlaMaxConnectionsTextBox.TextChanged += new System.EventHandler(this.DownlaMaxConnectionsTextBox_TextChanged);
             // 
             // DownlaDownloadPathTextBox
             // 
@@ -200,6 +223,7 @@
             this.DownlaDownloadPathTextBox.Name = "DownlaDownloadPathTextBox";
             this.DownlaDownloadPathTextBox.Size = new System.Drawing.Size(371, 23);
             this.DownlaDownloadPathTextBox.TabIndex = 0;
+            this.DownlaDownloadPathTextBox.TextChanged += new System.EventHandler(this.DownlaDownloadPathTextBox_TextChanged);
             // 
             // groupBox4
             // 
@@ -248,6 +272,7 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.StopDownloadButton);
             this.groupBox5.Controls.Add(this.VideoComboBox);
             this.groupBox5.Controls.Add(this.StartStreamButton);
             this.groupBox5.Controls.Add(this.StartDownloadButton);
@@ -259,6 +284,17 @@
             this.groupBox5.TabIndex = 4;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Video";
+            // 
+            // StopDownloadButton
+            // 
+            this.StopDownloadButton.Enabled = false;
+            this.StopDownloadButton.Location = new System.Drawing.Point(585, 20);
+            this.StopDownloadButton.Name = "StopDownloadButton";
+            this.StopDownloadButton.Size = new System.Drawing.Size(185, 23);
+            this.StopDownloadButton.TabIndex = 4;
+            this.StopDownloadButton.Text = "Stop Download";
+            this.StopDownloadButton.UseVisualStyleBackColor = true;
+            this.StopDownloadButton.Click += new System.EventHandler(this.StopDownloadButton_Click);
             // 
             // VideoComboBox
             // 
@@ -284,9 +320,9 @@
             // StartDownloadButton
             // 
             this.StartDownloadButton.Enabled = false;
-            this.StartDownloadButton.Location = new System.Drawing.Point(399, 20);
+            this.StartDownloadButton.Location = new System.Drawing.Point(398, 20);
             this.StartDownloadButton.Name = "StartDownloadButton";
-            this.StartDownloadButton.Size = new System.Drawing.Size(371, 23);
+            this.StartDownloadButton.Size = new System.Drawing.Size(180, 23);
             this.StartDownloadButton.TabIndex = 1;
             this.StartDownloadButton.Text = "Start Download";
             this.StartDownloadButton.UseVisualStyleBackColor = true;
@@ -369,7 +405,6 @@
         private TextBox SearchTitleTextBox;
         private ComboBox SearchGenresComboBox;
         private Button SearchButton;
-        private ComboBox TenguHostsComboBox;
         private TextBox DownlaMaxPacketSizeTextBox;
         private TextBox DownlaMaxConnectionsTextBox;
         private TextBox DownlaDownloadPathTextBox;
@@ -387,5 +422,8 @@
         private Label label7;
         private Label label6;
         private Button LoadMoreEpisodesButton;
+        private Button StopDownloadButton;
+        private CheckBox AnimeUnityCheckBox;
+        private CheckBox AnimeSaturnCheckBox;
     }
 }

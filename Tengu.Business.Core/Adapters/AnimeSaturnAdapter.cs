@@ -93,10 +93,14 @@ namespace Tengu.Business.Core.Adapters
                 .Split(",")[0]);
 
                 var taskList = new List<Task>();
+                
+                int finalPage = totalPages;
 
-                var finalPage = totalPages > count / 15 ? count / 15 : totalPages;
+                finalPage = count > 0 && totalPages > count / 15 ? 
+                    count / 15 : 
+                    totalPages;
 
-                Parallel.For(1, totalPages + 1, i =>
+                Parallel.For(1, finalPage, i =>
                 {
                     HtmlWeb innerWeb = new HtmlWeb();
                     HtmlDocument innerDoc = innerWeb.Load($"{requestUrl}page={i}");

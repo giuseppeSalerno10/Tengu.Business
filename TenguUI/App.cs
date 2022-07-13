@@ -10,11 +10,13 @@ namespace TenguUI
 {
     public partial class App : Form
     {
-        public TenguHosts[] Hosts { get; set; } = new TenguHosts[] { TenguHosts.AnimeSaturn, TenguHosts.AnimeUnity };
+        public List<TenguHosts> Hosts { get; set; } = new List<TenguHosts>() { TenguHosts.AnimeSaturn, TenguHosts.AnimeUnity };
         
         private readonly ITenguController _tenguController;
 
         private readonly ITenguApi _tenguApi;
+
+        private CancellationTokenSource cts = new CancellationTokenSource();
 
         public App(ITenguController commandsController, ITenguApi tenguApi)
         {
@@ -23,7 +25,7 @@ namespace TenguUI
             _tenguController = commandsController;
             _tenguApi = tenguApi;
 
-            _tenguController.SetHosts(Hosts);
+            _tenguController.SetHosts(Hosts.ToArray());
 
             _tenguApi.MaxConnections = 10;
             _tenguApi.MaxPacketSize = 40000000;
@@ -70,6 +72,7 @@ namespace TenguUI
 
         private async void SearchButton_Click(object sender, EventArgs e)
         {
+
             TenguSearchFilter tenguSearchFilter = new()
             {
             };
@@ -77,6 +80,7 @@ namespace TenguUI
             var result = await _tenguController.SearchAnimesAsync(SearchTitleTextBox.Text, tenguSearchFilter);
             
             GetEpisodesComboBox.DataSource = result;
+
         }
 
         private async void GetEpisodesButton_Click(object sender, EventArgs e)
@@ -100,11 +104,22 @@ namespace TenguUI
 
         private async void StartDownloadButton_Click(object sender, EventArgs e)
         {
+            cts.TryReset();
+
             var episode = (EpisodeModel)VideoComboBox.SelectedItem;
 
-            await _tenguController.StartDownloadAsync(episode.DownloadUrl, episode.Host);
-        }
+            await _tenguController.StartDownloadAsync(episode.DownloadUrl, episode.Host, cts.Token);
 
+            StopDownloadButton.Enabled = true;
+            StartDownloadButton.Enabled = false;
+        }
+        private void StopDownloadButton_Click(object sender, EventArgs e)
+        {
+            cts.Cancel();
+
+            StopDownloadButton.Enabled = true;
+            StartDownloadButton.Enabled = false;
+        }
 
         #region Delegates
         private void GetEpisodesSourceChangedHandler(object? sender, EventArgs e)
@@ -147,5 +162,47 @@ namespace TenguUI
         }
         #endregion
 
+        private void DownlaDownloadPathTextBox_TextChanged(object sender, EventArgs e)
+        {
+            _tenguApi.DownloadPath = DownlaDownloadPathTextBox.Text;
+        }
+
+        private void DownlaMaxConnectionsTextBox_TextChanged(object sender, EventArgs e)
+        {
+            _tenguApi.MaxConnections = int.Parse(DownlaMaxConnectionsTextBox.Text);
+        }
+
+        private void DownlaMaxPacketSizeTextBox_TextChanged(object sender, EventArgs e)
+        {
+            _tenguApi.MaxPacketSize = int.Parse(DownlaMaxPacketSizeTextBox.Text);
+        }
+
+        private void AnimeSaturnCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (AnimeSaturnCheckBox.Checked)
+            {
+                Hosts.Add(TenguHosts.AnimeSaturn);
+            }
+            else
+            {
+                Hosts.Remove(TenguHosts.AnimeSaturn);
+            }
+
+            _tenguApi.CurrentHosts = Hosts.ToArray();
+        }
+
+        private void AnimeUnityCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (AnimeUnityCheckBox.Checked)
+            {
+                Hosts.Add(TenguHosts.AnimeUnity);
+            }
+            else
+            {
+                Hosts.Remove(TenguHosts.AnimeUnity);
+            }
+
+            _tenguApi.CurrentHosts = Hosts.ToArray();
+        }
     }
 }

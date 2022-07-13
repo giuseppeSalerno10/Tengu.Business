@@ -90,10 +90,11 @@ namespace Tengu.Business.API.Managers
 
         public async Task<AnimeModel[]> SearchAnimeAsync(string title, TenguSearchFilter filter, int count, CancellationToken cancellationToken)
         {
-            var animeList = await SearchAnimeAsync(filter, count, cancellationToken);
+            var animeList = await SearchAnimeAsync(filter, -1, cancellationToken);
 
             return animeList
                 .Where(anime => anime.Title.Contains(title))
+                .Take(count)
                 .ToArray();
         }
     }

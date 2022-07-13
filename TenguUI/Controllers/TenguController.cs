@@ -63,13 +63,13 @@ namespace TenguUI.Controllers
             return result;
         }
 
-        public async Task<DownloadMonitor> StartDownloadAsync(string episodeUrl, TenguHosts episodeHost)
+        public async Task<DownloadMonitor> StartDownloadAsync(string episodeUrl, TenguHosts episodeHost, CancellationToken ct)
         {
             DownloadMonitor result = new DownloadMonitor();
 
             try
             {
-                result = await _manager.StartDownloadAsync(episodeUrl, episodeHost);
+                result = await _manager.StartDownloadAsync(episodeUrl, episodeHost, ct);
             }
             catch (Exception e)
             {
