@@ -106,23 +106,27 @@ namespace Tengu.Business.Core.Adapters
                     HtmlDocument innerDoc = innerWeb.Load($"{requestUrl}page={i}");
 
                     var currentAnimesNode = innerDoc.DocumentNode.SelectNodes($"./div/div/div[@class='anime-card-newanime main-anime-card']");
-
-                    foreach (var node in currentAnimesNode)
+                    
+                    if(currentAnimesNode != null)
                     {
-                        var aNode = node.SelectSingleNode("./div/a");
-
-                        var url = aNode.GetAttributeValue("href", "");
-
-                        var anime = new AnimeModel()
+                        foreach (var node in currentAnimesNode)
                         {
-                            Id = url.Split("/")[^1],
-                            Host = TenguHosts.AnimeSaturn,
-                            Image = aNode.SelectSingleNode("./img").GetAttributeValue("src", ""),
-                            Url = url,
-                            Title = aNode.GetAttributeValue("title", ""),
-                        };
-                        animeList.Add(anime);
+                            var aNode = node.SelectSingleNode("./div/a");
+
+                            var url = aNode.GetAttributeValue("href", "");
+
+                            var anime = new AnimeModel()
+                            {
+                                Id = url.Split("/")[^1],
+                                Host = TenguHosts.AnimeSaturn,
+                                Image = aNode.SelectSingleNode("./img").GetAttributeValue("src", ""),
+                                Url = url,
+                                Title = aNode.GetAttributeValue("title", ""),
+                            };
+                            animeList.Add(anime);
+                        }
                     }
+                    
                 });
 
             }
@@ -142,36 +146,38 @@ namespace Tengu.Business.Core.Adapters
             var episodeBag = new ConcurrentBag<EpisodeModel>();
 
             var animeTitle = doc.DocumentNode.SelectSingleNode("//div[@class='container anime-title-as mb-3 w-100']/b").InnerText;
-            var episodes = doc.DocumentNode.SelectNodes("//div[@class='btn-group episodes-button episodi-link-button']/a");
+            var episodesNode = doc.DocumentNode.SelectNodes("//div[@class='btn-group episodes-button episodi-link-button']/a");
 
-            limit = limit == 0 ? episodes.Count : Math.Min(episodes.Count,limit);
-
-            for (int i = offset; i < limit; i++)
+            if(episodesNode != null)
             {
-                var episodeUrl = episodes[i]
-                        .GetAttributeValue("href", "");
+                limit = limit == 0 ? episodesNode.Count : Math.Min(episodesNode.Count, limit);
 
-                var url = GetEpisodeUrl(episodeUrl);
-
-                var episode = new EpisodeModel
+                for (int i = offset; i < limit; i++)
                 {
-                    Id = url.Split("=")[^1],
-                    AnimeId = animeId,
-                    Host = TenguHosts.AnimeSaturn,
-                    Title = animeTitle,
-                    Url = url,
-                    EpisodeNumber = (i + 1).ToString(),
-                    DownloadUrl = url,
-                };
-                episodeBag.Add(episode);
+                    var episodeUrl = episodesNode[i]
+                            .GetAttributeValue("href", "");
+
+                    var url = GetEpisodeUrl(episodeUrl);
+
+                    var episode = new EpisodeModel
+                    {
+                        Id = url.Split("=")[^1],
+                        AnimeId = animeId,
+                        Host = TenguHosts.AnimeSaturn,
+                        Title = animeTitle,
+                        Url = url,
+                        EpisodeNumber = (i + 1).ToString(),
+                        DownloadUrl = url,
+                    };
+                    episodeBag.Add(episode);
+                }
             }
+            var episodes = episodeBag
+                    .ToArray();
 
-            var episodesList = episodeBag
-                .ToList();
+            Array.Sort(episodes);
 
-            episodesList.Sort();
-
-            return episodesList.ToArray();
+            return episodes;
 
         }
 
