@@ -33,7 +33,7 @@ namespace TenguUI
 
             DownlaMaxPacketSizeTextBox.Text = "40000000";
 
-            DownlaDownloadPathTextBox.Text = _tenguApi.DownloadPath = $"{Environment.CurrentDirectory}/DownloadedAnime";
+            DownlaDownloadPathTextBox.Text = _tenguApi.DownloadPath = $"{Environment.CurrentDirectory}\\DownloadedAnime";
 
             GetEpisodesComboBox.DataSourceChanged += GetEpisodesSourceChangedHandler;
             VideoComboBox.DataSourceChanged += VideoSourceChangedHandler;
