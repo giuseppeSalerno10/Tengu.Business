@@ -58,6 +58,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.LogBox = new System.Windows.Forms.TextBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.ChoosePathButton = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -123,6 +124,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.ChoosePathButton);
             this.groupBox2.Controls.Add(this.AnimeUnityCheckBox);
             this.groupBox2.Controls.Add(this.AnimeSaturnCheckBox);
             this.groupBox2.Controls.Add(this.label7);
@@ -219,11 +221,11 @@
             // 
             // DownlaDownloadPathTextBox
             // 
+            this.DownlaDownloadPathTextBox.Enabled = false;
             this.DownlaDownloadPathTextBox.Location = new System.Drawing.Point(8, 121);
             this.DownlaDownloadPathTextBox.Name = "DownlaDownloadPathTextBox";
             this.DownlaDownloadPathTextBox.Size = new System.Drawing.Size(371, 23);
             this.DownlaDownloadPathTextBox.TabIndex = 0;
-            this.DownlaDownloadPathTextBox.TextChanged += new System.EventHandler(this.DownlaDownloadPathTextBox_TextChanged);
             // 
             // groupBox4
             // 
@@ -368,6 +370,16 @@
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Kitsu";
             // 
+            // ChoosePathButton
+            // 
+            this.ChoosePathButton.Location = new System.Drawing.Point(350, 121);
+            this.ChoosePathButton.Name = "ChoosePathButton";
+            this.ChoosePathButton.Size = new System.Drawing.Size(29, 23);
+            this.ChoosePathButton.TabIndex = 8;
+            this.ChoosePathButton.Text = "...";
+            this.ChoosePathButton.UseVisualStyleBackColor = true;
+            this.ChoosePathButton.Click += new System.EventHandler(this.ChoosePathButton_Click);
+            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -425,5 +437,6 @@
         private Button StopDownloadButton;
         private CheckBox AnimeUnityCheckBox;
         private CheckBox AnimeSaturnCheckBox;
+        private Button ChoosePathButton;
     }
 }

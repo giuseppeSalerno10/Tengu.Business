@@ -16,6 +16,8 @@ namespace TenguUI
 
         private readonly ITenguApi _tenguApi;
 
+        private DownloadMonitor? currentDownload;
+
         private CancellationTokenSource cts = new CancellationTokenSource();
 
         public App(ITenguController commandsController, ITenguApi tenguApi)
@@ -27,9 +29,11 @@ namespace TenguUI
 
             _tenguController.SetHosts(Hosts.ToArray());
 
-            _tenguApi.MaxConnections = 10;
-            _tenguApi.MaxPacketSize = 40000000;
-            _tenguApi.DownloadPath = $"{Environment.CurrentDirectory}/DownloadedAnime";
+            DownlaMaxConnectionsTextBox.Text = "10";
+
+            DownlaMaxPacketSizeTextBox.Text = "40000000";
+
+            DownlaDownloadPathTextBox.Text = _tenguApi.DownloadPath = $"{Environment.CurrentDirectory}/DownloadedAnime";
 
             GetEpisodesComboBox.DataSourceChanged += GetEpisodesSourceChangedHandler;
             VideoComboBox.DataSourceChanged += VideoSourceChangedHandler;
@@ -49,10 +53,8 @@ namespace TenguUI
             }
             else
             {
-                {
-                    LogBox.Text = $"Packet downloaded: {infos.DownloadedPackets}\r\n" + LogBox.Text;
-                    VideoProgressBar.Value = infos.Percentage;
-                }
+                LogBox.Text = $"Packet downloaded: {infos.DownloadedPackets}\r\n" + LogBox.Text;
+                VideoProgressBar.Value = infos.Percentage;
             }
         }
         private void _tenguApi_OnStatusChange(DownloadStatuses status, DownloadMonitorInfos infos, IEnumerable<Exception> exceptions)
@@ -64,10 +66,15 @@ namespace TenguUI
             }
             else
             {
+                if(status == DownloadStatuses.Completed)
                 {
-                    LogBox.Text = $"Status changed: {status} - Errors: {exceptions.Count()}\r\n" + LogBox.Text;
+                    currentDownload!.EnsureDownload();
+                    StartDownloadButton.Enabled = true;
+                    StopDownloadButton.Enabled = false;
                 }
+                LogBox.Text = $"Status changed: {status} - Errors: {exceptions.Count()}\r\n" + LogBox.Text;
             }
+
         }
 
         private async void SearchButton_Click(object sender, EventArgs e)
@@ -108,7 +115,7 @@ namespace TenguUI
 
             var episode = (EpisodeModel)VideoComboBox.SelectedItem;
 
-            await _tenguController.StartDownloadAsync(episode.DownloadUrl, episode.Host, cts.Token);
+            currentDownload = await _tenguController.StartDownloadAsync(episode.DownloadUrl, episode.Host, cts.Token);
 
             StopDownloadButton.Enabled = true;
             StartDownloadButton.Enabled = false;
@@ -117,64 +124,24 @@ namespace TenguUI
         {
             cts.Cancel();
 
-            StopDownloadButton.Enabled = true;
-            StartDownloadButton.Enabled = false;
-        }
-
-        #region Delegates
-        private void GetEpisodesSourceChangedHandler(object? sender, EventArgs e)
-        {
-            var comboBox = (ComboBox) sender!;
-            var dataSource = (AnimeModel[])comboBox.DataSource!;
-
-            if(dataSource.Any())
-            {
-                GetEpisodesComboBox.Enabled = true;
-                GetEpisodesButton.Enabled = true;
-
-                LoadMoreEpisodesButton.Enabled = true;
-            }
-            else
-            {
-                GetEpisodesComboBox.Text = "No anime founds";
-
-                GetEpisodesComboBox.Enabled = false;
-                GetEpisodesButton.Enabled = false;
-            }
-        }
-        private void VideoSourceChangedHandler(object? sender, EventArgs e)
-        {
-            var comboBox = (ComboBox)sender!;
-            var dataSource = (EpisodeModel[])comboBox.DataSource!;
-
-            if (dataSource.Any())
-            {
-                VideoComboBox.Enabled = true;
-                StartDownloadButton.Enabled = true;
-            }
-            else
-            { 
-                VideoComboBox.Text = "No episode founds";
-    
-                VideoComboBox.Enabled = false;
-                StartDownloadButton.Enabled = false;
-            }
-        }
-        #endregion
-
-        private void DownlaDownloadPathTextBox_TextChanged(object sender, EventArgs e)
-        {
-            _tenguApi.DownloadPath = DownlaDownloadPathTextBox.Text;
+            StopDownloadButton.Enabled = false;
+            StartDownloadButton.Enabled = true;
         }
 
         private void DownlaMaxConnectionsTextBox_TextChanged(object sender, EventArgs e)
         {
-            _tenguApi.MaxConnections = int.Parse(DownlaMaxConnectionsTextBox.Text);
+            if (!string.IsNullOrEmpty(DownlaMaxConnectionsTextBox.Text))
+            {
+                _tenguApi.MaxConnections = int.Parse(DownlaMaxConnectionsTextBox.Text);
+            }
         }
 
         private void DownlaMaxPacketSizeTextBox_TextChanged(object sender, EventArgs e)
         {
-            _tenguApi.MaxPacketSize = int.Parse(DownlaMaxPacketSizeTextBox.Text);
+            if (!string.IsNullOrEmpty(DownlaMaxPacketSizeTextBox.Text))
+            {
+                _tenguApi.MaxPacketSize = int.Parse(DownlaMaxPacketSizeTextBox.Text);
+            }
         }
 
         private void AnimeSaturnCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -204,5 +171,59 @@ namespace TenguUI
 
             _tenguApi.CurrentHosts = Hosts.ToArray();
         }
+
+        private void ChoosePathButton_Click(object sender, EventArgs e)
+        {
+            using (var fbd = new FolderBrowserDialog())
+            {
+                DialogResult result = fbd.ShowDialog();
+
+                if (result == DialogResult.OK)
+                {
+                    DownlaDownloadPathTextBox.Text = _tenguApi.DownloadPath = fbd.SelectedPath;
+                }
+            }
+        }
+
+        #region Delegates
+        private void GetEpisodesSourceChangedHandler(object? sender, EventArgs e)
+        {
+            var comboBox = (ComboBox)sender!;
+            var dataSource = (AnimeModel[])comboBox.DataSource!;
+
+            if (dataSource.Any())
+            {
+                GetEpisodesComboBox.Enabled = true;
+                GetEpisodesButton.Enabled = true;
+
+                LoadMoreEpisodesButton.Enabled = true;
+            }
+            else
+            {
+                GetEpisodesComboBox.Text = "No anime founds";
+
+                GetEpisodesComboBox.Enabled = false;
+                GetEpisodesButton.Enabled = false;
+            }
+        }
+        private void VideoSourceChangedHandler(object? sender, EventArgs e)
+        {
+            var comboBox = (ComboBox)sender!;
+            var dataSource = (EpisodeModel[])comboBox.DataSource!;
+
+            if (dataSource.Any())
+            {
+                VideoComboBox.Enabled = true;
+                StartDownloadButton.Enabled = true;
+            }
+            else
+            {
+                VideoComboBox.Text = "No episode founds";
+
+                VideoComboBox.Enabled = false;
+                StartDownloadButton.Enabled = false;
+            }
+        }
+        #endregion
     }
 }
