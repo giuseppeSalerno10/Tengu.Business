@@ -13,9 +13,6 @@ namespace Tengu.Business.API.Interfaces
         long MaxPacketSize { get; set; }
         int MaxConnections { get; set; }
 
-        event OnDownlaEventDelegate OnStatusChange;
-        event OnDownlaEventDelegate OnPacketDownloaded;
-
         Task<TenguResult<DownloadMonitor>> StartDownloadAsync(string episodeUrl, TenguHosts host, CancellationToken cancellationToken = default);
         Task<TenguResult<Calendar[]>> GetCalendarAsync(CancellationToken cancellationToken = default);
         Task<TenguResult<EpisodeModel[]>> GetEpisodesAsync(string animeId, TenguHosts host, int offset = 0, int count = 0, CancellationToken cancellationToken = default);

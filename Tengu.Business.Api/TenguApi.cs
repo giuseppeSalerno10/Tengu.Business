@@ -19,9 +19,6 @@ namespace Tengu.Business.API
         public long MaxPacketSize { get => _downlaClient.MaxPacketSize; set => _downlaClient.MaxPacketSize = value; }
         public int MaxConnections { get => _downlaClient.MaxConnections; set => _downlaClient.MaxConnections = value; }
 
-        public event OnDownlaEventDelegate OnStatusChange { add => _downlaClient.OnStatusChange += value; remove => _downlaClient.OnPacketDownloaded -= value; }
-        public event OnDownlaEventDelegate OnPacketDownloaded { add => _downlaClient.OnPacketDownloaded += value; remove => _downlaClient.OnPacketDownloaded -= value; }
-
         private readonly ILogger<TenguApi> _logger;
         private readonly IAnimeUnityController _animeUnityController;
         private readonly IAnimeSaturnController _animeSaturnController;

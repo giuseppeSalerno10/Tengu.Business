@@ -37,44 +37,41 @@ namespace TenguUI
 
             GetEpisodesComboBox.DataSourceChanged += GetEpisodesSourceChangedHandler;
             VideoComboBox.DataSourceChanged += VideoSourceChangedHandler;
-
-            _tenguApi.OnStatusChange += _tenguApi_OnStatusChange;
-            _tenguApi.OnPacketDownloaded += _tenguApi_OnPacketDownloaded;
         }
 
-        delegate void TenguCallback(DownloadStatuses status, DownloadMonitorInfos infos, IEnumerable<Exception> exceptions);
-
-        private void _tenguApi_OnPacketDownloaded(DownloadStatuses status, DownloadMonitorInfos infos, IEnumerable<Exception> exceptions)
+        private void Infos_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (LogBox.InvokeRequired)
+
+            DownloadMonitorInfos infos = (DownloadMonitorInfos)sender!;
+            switch (e.PropertyName)
             {
-                TenguCallback callback = new TenguCallback(_tenguApi_OnPacketDownloaded);
-                Invoke(callback, new object[] { status, infos, exceptions });
-            }
-            else
-            {
-                LogBox.Text = $"Packet downloaded: {infos.DownloadedPackets}\r\n" + LogBox.Text;
-                VideoProgressBar.Value = infos.Percentage;
+                case nameof(DownloadMonitor.Infos.DownloadedPackets):
+                    BeginInvoke( () =>
+                    {
+                        LogBox.Text = $"Packet Downloaded: {infos.DownloadedPackets}\r\n" + LogBox.Text;
+                    });
+                    break;
+                case nameof(DownloadMonitor.Infos.Percentage):
+                    BeginInvoke(() =>
+                    {
+                        VideoProgressBar.Value = infos.Percentage;
+                    });
+                    break;
             }
         }
-        private void _tenguApi_OnStatusChange(DownloadStatuses status, DownloadMonitorInfos infos, IEnumerable<Exception> exceptions)
-        {
-            if (LogBox.InvokeRequired)
-            {
-                TenguCallback callback = new TenguCallback(_tenguApi_OnStatusChange);
-                Invoke(callback, new object[] { status, infos, exceptions });
-            }
-            else
-            {
-                if(status == DownloadStatuses.Completed)
-                {
-                    currentDownload!.EnsureDownload();
-                    StartDownloadButton.Enabled = true;
-                    StopDownloadButton.Enabled = false;
-                }
-                LogBox.Text = $"Status changed: {status} - Errors: {exceptions.Count()}\r\n" + LogBox.Text;
-            }
 
+        private void CurrentDownload_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            DownloadMonitor monitor = (DownloadMonitor)sender!;
+            switch (e.PropertyName)
+            {
+                case nameof(DownloadMonitor.Status):
+                    BeginInvoke(() =>
+                    {
+                        LogBox.Text = $"Status Changed: {monitor.Status}\r\n" + LogBox.Text;
+                    });
+                    break;
+            }
         }
 
         private async void SearchButton_Click(object sender, EventArgs e)
@@ -117,9 +114,12 @@ namespace TenguUI
 
             currentDownload = await _tenguController.StartDownloadAsync(episode.DownloadUrl, episode.Host, cts.Token);
 
+            currentDownload.PropertyChanged += CurrentDownload_PropertyChanged;
+            currentDownload.Infos.PropertyChanged += Infos_PropertyChanged;
             StopDownloadButton.Enabled = true;
             StartDownloadButton.Enabled = false;
         }
+
         private void StopDownloadButton_Click(object sender, EventArgs e)
         {
             cts.Cancel();
