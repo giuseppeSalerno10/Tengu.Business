@@ -5,7 +5,7 @@ on:
     branches: [ development ]
     paths-ignore:
       - '.github/workflows/**'
-
+      - 'TenguUI/*'
 env:
   NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
   VERSION: 1.2
