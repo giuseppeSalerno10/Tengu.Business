@@ -55,6 +55,11 @@ namespace TenguUI
                     BeginInvoke(() =>
                     {
                         VideoProgressBar.Value = infos.Percentage;
+                        if(infos.Percentage == 100)
+                        {
+                            StartDownloadButton.Enabled = true;
+                            StopDownloadButton.Enabled = false;
+                        }
                     });
                     break;
             }
