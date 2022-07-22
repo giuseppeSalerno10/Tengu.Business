@@ -41,6 +41,8 @@ namespace Tengu.Business.Core.Adapters
                 foreach (var episode in response.Episodes)
                 {
 
+                    string downloadUrl = await _utilities.GetDownloadUrl(episode.Scws_id, episode.File_name);
+
                     var episodeToAdd = new EpisodeModel()
                     {
                         Url = $"{Config.AnimeUnityConfig.BaseAnimeUrl}/{animeId}-{response.Slug}",

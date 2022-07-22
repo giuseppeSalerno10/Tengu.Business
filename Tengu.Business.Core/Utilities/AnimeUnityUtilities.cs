@@ -1,4 +1,6 @@
 ﻿using Flurl.Http;
+using System.Security.Cryptography;
+using System.Text;
 using Tengu.Business.Commons;
 using Tengu.Business.Commons.Objects;
 using Tengu.Business.Core.DTO.Output.AnimeUnity;
@@ -9,6 +11,18 @@ namespace Tengu.Business.Core.Utilities
 {
     public class AnimeUnityUtilities : IAnimeUnityUtilities
     {
+        public async Task<string> GetDownloadUrl(string scwsId, string fileName)
+        {
+            dynamic scwsResponse = await $"https://scws.xyz/videos/{scwsId}".GetJsonAsync<dynamic>();
+            string ipResponse = await "https://au-a1-01.scws-content.net/get-ip".GetStringAsync();
+
+            var token = CryptString(2, ipResponse, "Yc8U6r8KjAKAepEA");
+
+            string downloadUrl= $"https://au-d1-0{scwsResponse.proxy_download}.scws-content.net/download/{scwsResponse.storage_download.number}/{scwsResponse.folder_id}/{scwsResponse.quality}p.mp4?token={token}&filename={fileName}";
+            return downloadUrl;
+        }
+
+
         public async Task<AnimeUnityCreateSessionOutput> CreateSession()
         {
             var requestUrl = Config.AnimeUnityConfig.BaseUrl;
@@ -106,6 +120,34 @@ namespace Tengu.Business.Core.Utilities
             };
 
             return statusMap[status];
+        }
+
+        private string CryptString(int coeff, string clearData, string key)
+        {
+            /*
+                var r = new Date(Date.now() + 36e5 * t).getTime()
+                i = (r = String(Math.round(r / 1e3))) + e + " " + n;
+                return CryptoJS.MD5(i).toString(CryptoJS.enc.Base64).replace(/=/ g, "").replace(/\+/ g, "-").replace(/\//g, "_") + "&expires=" + r
+
+                    n = key
+                    e = clearData
+                    coeff = t
+            */
+            long currentMillis = (long)(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + 36e5 * coeff);
+            long expireTime = Convert.ToInt64(currentMillis / 1000);
+
+            string strToCrypt = $"{expireTime}{clearData} {key}";
+            var encodedStr = Encoding.ASCII.GetBytes(strToCrypt);
+
+            byte[] cryptedData = MD5.HashData(encodedStr);
+            string rawCryptedString = Convert.ToBase64String(cryptedData);
+
+            string cryptedString = rawCryptedString
+                .Replace("=", "")
+                .Replace("+", "-")
+                .Replace("/", "_");
+
+            return $"{cryptedString}&expires={expireTime}";
         }
     }
 }
