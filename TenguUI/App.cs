@@ -113,7 +113,7 @@ namespace TenguUI
 
         private async void StartDownloadButton_Click(object sender, EventArgs e)
         {
-            cts.TryReset();
+            cts = new();
 
             var episode = (EpisodeModel)VideoComboBox.SelectedItem;
 
